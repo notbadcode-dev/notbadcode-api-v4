@@ -1,0 +1,63 @@
+{
+  // ---- Formato (Prettier) ----
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "modificationsIfAvailable",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // ---- ESLint (fix on save) ----
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "typescript"],
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // ---- Jest (usa npm + nvm y PATH robusto) ----
+  "jest.jestCommandLine": "npm run test:watch:auth --",
+  "jest.nodeEnv": {
+    "NVM_DIR": "/Users/bgr/.nvm",
+    "PATH": "/Users/bgr/.nvm/versions/node/v22.14.0/bin:/usr/local/bin:/usr/bin:/bin:${env:PATH}"
+  },
+  "jest.showCoverageOnLoad": false,
+  "jest.debugMode": false,
+
+  // ---- Terminal integrado (nvm disponible) ----
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.env.osx": {
+    "NVM_DIR": "/Users/bgr/.nvm",
+    "PATH": "/Users/bgr/.nvm/versions/node/v22.14.0/bin:/usr/local/bin:/usr/bin:/bin:${PATH}"
+  },
+
+  // ---- TypeScript del workspace ----
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.preferences.quoteStyle": "single",
+
+  // ---- Calidad de vida ----
+  "files.eol": "\n",
+  "search.exclude": { "**/dist": true, "**/coverage": true, "**/node_modules": true },
+  "files.watcherExclude": { "**/dist/**": true, "**/coverage/**": true, "**/node_modules/**": true },
+  "explorer.excludeGitIgnore": true,
+  "editor.tabSize": 2,
+  "editor.renderWhitespace": "selection",
+  "editor.linkedEditing": true,
+  "git.ignoreLimitWarning": true,
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MariaDB",
+      "name": "127.0.0.1",
+      "database": "mysql",
+      "username": "bgr"
+    }
+  ]
+}

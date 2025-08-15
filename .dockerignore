@@ -1,0 +1,58 @@
+# -------------------
+# Node / NPM / Yarn
+# -------------------
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+.pnpm-store
+package-lock.json # opcional, si no quieres que afecte al caché (recomendado dejarlo si usas npm ci)
+
+# -------------------
+# Builds
+# -------------------
+dist
+build
+tmp
+logs
+*.log
+
+# -------------------
+# Sistemas de control de versiones
+# -------------------
+.git
+.gitignore
+.gitattributes
+
+# -------------------
+# Archivos temporales del SO
+# -------------------
+.DS_Store
+Thumbs.db
+
+# -------------------
+# Docker
+# -------------------
+Dockerfile
+docker-compose*.yml
+
+# -------------------
+# Entornos
+# -------------------
+.env
+.env.*
+!*.env.example # mantén ejemplos de configuración
+
+# -------------------
+# Tests
+# -------------------
+coverage
+.vscode
+.idea
+*.spec.ts
+*.test.ts
+
+# -------------------
+# Otros
+# -------------------
+**/README.md

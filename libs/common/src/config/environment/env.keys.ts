@@ -1,0 +1,39 @@
+export const ENV_KEYS = {
+  // Auth
+  AUTH_PORT: 'AUTH_PORT',
+
+  // JWT
+  AUTH_JWT_SECRET: 'AUTH_JWT_SECRET',
+  AUTH_JWT_EXPIRES_IN: 'AUTH_JWT_EXPIRES_IN',
+
+  // DB
+  AUTH_DB_HOST: 'AUTH_DB_HOST',
+  AUTH_DB_PORT: 'AUTH_DB_PORT',
+  AUTH_DB_USER: 'AUTH_DB_USER',
+  AUTH_DB_PASS: 'AUTH_DB_PASS',
+  AUTH_DB_NAME: 'AUTH_DB_NAME',
+
+  // Common
+  SERVICE_NAME: 'SERVICE_NAME',
+
+  // SSL
+  SSL_KEY_PATH: 'SSL_KEY_PATH',
+  SSL_CERT_PATH: 'SSL_CERT_PATH',
+
+  // i18n
+  I18N_DIR: 'I18N_DIR',
+  FALLBACK_LANGUAGE: 'FALLBACK_LANGUAGE',
+
+  // Redis
+  REDIS_URL: 'REDIS_URL',
+
+  // DB genérica (si las usas)
+  DB_HOST: 'DB_HOST',
+  DB_PORT: 'DB_PORT',
+  DB_ROOT_PASSWORD: 'DB_ROOT_PASSWORD',
+  DB_USER: 'DB_USER',
+  DB_PASSWORD: 'DB_PASSWORD',
+  DB_NAME: 'DB_NAME',
+} as const;
+
+export type EnvKey = (typeof ENV_KEYS)[keyof typeof ENV_KEYS];

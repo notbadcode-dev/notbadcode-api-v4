@@ -1,0 +1,33 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps",
+  "compilerOptions": {
+    "deleteOutDir": true
+  },
+  "projects": {
+    "auth": {
+      "type": "application",
+      "root": "apps/auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth/tsconfig.build.json"
+      }
+    },
+    "common": {
+      "type": "library",
+      "root": "libs/common",
+      "sourceRoot": "libs/common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.build.json",
+        "assets": [
+          {
+            "include": "src/i18n/**/*",
+            "outDir": "../../dist/libs/common/src/i18n"
+          }
+        ],
+        "watchAssets": true
+      }
+    }
+  }
+}

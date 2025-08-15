@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {},
+  "include": ["apps/**/*.ts", "libs/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

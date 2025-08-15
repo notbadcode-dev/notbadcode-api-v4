@@ -1,0 +1,9 @@
+{
+  "error-message": {
+    "defaultApiFailureResponseMessage": "An error occurred while processing the request",
+    "unknownValidationError": "Unknown validation error"
+  },
+  "message": {
+    "defaultApiSuccessResponseMessage": "Request completed successfully"
+  }
+}

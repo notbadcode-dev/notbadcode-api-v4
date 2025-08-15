@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Debug NestJS Auth Service (hot reload, verbose)",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": [
+        "--require",
+        "ts-node/register",
+        "--require",
+        "tsconfig-paths/register",
+        "apps/auth/src/main.ts"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/apps/auth/.env",
+      "outputCapture": "std",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    }, 
+    {
+      "type": "pwa-node",
+      "request": "attach",
+      "name": "Attach NestJS (Docker)",
+      "address": "localhost",
+      "port": 9229,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app",
+      "restart": true,
+      "autoAttachChildProcesses": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+build/
+logs/
+apps/**/dist/
+libs/**/dist/
+*.log
+.DS_Store
+mariadb-data/
+redis-data/
+auth_node_modules/

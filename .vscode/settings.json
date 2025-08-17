@@ -15,7 +15,8 @@
   "eslint.workingDirectories": [{ "mode": "auto" }],
 
   // ---- Jest (usa npm + nvm y PATH robusto) ----
-  "jest.jestCommandLine": "npm run test:watch:auth --",
+  "jest.jestCommandLine": "node_modules/.bin/jest",
+  "jest.runMode": "on-demand",
   "jest.nodeEnv": {
     "NVM_DIR": "/Users/bgr/.nvm",
     "PATH": "/Users/bgr/.nvm/versions/node/v22.14.0/bin:/usr/local/bin:/usr/bin:/bin:${env:PATH}"

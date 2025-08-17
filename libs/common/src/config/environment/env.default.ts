@@ -1,5 +1,7 @@
 import { ESupportedLanguage } from '../../enums/';
+// eslint-disable-next-line import/order
 import { ENV_KEYS } from './env.keys';
+
 
 export const ENV_DEFAULTS = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers

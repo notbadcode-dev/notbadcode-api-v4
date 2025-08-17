@@ -1,6 +1,6 @@
 node_modules/
 dist/
-coverage/
+test/coverage/
 build/
 logs/
 apps/**/dist/

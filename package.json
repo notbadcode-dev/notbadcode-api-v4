@@ -34,31 +34,14 @@
     "start:auth:debug": "nest start auth --debug 0.0.0.0:9229 --watch",
     "start:auth:dev": "nest start auth --watch",
     "start:dev": "nest start --watch",
-    "test": "npm run test:auth && npm run test:common",
-    "test:auth": "jest --config apps/auth/test/jest.config.ts",
-    "test:common": "jest --config libs/common/test/jest.config.ts",
-    "test:cov": "jest --coverage --config apps/auth/test/jest.config.ts && jest --coverage --config libs/common/test/jest.config.ts",
-    "test:watch": "npm run test:watch:auth",
-    "test:watch:auth": "jest --watch --config apps/auth/test/jest.config.ts",
-    "test:watch:common": "jest --watch --config libs/common/test/jest.config.ts",
+    "test:all": "jest --config jest.config.js",
+    "test:auth": "jest --config apps/auth/test/jest.config.js",
+    "test:common": "jest --config libs/common/test/jest.config.js",
+    "test:cov": "jest --coverage --config jest.config.js",
+    "test:watch:all": "jest --watch --config jest.config.js",
+    "test:watch:auth": "jest --watch --config apps/auth/test/jest.config.js",
+    "test:watch:common": "jest --watch --config libs/common/test/jest.config.js",
     "tree": "tree -I 'node_modules|dist|coverage|.git'"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "./coverage",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": ".",
-    "testEnvironment": "node",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    }
   },
   "dependencies": {
     "@nestjs/common": "11.1.5",

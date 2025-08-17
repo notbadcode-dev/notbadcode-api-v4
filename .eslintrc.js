@@ -133,5 +133,9 @@ module.exports = {
         '@typescript-eslint/no-misused-promises': 'off',
       },
     },
+    {
+      files: ['test/jest.setup.js'],
+      parserOptions: { project: null },
+    },
   ],
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 export const AuthConstants = {
   nodeInspectHost: '0.0.0.0',
   listenAppMessage: (port: number) => {

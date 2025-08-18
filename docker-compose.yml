@@ -2,6 +2,7 @@ services:
   mariadb:
     image: mariadb:11
     container_name: mariadb
+    profiles: ["prod"]
     environment:
       - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MARIADB_DATABASE=${DB_NAME}
@@ -13,7 +14,6 @@ services:
       - --collation-server=utf8mb4_uca1400_ai_ci
     volumes:
       - mariadb-data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
     networks: [app-net]
     ports:
       - "3306:3306"
@@ -28,6 +28,7 @@ services:
   redis-cache:
     image: redis:7-alpine
     container_name: redis-cache
+    profiles: ["prod"]
     command: [
       "redis-server",
       "--appendonly","no",
@@ -49,6 +50,7 @@ services:
   redis-session:
     image: redis:7-alpine
     container_name: redis-session
+    profiles: ["prod"]
     command: [
       "redis-server",
       "--appendonly","yes",
@@ -68,12 +70,12 @@ services:
     networks: [app-net]
     restart: unless-stopped
 
-
   auth:
     build:
       context: .
       dockerfile: apps/auth/Dockerfile
     container_name: auth
+    profiles: ["prod"]
     env_file:
       - apps/auth/.env
     environment:
@@ -94,55 +96,7 @@ services:
         condition: service_healthy
       redis-session:
         condition: service_healthy
-    ports:
-      - "60200:60200"
-    volumes:
-      - ./certs:/app/certs:ro
     networks: [app-net]
-    restart: unless-stopped
-
-  # ---------- Modo depuración ----------
-  auth-debug:
-    build:
-      context: .
-      dockerfile: apps/auth/Dockerfile
-      target: base # usa stage con devDependencies
-    container_name: auth-debug
-    working_dir: /app
-    command: sh -lc "npm ci && npm run start:auth:debug" # --debug 0.0.0.0:9229 --watch
-    env_file:
-      - apps/auth/.env
-    environment:
-      - AUTH_DB_HOST=${DB_HOST}
-      - AUTH_DB_PORT=${DB_PORT}
-      - AUTH_DB_USER=${DB_USER}
-      - AUTH_DB_PASS=${DB_PASSWORD}
-      - AUTH_DB_NAME=${DB_NAME}
-      - REDIS_CACHE_URL=${REDIS_CACHE_URL}
-      - REDIS_SESSION_URL=${REDIS_SESSION_URL}
-      - SSL_KEY_PATH=${SSL_KEY_PATH}
-      - SSL_CERT_PATH=${SSL_CERT_PATH}
-      - CHOKIDAR_USEPOLLING=1
-      - WATCHPACK_POLLING=true
-      - NODE_OPTIONS=--enable-source-maps
-      - NODE_ENV=development
-      - I18N_DIR=/app/libs/common/src/i18n
-    depends_on:
-      mariadb:
-        condition: service_healthy
-      redis-cache:
-        condition: service_healthy
-      redis-session:
-        condition: service_healthy
-    ports:
-      - "60200:60200" # app
-      - "9229:9229" # inspector Node
-    volumes:
-      - .:/app
-      - ./certs:/app/certs:ro
-      - auth_node_modules:/app/node_modules
-    networks: [app-net]
-    profiles: ["debug"] # solo se usa con --profile debug
 
 volumes:
   mariadb-data:

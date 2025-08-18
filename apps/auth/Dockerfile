@@ -1,10 +1,7 @@
 # ---------- Base ----------
 FROM node:22.14.0-alpine AS base
 WORKDIR /app
-
-# Añade todas las dependencias necesarias para Alpine y módulos nativos (incluyendo zsh, gcc, make, g++, python3)
 RUN apk add --no-cache libc6-compat make gcc g++ python3 zsh
-
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
@@ -21,6 +18,7 @@ RUN npx nest build auth \
 FROM node:22.14.0-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+RUN apk add --no-cache zsh
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist

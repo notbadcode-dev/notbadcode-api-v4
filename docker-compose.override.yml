@@ -1,0 +1,56 @@
+services:
+  mariadb:
+    container_name: mariadb-dev
+    profiles: ["debug"]
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+
+  seed:
+    image: mariadb:11
+    container_name: mariadb-seed
+    command: >
+      sh -c "sleep 5 && mariadb --host=mariadb-dev --port=3306 -u${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < /seed/auth_dev_seed.sql"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./docker/seed:/seed:ro
+    networks: [app-net]
+    profiles: ["debug"]
+
+  redis-cache:
+    container_name: redis-cache-dev
+    profiles: ["debug"]
+
+  redis-session:
+    container_name: redis-session-dev
+    profiles: ["debug"]
+
+  auth:
+    profiles: ["debug"]
+    command: sh -lc "npm ci && npm run start:auth:debug"
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--enable-source-maps
+      - CHOKIDAR_USEPOLLING=1
+      - WATCHPACK_POLLING=true
+      - I18N_DIR=/app/libs/common/src/i18n
+    volumes:
+      - .:/app
+      - ./certs:/app/certs:ro
+      - auth_node_modules:/app/node_modules
+    ports:
+      - "60200:60200"
+      - "9229:9229"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+      redis-cache:
+        condition: service_healthy
+      redis-session:
+        condition: service_healthy

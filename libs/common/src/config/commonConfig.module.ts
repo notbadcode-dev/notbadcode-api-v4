@@ -9,7 +9,7 @@ import { envValidationSchema } from '@common/config';
   imports: [
     NestConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [path.resolve(process.cwd(), '.env'), path.resolve(process.cwd(), 'apps/auth/.env')],
+      envFilePath: [path.resolve(process.cwd(), 'apps/auth/.env'), path.resolve(process.cwd(), '.env')],
       validationSchema: envValidationSchema,
       validationOptions: {
         abortEarly: false,

@@ -20,6 +20,20 @@ CREATE TABLE
         UNIQUE KEY `UX_users_email` (`email`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
-CREATE USER IF NOT EXISTS 'bgr'@'%' IDENTIFIED BY '6900';
-GRANT ALL PRIVILEGES ON *.* TO 'bgr'@'%' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
+USE `auth_db`;
+
+-- Insertar usuarios de prueba solo si no existen (idempotente)
+INSERT IGNORE INTO users (email, passwordHash)
+VALUES
+    (
+        'admin@test.com',
+        '$2b$10$pD53uN6NY5M4lFTU4/s5m.NUN9DHYhRzp2kbbSUbS4xoc/rCXDZDO'
+    ),
+    (
+        'user@test.com',
+        '$2b$10$pD53uN6NY5M4lFTU4/s5m.NUN9DHYhRzp2kbbSUbS4xoc/rCXDZDO'
+    ),
+    (
+        'test@test.com',
+        '$2b$10$pD53uN6NY5M4lFTU4/s5m.NUN9DHYhRzp2kbbSUbS4xoc/rCXDZDO'
+    );

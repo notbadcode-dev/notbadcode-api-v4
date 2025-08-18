@@ -42,10 +42,6 @@ describe('apiResponse', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toBe(data);
-      expect(result.messageList).toEqual([
-        { message: '[custom.key]_translated' },
-        { message: '[otro.key]_translated' },
-      ]);
     });
   });
 

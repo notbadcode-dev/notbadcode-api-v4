@@ -21,7 +21,11 @@ export const ENV_DEFAULTS = {
   [ENV_KEYS.I18N_DIR]: '/app/libs/common/src/i18n',
   [ENV_KEYS.FALLBACK_LANGUAGE]: ESupportedLanguage?.English,
 
-  [ENV_KEYS.REDIS_URL]: 'redis://redis:6379',
+  [ENV_KEYS.REDIS_CACHE_URL]: 'redis://redis:6379',
+  [ENV_KEYS.REDIS_CACHE_PASSWORD]: '',
+
+  [ENV_KEYS.REDIS_SESSION_URL]: 'redis://redis:6379',
+  [ENV_KEYS.REDIS_SESSION_PASSWORD]: '',
 } as const;
 
 export const AUTH_JWT_SECRET_MIN_LENGTH = 32;

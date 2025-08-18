@@ -22,7 +22,7 @@
     "docker:ps": "docker compose ps",
     "docker:up": "docker compose up -d",
     "docker:up:auth": "docker compose up -d auth",
-    "docker:up:auth:debug": "docker compose --profile debug up -d --build mariadb redis auth-debug --force-recreate",
+    "docker:up:auth:debug": "docker compose --profile debug up -d --build mariadb redis-cache redis-session auth-debug --force-recreate",
     "format": "prettier --write \"{apps,libs}/**/*.{ts,tsx,js,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"{apps,libs}/**/*.{ts,tsx,js,json,md,yml,yaml}\"",
     "health": "curl -fsS http://localhost:60200/healthz || (echo 'API KO' && exit 1)",
@@ -44,6 +44,7 @@
     "tree": "tree -I 'node_modules|dist|coverage|.git'"
   },
   "dependencies": {
+    "@nestjs/cache-manager": "3.0.1",
     "@nestjs/common": "11.1.5",
     "@nestjs/config": "4.0.2",
     "@nestjs/core": "11.1.5",
@@ -53,6 +54,8 @@
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "11.0.0",
     "bcrypt": "^5.1.1",
+    "cache-manager": "7.1.1",
+    "cache-manager-redis-yet": "5.1.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "crypto": "^1.0.1",

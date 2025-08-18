@@ -18,4 +18,4 @@ import { envValidationSchema } from '@common/config';
     }),
   ],
 })
-export class ConfigModule {}
+export class CommonConfigModule {}

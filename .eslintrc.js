@@ -1,4 +1,6 @@
 /* ESLint para NestJS + TS (monorepo apps/ y libs/) */
+const path = require('path');
+
 module.exports = {
   root: true,
   reportUnusedDisableDirectives: true,
@@ -7,7 +9,13 @@ module.exports = {
 
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['./tsconfig.eslint.json'],
+    // 👉 Asegúrate de incluir TODOS los tsconfig de apps y libs
+    project: [
+      './tsconfig.eslint.json',
+      './tsconfig.json',
+      './apps/*/tsconfig.json',
+      './libs/*/tsconfig.json',
+    ],
     tsconfigRootDir: __dirname,
     sourceType: 'module',
     ecmaVersion: 'latest',
@@ -18,31 +26,41 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    // Reglas type-aware (necesitan project configurado arriba)
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:import/recommended',
     'plugin:import/typescript',
-    'plugin:sonarjs/recommended', // <- detección de duplicaciones y code smells
+    'plugin:sonarjs/recommended',
     'prettier',
   ],
 
   settings: {
+    // 👉 Resolver de imports debe apuntar a los mismos tsconfig
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true,
-        project: ['./tsconfig.json'],
+        project: [
+          './tsconfig.eslint.json',
+          './tsconfig.json',
+          './apps/*/tsconfig.json',
+          './libs/*/tsconfig.json',
+        ],
       },
     },
   },
 
   ignorePatterns: [
     '.eslintrc.js',
+    '.eslintrc.cjs',
     'node_modules/',
     'dist/',
     'coverage/',
     'apps/**/dist/',
     'libs/**/dist/',
     'logs/',
+    // si generas d.ts, puedes ignorarlos; si no, puedes quitar esta línea
     '*.d.ts',
+    // ❗ importante: evita ignorar archivos que quieras lintar
   ],
 
   rules: {
@@ -110,22 +128,34 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['builtin'],
       },
     ],
+
+    // En monorepo suele dar falsos positivos por paths configurados
     'import/no-unresolved': 'off',
   },
 
   overrides: [
+    // Archivos JS/CJS de config
     {
       files: ['*.cjs', '*.js'],
       env: { node: true },
       parser: null,
       plugins: ['import'],
       extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
+      rules: {
+        // Evita que el resolver TS se aplique a JS de config
+        'import/no-unresolved': 'off',
+      },
     },
+    // Tests
     {
       files: ['**/*.spec.ts', '**/*.test.ts'],
       env: { jest: true, node: true },
       plugins: ['jest', '@typescript-eslint'],
       extends: ['plugin:@typescript-eslint/recommended', 'plugin:jest/recommended', 'prettier'],
+      parserOptions: {
+        project: ['./tsconfig.eslint.json', './apps/*/tsconfig.json', './libs/*/tsconfig.json'],
+        tsconfigRootDir: __dirname,
+      },
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
@@ -133,6 +163,7 @@ module.exports = {
         '@typescript-eslint/no-misused-promises': 'off',
       },
     },
+    // Si tienes archivos de setup que no necesitan type-checking
     {
       files: ['test/jest.setup.js'],
       parserOptions: { project: null },

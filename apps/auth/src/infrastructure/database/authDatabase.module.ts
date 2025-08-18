@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { getAuthDbConfig } from './database.config';
+import { getAuthDbConfig } from './authDatabase.config';
 
 @Module({
   imports: [
@@ -19,4 +19,4 @@ import { getAuthDbConfig } from './database.config';
     }),
   ],
 })
-export class DatabaseModule {}
+export class AuthDatabaseModule {}

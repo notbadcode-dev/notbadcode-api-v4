@@ -25,15 +25,49 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  redis:
+  redis-cache:
     image: redis:7-alpine
-    container_name: redis
-    networks: [app-net]
+    container_name: redis-cache
+    command: [
+      "redis-server",
+      "--appendonly","no",
+      "--save","",
+      "--requirepass","${REDIS_CACHE_PASSWORD}",
+      "--maxmemory","512mb",
+      "--maxmemory-policy","allkeys-lru"
+    ]
     ports:
-      - "6379:6379"
+      - "63791:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_CACHE_PASSWORD}", "PING"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+    networks: [app-net]
     restart: unless-stopped
+
+  redis-session:
+    image: redis:7-alpine
+    container_name: redis-session
+    command: [
+      "redis-server",
+      "--appendonly","yes",
+      "--save","900","1",
+      "--save","60","1000",
+      "--requirepass","${REDIS_SESSION_PASSWORD}",
+      "--maxmemory","256mb",
+      "--maxmemory-policy","noeviction"
+    ]
+    ports:
+      - "63792:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_SESSION_PASSWORD}", "PING"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+    networks: [app-net]
+    restart: unless-stopped
+
 
   auth:
     build:
@@ -48,14 +82,17 @@ services:
       - AUTH_DB_USER=${DB_USER}
       - AUTH_DB_PASS=${DB_PASSWORD}
       - AUTH_DB_NAME=${DB_NAME}
-      - REDIS_URL=${REDIS_URL}
+      - REDIS_CACHE_URL=${REDIS_CACHE_URL}
+      - REDIS_SESSION_URL=${REDIS_SESSION_URL}
       - SSL_KEY_PATH=${SSL_KEY_PATH}
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - I18N_DIR=/app/dist/libs/common/src/i18n
     depends_on:
       mariadb:
         condition: service_healthy
-      redis:
+      redis-cache:
+        condition: service_healthy
+      redis-session:
         condition: service_healthy
     ports:
       - "60200:60200"
@@ -81,7 +118,8 @@ services:
       - AUTH_DB_USER=${DB_USER}
       - AUTH_DB_PASS=${DB_PASSWORD}
       - AUTH_DB_NAME=${DB_NAME}
-      - REDIS_URL=${REDIS_URL}
+      - REDIS_CACHE_URL=${REDIS_CACHE_URL}
+      - REDIS_SESSION_URL=${REDIS_SESSION_URL}
       - SSL_KEY_PATH=${SSL_KEY_PATH}
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - CHOKIDAR_USEPOLLING=1
@@ -92,7 +130,9 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-      redis:
+      redis-cache:
+        condition: service_healthy
+      redis-session:
         condition: service_healthy
     ports:
       - "60200:60200" # app

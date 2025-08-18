@@ -1,7 +1,8 @@
 {
   "error-message": {
     "defaultApiFailureResponseMessage": "An error occurred while processing the request",
-    "unknownValidationError": "Unknown validation error"
+    "unknownValidationError": "Unknown validation error",
+    "redidCacheNotInitialized": "Redis cache is not initialized. Ensure CommonCacheModule is imported in the module."
   },
   "message": {
     "defaultApiSuccessResponseMessage": "Request completed successfully"

@@ -9,4 +9,4 @@ import { loggerConfiguration } from '@common/loggers/';
   providers: [LoggingInterceptor],
   exports: [WinstonModule, LoggingInterceptor],
 })
-export class LoggerModule {}
+export class CommonLoggerModule {}

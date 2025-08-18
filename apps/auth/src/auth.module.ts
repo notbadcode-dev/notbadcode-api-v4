@@ -3,29 +3,31 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ConfigModule } from '@common/config';
+import { CommonCacheModule } from '@common/cache';
+import { CommonConfigModule } from '@common/config';
 import { CommonI18nModule } from '@common/i18n';
-import { LoggerModule } from '@common/loggers';
+import { CommonLoggerModule } from '@common/loggers';
 import { ApiResponseService } from '@common/responses';
 
 import { LoginHandler } from './application/handlers/login.handler';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { User } from './domain/entities/user.entity';
-import { DatabaseModule } from './infrastructure/database/database.module';
+import { AuthDatabaseModule } from './infrastructure/database/authDatabase.module';
 import { JwtConfigService } from './infrastructure/jwt/jwt-config.service';
 
 @Module({
   imports: [
-    ConfigModule,
-    LoggerModule,
+    CommonConfigModule,
+    CommonLoggerModule,
     CommonI18nModule,
-    CqrsModule,
-    DatabaseModule,
+    CommonCacheModule,
+    AuthDatabaseModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
       useClass: JwtConfigService,
     }),
+    CqrsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LoginHandler, JwtConfigService, ApiResponseService],

@@ -27,3 +27,17 @@ jobs:
 
       - name: Run ${{ matrix.test-script }}
         run: npm run ${{ matrix.test-script }}
+
+      - name: Upload test results (JUnit)
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.test-script }}
+          path: reports/junit/results.xml
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Jest Tests (${{ matrix.test-script }})
+          path: reports/junit/results.xml
+          reporter: jest-junit

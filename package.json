@@ -9,7 +9,7 @@
   "scripts": {
     "build": "nest build",
     "build:auth": "nest build auth",
-    "build:clean": "rm -rf dist && npm run build",
+    "build:clean": "rimraf dist && npm run build",
     "certs:generate": "cd certs && chmod +x generate-dev-cert.sh && ./generate-dev-cert.sh",
     "certs:validate": "cd certs && openssl x509 -in dev-cert.pem -text -noout && openssl pkey -in dev-key.pem -noout -text && openssl x509 -noout -modulus -in dev-cert.pem | openssl md5 && openssl pkey -noout -modulus -in dev-key.pem | openssl md5 && openssl verify -CAfile dev-cert.pem dev-cert.pem",
     "docker:build": "docker compose build",
@@ -61,8 +61,6 @@
     "cache-manager-redis-yet": "5.1.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
-    "crypto": "^1.0.1",
-    "fs": "^0.0.1-security",
     "i18next": "^25.3.2",
     "i18next-fs-backend": "^2.6.0",
     "i18next-http-middleware": "^3.8.0",

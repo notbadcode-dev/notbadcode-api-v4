@@ -1,58 +1,56 @@
-# -------------------
 # Node / NPM / Yarn
-# -------------------
-node_modules
-npm-debug.log
-yarn-error.log
-pnpm-debug.log
-.pnpm-store
-package-lock.json # opcional, si no quieres que afecte al caché (recomendado dejarlo si usas npm ci)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+# package-lock.json
 
-# -------------------
 # Builds
-# -------------------
-dist
-build
-tmp
-logs
+dist/
+build/
+tmp/
+logs/
 *.log
+*.log.gz
 
-# -------------------
-# Sistemas de control de versiones
-# -------------------
-.git
+# Version control
+.git/
 .gitignore
 .gitattributes
 
-# -------------------
-# Archivos temporales del SO
-# -------------------
+# OS temp files
 .DS_Store
 Thumbs.db
 
-# -------------------
-# Docker
-# -------------------
-Dockerfile
-docker-compose*.yml
+# Docker (opcional, solo si buildas fuera o nunca los necesitas dentro)
+# Dockerfile
+# docker-compose*.yml
 
-# -------------------
 # Entornos
-# -------------------
 .env
 .env.*
-!*.env.example # mantén ejemplos de configuración
+!.env.example # Mantén solo los archivos de ejemplo
 
-# -------------------
-# Tests
-# -------------------
-coverage
-.vscode
-.idea
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Tests y coverage
+coverage/
 *.spec.ts
 *.test.ts
 
-# -------------------
-# Otros
-# -------------------
-**/README.md
+# Otros temporales
+*.swp
+*.tmp
+*.bak
+.eslintcache
+
+# Documentación (opcional, suelen pesar poco)
+# README.md
+
+# Nx/Turbo (si aplican)
+.nx/
+.turbo/

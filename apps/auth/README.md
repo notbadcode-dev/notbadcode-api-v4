@@ -1,116 +1,157 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]:
-  https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Auth Microservice
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Microservicio de autenticación (`auth`) para la plataforma **NotBadCode API v4**, desarrollado con [NestJS](https://nestjs.com/). Gestiona autenticación basada en JWT, control de sesiones con Redis, integración con MariaDB y soporte completo de internacionalización (i18n). El servicio está preparado para funcionar de manera autónoma y dentro de una arquitectura de microservicios.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Índice
 
-## Project setup
+- [Auth Microservice](#auth-microservice)
+  - [Índice](#índice)
+  - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Variables de entorno](#variables-de-entorno)
+  - [Comandos útiles](#comandos-útiles)
+  - [Arquitectura y tecnologías](#arquitectura-y-tecnologías)
+  - [Buenas prácticas](#buenas-prácticas)
+  - [Notas adicionales](#notas-adicionales)
 
-```bash
-$ npm install
+---
+
+## Estructura del proyecto
+
+```text
+apps/auth
+├── Dockerfile
+├── README.md
+├── src
+│   ├── application
+│   │   ├── commands
+│   │   ├── dtos
+│   │   ├── handlers
+│   │   └── value-objects
+│   ├── auth.controller.ts
+│   ├── auth.module.ts
+│   ├── auth.service.ts
+│   ├── constants
+│   ├── domain
+│   │   └── entities
+│   ├── infrastructure
+│   │   ├── database
+│   │   └── jwt
+│   └── main.ts
+├── test
+│   ├── unit
+│   └── utils
+├── tsconfig.build.json
+└── tsconfig.json
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## Variables de entorno
 
-# watch mode
-$ npm run start:dev
+Crea un archivo `.env` en la raíz del microservicio `auth` basado en el siguiente ejemplo:
 
-# production mode
-$ npm run start:prod
+```dotenv
+# Nombre del microservicio
+SERVICE_NAME=auth
+
+# Puerto de escucha
+AUTH_PORT=60200
+
+# JWT
+AUTH_JWT_SECRET=        # Requerido: Clave secreta segura para firmar JWT
+AUTH_JWT_EXPIRES_IN=15m # Ejemplo: 15m, 1h, 7d
+
+# Base de datos específica de Auth
+AUTH_DB_NAME=auth_db
+
+# Configuración Redis (sesión y caché)
+REDIS_SESSION_URL=redis://:PASSWORD@redis-session-dev:6379/0
+REDIS_CACHE_URL=redis://:PASSWORD@redis-cache-dev:6379/0
+
+# SSL (si aplica)
+SSL_KEY_PATH=/app/certs/dev-key.pem
+SSL_CERT_PATH=/app/certs/dev-cert.pem
+
+# i18n
+I18N_DIR=/app/libs/common/src/i18n
+FALLBACK_LANGUAGE=en
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## Comandos útiles
 
-# e2e tests
-$ npm run test:e2e
+- **Arrancar en desarrollo:**
+  ```bash
+  npm run start:auth:dev
+  ```
 
-# test coverage
-$ npm run test:cov
-```
+- **Arrancar en modo debug (puerto 9229):**
+  ```bash
+  npm run start:auth:debug
+  ```
 
-## Deployment
+- **Tests unitarios:**
+  ```bash
+  npm run test:auth
+  ```
 
-When you're ready to deploy your NestJS application to production, there are some key
-steps you can take to ensure it runs as efficiently as possible. Check out the
-[deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- **Coverage:**
+  ```bash
+  npm run test:cov:auth
+  ```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check
-out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS
-applications on AWS. Mau makes deployment straightforward and fast, requiring just a few
-simple steps:
+- **Build del microservicio:**
+  ```bash
+  npm run build:auth
+  ```
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+- **Docker Compose (solo auth):**
+  ```bash
+  npm run docker:up:auth
+  ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on
-building features rather than managing infrastructure.
+---
 
-## Resources
+## Arquitectura y tecnologías
 
-Check out a few resources that may come in handy when working with NestJS:
+- **NestJS 11**  
+  Patrones CQRS y SOLID.
+- **JWT y Passport**  
+  Login seguro, expiración configurable.
+- **Redis**  
+  Control de sesiones y caché desacoplado.
+- **MariaDB/MySQL**  
+  Persistencia de usuarios y credenciales.
+- **i18n**  
+  Internacionalización basada en ficheros.
+- **Swagger**  
+  Documentación automática de endpoints (si está habilitado).
+- **Testing**  
+  Unitarios y mocks avanzados organizados en `test/unit`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the
-  framework.
-- For questions and support, please visit our
-  [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video
-  [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com)
-  in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time
-  using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official
-  [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and
-  [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official
-  [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Buenas prácticas
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and
-support by the amazing backers. If you'd like to join them, please
-[read more here](https://docs.nestjs.com/support).
+- Nunca subas archivos `.env` ni credenciales al repositorio.
+- Revisa y actualiza las dependencias regularmente.
+- Asegura que todos los comandos (`npm run ...`) pasan sin errores antes de hacer push.
+- Mantén el código formateado (`npm run format`).
+- Los tests deben estar siempre actualizados y pasar en CI.
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Notas adicionales
 
-## License
+- El microservicio `auth` está diseñado para funcionar de forma autónoma, pero integrado dentro de una arquitectura de microservicios.
+- Consulta la documentación de arquitectura global en el README raíz del monorepo para ver dependencias cruzadas y configuración compartida.
+- Si necesitas añadir endpoints o lógica nueva, sigue las convenciones de CQRS (command/handler) y añade siempre sus tests unitarios.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+**¿Dudas, sugerencias o bugs?**  
+Contacta con el responsable de backend o abre un issue en el repositorio central.

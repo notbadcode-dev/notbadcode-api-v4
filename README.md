@@ -53,7 +53,7 @@ Monorepo de microservicios para la plataforma **NotBadCode API v4**, desarrollad
 
 1. **Clona el repositorio**  
    ```bash
-   git clone <REPO_URL>
+   git clone https://github.com/notbadcode-dev/notbadcode-api-v4
    cd notbadcode-api-v4
    ```
 

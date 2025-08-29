@@ -28,10 +28,10 @@ jobs:
         run: npm ci
 
       - name: Run tests (auth)
-        run: npm run test:auth
+        run: npm run test:auth | tee reports/junit/auth-test.log
 
       - name: Run tests (common)
-        run: npm run test:common
+        run: npm run test:common | tee reports/junit/common-test.log
 
       - name: List test report
         run: ls -lh reports/junit/results.xml || echo "No report found"
@@ -41,6 +41,18 @@ jobs:
         with:
           name: test-results
           path: reports/junit/results.xml
+
+      - name: Upload Jest logs (auth)
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-auth-log
+          path: reports/junit/auth-test.log
+
+      - name: Upload Jest logs (common)
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-common-log
+          path: reports/junit/common-test.log
 
       - name: Publish Test Report
         uses: dorny/test-reporter@v1

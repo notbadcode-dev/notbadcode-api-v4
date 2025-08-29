@@ -21,7 +21,6 @@
     "NVM_DIR": "/Users/bgr/.nvm",
     "PATH": "/Users/bgr/.nvm/versions/node/v22.14.0/bin:/usr/local/bin:/usr/bin:/bin:${env:PATH}"
   },
-  "jest.showCoverageOnLoad": false,
   "jest.debugMode": false,
 
   // ---- Terminal integrado (nvm disponible) ----
@@ -39,8 +38,8 @@
 
   // ---- Calidad de vida ----
   "files.eol": "\n",
-  "search.exclude": { "**/dist": true, "**/coverage": true, "**/node_modules": true },
-  "files.watcherExclude": { "**/dist/**": true, "**/coverage/**": true, "**/node_modules/**": true },
+  "search.exclude": { "**/dist": true, "**/node_modules": true, "**/coverage": false },
+  "files.watcherExclude": { "**/dist/**": true, "**/node_modules/**": true, "coverage": true },
   "explorer.excludeGitIgnore": true,
   "editor.tabSize": 2,
   "editor.renderWhitespace": "selection",
@@ -60,5 +59,12 @@
       "database": "mysql",
       "username": "bgr"
     }
-  ]
+  ],
+  "console-ninja.toolsToEnableSupportAutomaticallyFor": {
+    "jest": false
+  },
+  "console-ninja.featureSet": "Community",
+  "console-ninja.predictiveLoggingEnabled": false,
+  "console-ninja.buildHooks.enabled": false,
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

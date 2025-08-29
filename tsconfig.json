@@ -1,6 +1,12 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {},
-  "include": ["apps/**/*.ts", "libs/**/*.ts"],
+  "include": [
+    "apps/**/*.ts",
+    "libs/**/*.ts",
+    "test/utils/mocks/apiResponse.service.mock.ts",
+    "test/utils/mocks/cache.mock.ts",
+    "test/utils/mocks/i18n.service.mock.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

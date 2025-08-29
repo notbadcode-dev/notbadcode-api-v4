@@ -4,12 +4,15 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { I18nService } from '@common/i18n';
+import { CommonSessionControlService } from '@common/redis/session';
+import { UserSession } from '@common/redis/session/userSession.model';
 import {
   ApiFailureResponse,
   ApiResponse,
   apiResponseFailure,
   ApiResponseService,
   apiResponseSuccess,
+  ApiSuccessResponse,
   EApiResponseMessageType,
 } from '@common/responses';
 
@@ -27,6 +30,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     private readonly authService: AuthService,
     private readonly i18nService: I18nService,
     private readonly apiResponseService: ApiResponseService,
+    private readonly commonSessionControlService: CommonSessionControlService,
   ) {}
 
   async execute(command: LoginCommand): Promise<ApiResponse<LoginResponseDto>> {
@@ -53,7 +57,22 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     await this.AddLastLoginAt(tokens, user);
 
+    await this.setCacheSession(user, payloadResult);
+
     return await apiResponseSuccess(this.i18nService, tokens);
+  }
+
+  private async setCacheSession(
+    user: User,
+    payloadResult: ApiSuccessResponse<JwtPayload>,
+  ): Promise<string | null> {
+    const userSession: UserSession = {
+      userId: user.id,
+      sessionId: payloadResult.data.jti,
+      loginAt: new Date().toISOString(),
+    };
+    const userSessionKey = this.commonSessionControlService.getUserSessionKey(userSession);
+    return await this.commonSessionControlService.setSession<UserSession>(userSessionKey, userSession);
   }
 
   private async AddLastLoginAt(tokens: LoginResponseDto, user: User) {

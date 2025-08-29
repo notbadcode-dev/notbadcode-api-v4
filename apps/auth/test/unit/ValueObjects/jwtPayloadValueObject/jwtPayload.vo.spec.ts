@@ -1,7 +1,7 @@
 import { type ApiResponseService } from '@common/responses';
 
+import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
 import { JwtPayload } from 'apps/auth/src/application/value-objects/jwt-payload.vo';
-import { MockApiResponseService } from 'apps/auth/test/utils/mocks/apiResponse.service.mock';
 
 import { JwtPayloadFixture } from './jwtPayload.vo.fixture';
 

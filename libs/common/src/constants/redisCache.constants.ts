@@ -4,4 +4,7 @@ export const RedisCacheConstants = {
   ttlMsMultiple: 1000,
 
   ttl60Minutes: 60,
+
+  unknownClassName: 'UnknownClass',
+  propertySymbol: 'symbol',
 };

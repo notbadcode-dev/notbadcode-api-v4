@@ -4,15 +4,15 @@ import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
 
 import { safeObjectContaining } from '@common/helpers';
+import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
 
+import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
 import { LoginCommand } from 'apps/auth/src/application/commands/login.command';
-import { LoginResponseDto } from 'apps/auth/src/application/dtos';
 import { LoginHandler } from 'apps/auth/src/application/handlers/login.handler';
 import { JwtPayload } from 'apps/auth/src/application/value-objects';
 import { type AuthService } from 'apps/auth/src/auth.service';
 import { type User } from 'apps/auth/src/domain/entities/user.entity';
-import { MockApiResponseService } from 'apps/auth/test/utils/mocks/apiResponse.service.mock';
 
 import { LoginHandlerFixture } from './login.handler.fixture';
 
@@ -59,23 +59,6 @@ jest.mock('@common/responses', () => {
   };
 });
 
-class LoginHandlerSpecFixture {
-  static mockJwtPayload(user: User): JwtPayload {
-    return {
-      userId: user.id,
-      email: user.email,
-      toPlainObject: () => ({
-        sub: user.id,
-        email: user.email,
-      }),
-    };
-  }
-
-  static emptyTokens(): LoginResponseDto {
-    return new LoginResponseDto('', '');
-  }
-}
-
 let handler: LoginHandler;
 
 describe('LoginHandler', () => {
@@ -83,6 +66,7 @@ describe('LoginHandler', () => {
   let userRepository: jest.Mocked<Repository<User>>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let apiResponseService: jest.Mocked<ApiResponseService>;
+  let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -91,9 +75,16 @@ describe('LoginHandler', () => {
     userRepository = mockDeep<Repository<User>>();
     i18nService = { translate: jest.fn(), t: jest.fn() };
     apiResponseService = MockApiResponseService.create();
+    commonSessionControlService = mockDeep<CommonSessionControlService>();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    handler = new LoginHandler(userRepository, authService, i18nService as any, apiResponseService);
+    handler = new LoginHandler(
+      userRepository,
+      authService,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      i18nService as any,
+      apiResponseService,
+      commonSessionControlService,
+    );
   });
 
   it('returns failure when the user does not exist', async () => {
@@ -171,7 +162,7 @@ describe('LoginHandler', () => {
 
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
       success: true,
-      data: LoginHandlerSpecFixture.mockJwtPayload(LoginHandlerFixture.validUser()),
+      data: LoginHandlerFixture.mockJwtPayload(LoginHandlerFixture.validUser()),
     });
 
     const result = await handler.execute(
@@ -206,7 +197,7 @@ describe('LoginHandler', () => {
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
     (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
 
-    const emptyTokens = LoginHandlerSpecFixture.emptyTokens();
+    const emptyTokens = LoginHandlerFixture.emptyTokens();
     authService.generateTokens.mockResolvedValueOnce(emptyTokens);
 
     jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
@@ -217,7 +208,7 @@ describe('LoginHandler', () => {
 
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
       success: true,
-      data: LoginHandlerSpecFixture.mockJwtPayload(LoginHandlerFixture.validUser()),
+      data: LoginHandlerFixture.mockJwtPayload(LoginHandlerFixture.validUser()),
     });
 
     const saveSpy = jest.spyOn(userRepository, 'save');

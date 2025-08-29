@@ -10,10 +10,20 @@ export class CacheAccessor implements OnModuleInit {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
   onModuleInit(): void {
-    CacheAccessor._cache = this.cache;
+    if (!CacheAccessor._cache) {
+      CacheAccessor._cache = this.cache;
+    }
   }
 
   static get cache(): Cache | null {
     return CacheAccessor._cache;
+  }
+
+  static get isInitialized(): boolean {
+    return CacheAccessor._cache !== null;
+  }
+
+  static setCache(cache: Cache) {
+    CacheAccessor._cache = cache;
   }
 }

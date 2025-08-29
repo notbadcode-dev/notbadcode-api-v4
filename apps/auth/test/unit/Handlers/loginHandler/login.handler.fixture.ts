@@ -1,6 +1,8 @@
 // apps/auth/test/unit/Handlers/loginHandler/login.handler.fixture.ts
 import { type ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
+import { LoginResponseDto } from 'apps/auth/src/application/dtos';
+import { type JwtPayload } from 'apps/auth/src/application/value-objects';
 import { User } from 'apps/auth/src/domain/entities/user.entity';
 
 import { AuthErrorMessageConstants } from '../../../../src/constants';
@@ -61,5 +63,21 @@ export class LoginHandlerFixture {
         },
       ],
     };
+  }
+
+  static mockJwtPayload(user: User): JwtPayload {
+    return {
+      userId: user.id,
+      email: user.email,
+      jti: 'uuid-0000-0000-0000-000000000000',
+      toPlainObject: () => ({
+        sub: user.id,
+        email: user.email,
+      }),
+    };
+  }
+
+  static emptyTokens(): LoginResponseDto {
+    return new LoginResponseDto('', '');
   }
 }

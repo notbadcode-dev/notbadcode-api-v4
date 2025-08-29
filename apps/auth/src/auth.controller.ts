@@ -4,8 +4,8 @@ import { ApiOkResponse } from '@nestjs/swagger';
 
 import { ApiResponse } from '@common/responses';
 
-import { LoginCommand } from './application/commands';
-import { LoginRequestDto, LoginResponseDto } from './application/dtos';
+import { LoginCommand } from 'apps/auth/src/application/commands';
+import { LoginRequestDto, LoginResponseDto } from 'apps/auth/src/application/dtos';
 
 @Controller('auth')
 export class AuthController {

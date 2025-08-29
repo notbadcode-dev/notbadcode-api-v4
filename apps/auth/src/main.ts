@@ -14,8 +14,8 @@ import { LoggingInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
 
-import { AuthModule } from './auth.module';
-import { AuthConstants } from './constants';
+import { AuthModule } from 'apps/auth/src/auth.module';
+import { AuthConstants } from 'apps/auth/src/constants';
 
 async function bootstrap() {
   const app = await createApp();

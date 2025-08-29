@@ -1,4 +1,5 @@
-import { CommonErrorMessageConstants } from '@common/constants';
+import { CommonConstants, CommonErrorMessageConstants } from '@common/constants';
+import { RedisCacheConstants } from '@common/constants/redisCache.constants';
 import { type I18nService } from '@common/i18n';
 import { apiResponseFailure, EApiResponseMessageType } from '@common/responses';
 
@@ -6,32 +7,34 @@ import { CacheAccessor } from '../cacheAccessor';
 
 type AsyncMethod<This, A extends unknown[], R> = (this: This, ...args: A) => Promise<R>;
 
-function stableReplacer(_key: string, value: unknown): unknown {
+export function stableReplacer(_key: string, value: unknown): unknown {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     const obj = value as Record<string, unknown>;
     const ordered: Record<string, unknown> = {};
     for (const k of Object.keys(obj).sort()) {
-      ordered[k] = k.toLowerCase().includes('password5') ? '<redacted>' : obj[k];
+      ordered[k] = k.toLowerCase().includes(CommonConstants.passwordTag)
+        ? CommonConstants.redactedTag
+        : obj[k];
     }
     return ordered;
   }
   return value;
 }
 
-function makeCacheKey(className: string, methodName: string, args: unknown[]): string {
+export function makeCacheKey(className: string, methodName: string, args: unknown[]): string {
   const safeArgs = args.length === 0 ? '' : `(${JSON.stringify(args, stableReplacer)})`;
   return `${className}:${methodName}${safeArgs}`;
 }
 
-function getClassName(thisArg: unknown): string {
+export function getClassName(thisArg: unknown): string {
   if (typeof thisArg === 'object' && thisArg !== null) {
     const ctor = (thisArg as { constructor?: { name?: string } }).constructor;
     if (ctor?.name) return ctor.name;
   }
-  return 'UnknownClass';
+  return RedisCacheConstants.unknownClassName;
 }
 
-async function returnCacheError<R>(i18nService?: I18nService): Promise<R> {
+export async function returnCacheError<R>(i18nService?: I18nService): Promise<R> {
   if (i18nService) {
     const message = await i18nService.translate(CommonErrorMessageConstants.redisCacheNotInitialized);
 
@@ -56,8 +59,9 @@ export function Cached(ttlSeconds: number, i18nService?: I18nService) {
       }
 
       const className = getClassName(this);
-      const methodName = typeof propertyKey === 'symbol' ? propertyKey.toString() : propertyKey;
-      const key = makeCacheKey(className, methodName, args);
+      const methodName =
+        typeof propertyKey === RedisCacheConstants.propertySymbol ? propertyKey.toString() : propertyKey;
+      const key = makeCacheKey(className, methodName as 'symbol', args);
 
       const cached = await cache.get<R | undefined>(key);
       if (cached !== undefined) {

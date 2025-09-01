@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
@@ -12,7 +13,6 @@ import {
   apiResponseFailure,
   ApiResponseService,
   apiResponseSuccess,
-  ApiSuccessResponse,
   EApiResponseMessageType,
 } from '@common/responses';
 
@@ -28,6 +28,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
     private readonly i18nService: I18nService,
     private readonly apiResponseService: ApiResponseService,
     private readonly commonSessionControlService: CommonSessionControlService,
@@ -57,18 +58,20 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     await this.addLastLoginAt(tokens, user);
 
-    await this.setCacheSession(user, payloadResult);
+    await this.setCacheSession(user, tokens);
 
     return await apiResponseSuccess(this.i18nService, tokens);
   }
 
-  private async setCacheSession(
-    user: User,
-    payloadResult: ApiSuccessResponse<JwtPayload>,
-  ): Promise<string | null> {
+  private async setCacheSession(user: User, tokens: LoginResponseDto): Promise<string | null> {
+    const decoded = this.jwtService.decode(tokens.accessToken) as { jti?: string } | null;
+    if (!decoded?.jti) {
+      return null;
+    }
+
     const userSession: UserSession = {
       userId: user.id,
-      sessionId: payloadResult.data.jti,
+      sessionId: decoded.jti,
       loginAt: new Date().toISOString(),
     };
     const userSessionKey = this.commonSessionControlService.getUserSessionKey(userSession);

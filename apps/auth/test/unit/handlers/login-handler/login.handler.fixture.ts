@@ -73,6 +73,7 @@ export class LoginHandlerFixture {
       toPlainObject: () => ({
         sub: user.id,
         email: user.email,
+        jti: 'uuid-0000-0000-0000-000000000000',
       }),
     };
   }

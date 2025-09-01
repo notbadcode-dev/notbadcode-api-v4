@@ -14,13 +14,16 @@ describe('I18nService', () => {
   });
 
   it('should call i18n.t with key and options in translate', async () => {
+    // Arrange
     mockNestI18nService.t.mockResolvedValue(I18nServiceFixture.translatedSimple);
 
+    // Act
     const result = await i18nService.translate(
       I18nServiceFixture.keySimple,
       I18nServiceFixture.simpleOptions,
     );
 
+    // Assert
     expect(mockNestI18nService.t).toHaveBeenCalledWith(
       I18nServiceFixture.keySimple,
       I18nServiceFixture.simpleOptions,
@@ -29,14 +32,17 @@ describe('I18nService', () => {
   });
 
   it('should call i18n.t with key and merged options in translateWithArguments', async () => {
+    // Arrange
     mockNestI18nService.t.mockResolvedValue(I18nServiceFixture.translatedWithArgs);
 
+    // Act
     const result = await i18nService.translateWithArguments(
       I18nServiceFixture.keyWithArgs,
       I18nServiceFixture.args,
       I18nServiceFixture.withArgsOptions,
     );
 
+    // Assert
     expect(mockNestI18nService.t).toHaveBeenCalledWith(
       I18nServiceFixture.keyWithArgs,
       I18nServiceFixture.expectedMergedOptions,
@@ -45,13 +51,16 @@ describe('I18nService', () => {
   });
 
   it('should call i18n.t with key and only args if options is undefined in translateWithArguments', async () => {
+    // Arrange
     mockNestI18nService.t.mockResolvedValue(I18nServiceFixture.translatedOnlyArgs);
 
+    // Act
     const result = await i18nService.translateWithArguments(
       I18nServiceFixture.keyOnlyArgs,
       I18nServiceFixture.onlyArgs,
     );
 
+    // Assert
     expect(mockNestI18nService.t).toHaveBeenCalledWith(I18nServiceFixture.keyOnlyArgs, {
       args: I18nServiceFixture.onlyArgs,
     });

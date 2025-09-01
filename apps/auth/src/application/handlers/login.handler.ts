@@ -55,7 +55,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     const tokens = await this.authService.generateTokens(payloadResult.data);
 
-    await this.AddLastLoginAt(tokens, user);
+    await this.addLastLoginAt(tokens, user);
 
     await this.setCacheSession(user, payloadResult);
 
@@ -75,7 +75,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     return await this.commonSessionControlService.setSession<UserSession>(userSessionKey, userSession);
   }
 
-  private async AddLastLoginAt(tokens: LoginResponseDto, user: User) {
+  private async addLastLoginAt(tokens: LoginResponseDto, user: User) {
     if (!user?.id || !tokens.accessToken?.length || !tokens.refreshToken.length) {
       return;
     }

@@ -1,10 +1,12 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { RedisSessionControlConstants } from '@common/constants/redisSessionControl.constants';
 import { CommonSessionControlService } from '@common/redis/session';
 
 import { cacheManagerMock } from '@test/utils/mocks/cache.mock';
+import { loggerMock } from '@test/utils/mocks/winston.mock';
 
 import { UserSessionFixture } from './userSession.fixture';
 
@@ -16,7 +18,11 @@ describe('CommonSessionControlService', () => {
     cacheMock = cacheManagerMock();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommonSessionControlService, { provide: CACHE_MANAGER, useValue: cacheMock }],
+      providers: [
+        CommonSessionControlService,
+        { provide: CACHE_MANAGER, useValue: cacheMock },
+        { provide: Logger, useValue: loggerMock },
+      ],
     }).compile();
 
     service = module.get<CommonSessionControlService>(CommonSessionControlService);

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { type JwtService } from '@nestjs/jwt';
 import { compare as bcryptCompare } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
-import { type JwtService } from '@nestjs/jwt';
 
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
@@ -176,8 +176,13 @@ describe('LoginHandler', () => {
 
     spy.mockRestore();
 
-    const expectedWhere = safeObjectContaining({ email: LoginHandlerFixture.testEmail() });
-    const expectedParam = safeObjectContaining({ where: expectedWhere });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const expectedWhere = safeObjectContaining({ email: LoginHandlerFixture.testEmail() }) as {
+      email: string;
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const expectedParam = safeObjectContaining({ where: expectedWhere }) as { where: { email: string } };
+
     expect(userRepository.findOne).toHaveBeenCalledWith(expectedParam);
 
     expect(bcryptCompare).toHaveBeenCalledWith(
@@ -229,5 +234,22 @@ describe('LoginHandler', () => {
     expect(result.data?.refreshToken).toBe('');
 
     spy.mockRestore();
+  });
+
+  it('should NOT save session if jti is not a valid UUID', async () => {
+    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
+    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
+
+    jwtService.decode.mockReturnValueOnce({ jti: 'not-a-uuid' });
+
+    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
+
+    const result = await handler.execute(
+      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
+    );
+
+    expect(setSessionSpy).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
   });
 });

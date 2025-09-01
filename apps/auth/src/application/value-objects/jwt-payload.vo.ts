@@ -17,7 +17,7 @@ export class JwtPayload {
       return apiResponse.error([AuthErrorMessageConstants.invalidUserId]);
     }
 
-    if (!email || !PatternConstants.patternValidationEmail.test(email)) {
+    if (!email || !PatternConstants.validationEmail.test(email)) {
       return apiResponse.error([AuthErrorMessageConstants.invalidEmail]);
     }
 

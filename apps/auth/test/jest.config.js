@@ -9,6 +9,7 @@ module.exports = {
     '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/apps/auth/tsconfig.json' }],
   },
   moduleNameMapper: {
+    '^@common/test/(.*)$': '<rootDir>/libs/common/test/$1',
     '^@common/(.*)$': '<rootDir>/libs/common/src/$1',
     '^apps/(.*)$': '<rootDir>/apps/$1',
     '^@test/(.*)$': '<rootDir>/test/$1',

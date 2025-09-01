@@ -1,7 +1,6 @@
 import { UUID } from 'node:crypto';
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -31,7 +30,6 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
     private readonly i18nService: I18nService,
     private readonly apiResponseService: ApiResponseService,
     private readonly commonSessionControlService: CommonSessionControlService,
@@ -61,19 +59,17 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     await this.addLastLoginAt(tokens, user);
 
-    await this.setCacheSession(user, tokens);
+    await this.setCacheSession(user, payloadResult.data.jti);
 
     return await apiResponseSuccess(this.i18nService, tokens);
   }
 
-  private async setCacheSession(user: User, tokens: LoginResponseDto): Promise<string | null> {
-    const decoded: { jti?: string } | null = this.jwtService.decode(tokens.accessToken);
-
-    if (!decoded?.jti) {
+  private async setCacheSession(user: User, jti: string): Promise<string | null> {
+    if (!jti?.length) {
       return null;
     }
 
-    const validateUUID = PatternConstants.validationUUID.test(decoded?.jti);
+    const validateUUID = PatternConstants.validationUUID.test(jti);
 
     if (!validateUUID) {
       return null;
@@ -81,7 +77,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     const userSession: UserSession = {
       userId: user.id,
-      sessionId: decoded.jti as UUID,
+      sessionId: jti as UUID,
       loginAt: new Date().toISOString(),
     };
     const userSessionKey = this.commonSessionControlService.getUserSessionKey(userSession);

@@ -1,4 +1,6 @@
 // apps/auth/test/unit/Handlers/loginHandler/login.handler.fixture.ts
+import { type UUID } from 'crypto';
+
 import { type ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
 import { LoginResponseDto } from 'apps/auth/src/application/dtos';
@@ -65,15 +67,23 @@ export class LoginHandlerFixture {
     };
   }
 
-  static mockJwtPayload(user: User): JwtPayload {
+  static getValidJti(): string {
+    return '00000000-0000-0000-0000-000000000000';
+  }
+
+  static getInvalidJti(): string {
+    return 'not-a-uuid';
+  }
+
+  static mockJwtPayload(user: User, jti: string = LoginHandlerFixture.getValidJti()): JwtPayload {
     return {
       userId: user.id,
       email: user.email,
-      jti: 'uuid-0000-0000-0000-000000000000',
+      jti: jti as UUID,
       toPlainObject: () => ({
         sub: user.id,
         email: user.email,
-        jti: 'uuid-0000-0000-0000-000000000000',
+        jti: jti as UUID,
       }),
     };
   }

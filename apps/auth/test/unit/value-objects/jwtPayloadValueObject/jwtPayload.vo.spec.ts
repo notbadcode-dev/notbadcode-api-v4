@@ -83,7 +83,9 @@ describe('JwtPayload', () => {
         throw new Error('Expected result.success to be true');
       }
 
-      expect(result.data.toPlainObject()).toEqual(JwtPayloadFixture.expectedPlainObject());
+      expect(result.data.toPlainObject()).toEqual(
+        JwtPayloadFixture.expectedPlainObject(result.data.jti),
+      );
     });
   });
 });

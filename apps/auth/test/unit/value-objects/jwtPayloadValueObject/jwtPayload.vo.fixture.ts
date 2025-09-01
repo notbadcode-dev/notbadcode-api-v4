@@ -30,8 +30,8 @@ export class JwtPayloadFixture {
     return '';
   }
 
-  static expectedPlainObject(): Readonly<{ sub: number; email: string }> {
-    return { sub: this.validUserId(), email: this.validEmail() } as const;
+  static expectedPlainObject(jti: string): Readonly<{ sub: number; email: string; jti: string }> {
+    return { sub: this.validUserId(), email: this.validEmail(), jti } as const;
   }
 
   static apiResponse(): ApiResponseService {

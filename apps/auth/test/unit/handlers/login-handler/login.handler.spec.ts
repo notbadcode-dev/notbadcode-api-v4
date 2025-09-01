@@ -2,6 +2,7 @@
 import { compare as bcryptCompare } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
+import { type JwtService } from '@nestjs/jwt';
 
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
@@ -64,6 +65,7 @@ let handler: LoginHandler;
 describe('LoginHandler', () => {
   let authService: jest.Mocked<AuthService>;
   let userRepository: jest.Mocked<Repository<User>>;
+  let jwtService: jest.Mocked<JwtService>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let apiResponseService: jest.Mocked<ApiResponseService>;
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
@@ -73,6 +75,7 @@ describe('LoginHandler', () => {
 
     authService = mockDeep<AuthService>();
     userRepository = mockDeep<Repository<User>>();
+    jwtService = mockDeep<JwtService>();
     i18nService = { translate: jest.fn(), t: jest.fn() };
     apiResponseService = MockApiResponseService.create();
     commonSessionControlService = mockDeep<CommonSessionControlService>();
@@ -80,6 +83,7 @@ describe('LoginHandler', () => {
     handler = new LoginHandler(
       userRepository,
       authService,
+      jwtService,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       i18nService as any,
       apiResponseService,
@@ -153,6 +157,7 @@ describe('LoginHandler', () => {
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
     (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
+    jwtService.decode.mockReturnValueOnce({ jti: 'uuid-0000-0000-0000-000000000000' });
 
     jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
       success: true,
@@ -199,6 +204,7 @@ describe('LoginHandler', () => {
 
     const emptyTokens = LoginHandlerFixture.emptyTokens();
     authService.generateTokens.mockResolvedValueOnce(emptyTokens);
+    jwtService.decode.mockReturnValueOnce(null);
 
     jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
       success: true,

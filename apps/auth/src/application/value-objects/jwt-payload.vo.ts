@@ -24,7 +24,7 @@ export class JwtPayload {
     return apiResponse.success(new JwtPayload(userId, email, randomUUID()));
   }
 
-  toPlainObject(): { sub: number; email: string } {
-    return { sub: this.userId, email: this.email };
+  toPlainObject(): { sub: number; email: string; jti: UUID } {
+    return { sub: this.userId, email: this.email, jti: this.jti };
   }
 }

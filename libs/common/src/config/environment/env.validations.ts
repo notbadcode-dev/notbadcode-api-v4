@@ -22,6 +22,7 @@ export const envValidationSchema = Joi.object({
     .try(Joi.string().pattern(AUTH_JWT_EXPIRES_IN_PATTERN))
     .try(Joi.number().integer().positive())
     .default(ENV_DEFAULTS[ENV_KEYS.AUTH_JWT_EXPIRES_IN]),
+  [ENV_KEYS.AUTH_JWT_REFRESH_EXPIRES_IN]: Joi.string().min(AUTH_JWT_SECRET_MIN_LENGTH).required(),
 
   // Auth database configuration
   [ENV_KEYS.AUTH_DB_HOST]: Joi.string().hostname().allow(CommonConstants.localhostTag).required(),

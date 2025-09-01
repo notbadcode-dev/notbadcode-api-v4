@@ -8,6 +8,7 @@ export const ENV_DEFAULTS = {
   [ENV_KEYS.AUTH_PORT]: 60200,
 
   [ENV_KEYS.AUTH_JWT_EXPIRES_IN]: '15m',
+  [ENV_KEYS.AUTH_JWT_REFRESH_EXPIRES_IN]: '7d',
 
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   [ENV_KEYS.AUTH_DB_PORT]: 3306,

@@ -42,6 +42,16 @@ describe('apiResponse', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toBe(data);
+      expect(result.messageList).toEqual([
+        {
+          message: '[custom.key]_translated',
+          type: EApiResponseMessageType.Info,
+        },
+        {
+          message: '[other.key]_translated',
+          type: EApiResponseMessageType.Warning,
+        },
+      ]);
     });
   });
 
@@ -72,8 +82,14 @@ describe('apiResponse', () => {
       expect(result.success).toBe(false);
       expect(result.data).toBeNull();
       expect(result.messageList).toEqual([
-        { message: '[error.key1]_translated' },
-        { message: '[error.key2]_translated' },
+        {
+          message: '[error.key1]_translated',
+          type: EApiResponseMessageType.Error,
+        },
+        {
+          message: '[error.key2]_translated',
+          type: EApiResponseMessageType.Error,
+        },
       ]);
     });
   });

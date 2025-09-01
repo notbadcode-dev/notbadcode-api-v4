@@ -37,9 +37,10 @@ const buildApiResponse = async <T>(
     },
   ];
 
-  const translatedMessageList = await Promise.all(
-    messageList?.map(async (message: ApiResponseMessage) => ({
-      message: await i18nService.translate(message.message),
+  const translatedMessageList: ApiResponseMessage[] = await Promise.all(
+    messageList?.map(async (msg: ApiResponseMessage) => ({
+      message: await i18nService.translate(msg.message),
+      type: msg.type,
     })) || defaultMessageList,
   );
 

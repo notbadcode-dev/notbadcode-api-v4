@@ -3,7 +3,7 @@ import { compare as bcryptCompare } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
 
-import { safeObjectContaining } from '@common/helpers';
+import { safeObjectContaining } from '@common/test/utils/safeObjectContaining.helper';
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
 

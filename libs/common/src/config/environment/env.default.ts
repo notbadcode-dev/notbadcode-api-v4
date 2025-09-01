@@ -30,5 +30,6 @@ export const ENV_DEFAULTS = {
 } as const;
 
 export const AUTH_JWT_SECRET_MIN_LENGTH = 32;
-export const AUTH_JWT_EXPIRES_IN_PATTERN = /^\d+(ms|s|m|h|d)$/;
+export const AUTH_JWT_EXPIRES_IN_PATTERN = /^(\d+)([smhdwy])?$/i;
+
 export const ENV_REDIS_SCHEMES = ['redis', 'rediss'];

@@ -4,8 +4,12 @@ import { ApiOkResponse } from '@nestjs/swagger';
 
 import { ApiResponse } from '@common/responses';
 
-import { LoginCommand } from 'apps/auth/src/application/commands';
-import { LoginRequestDto, LoginResponseDto } from 'apps/auth/src/application/dtos';
+import { LoginCommand, LogoutCommand } from 'apps/auth/src/application/commands';
+import {
+  LoginRequestDto,
+  LoginResponseDto,
+  LogoutRequestDto,
+} from 'apps/auth/src/application/dtos';
 
 @Controller('auth')
 export class AuthController {
@@ -15,5 +19,11 @@ export class AuthController {
   @ApiOkResponse({ type: LoginResponseDto })
   async login(@Body() dto: LoginRequestDto): Promise<ApiResponse<LoginResponseDto>> {
     return this.commandBus.execute(new LoginCommand(dto.email, dto.password));
+  }
+
+  @Post('logout')
+  @ApiOkResponse()
+  async logout(@Body() dto: LogoutRequestDto): Promise<ApiResponse<null>> {
+    return this.commandBus.execute(new LogoutCommand(dto.token));
   }
 }

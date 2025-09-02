@@ -11,6 +11,7 @@ import { CommonSessionControlModule } from '@common/redis/session';
 import { ApiResponseService } from '@common/responses';
 
 import { LoginHandler } from 'apps/auth/src/application/handlers/login.handler';
+import { LogoutHandler } from 'apps/auth/src/application/handlers/logout.handler';
 import { AuthController } from 'apps/auth/src/auth.controller';
 import { AuthService } from 'apps/auth/src/auth.service';
 import { User } from 'apps/auth/src/domain/entities/user.entity';
@@ -32,6 +33,6 @@ import { JwtConfigService } from 'apps/auth/src/infrastructure/jwt/jwt-config.se
     CqrsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LoginHandler, JwtConfigService, ApiResponseService],
+  providers: [AuthService, LoginHandler, LogoutHandler, JwtConfigService, ApiResponseService],
 })
 export class AuthModule {}

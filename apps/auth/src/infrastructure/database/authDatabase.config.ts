@@ -1,7 +1,7 @@
 import { type ConfigService } from '@nestjs/config';
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { User } from 'apps/auth/src/domain/entities/user.entity';
+import { User } from '@apps/auth/src/domain/entities/user.entity';
 
 export const getAuthDbConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'mariadb',

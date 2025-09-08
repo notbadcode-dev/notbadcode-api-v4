@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { type JwtPayload } from 'apps/auth/src/application/value-objects/jwt-payload.vo';
+import { type JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 
 export class AuthServiceFixture {
   static validJwtPayload: JwtPayload = {
@@ -27,4 +27,12 @@ export class AuthServiceFixture {
   static validAccessToken = 'ACCESS_TOKEN';
   static validRefreshToken = 'REFRESH_TOKEN';
   static validLoginResponse = { accessToken: 'ACCESS_TOKEN', refreshToken: 'REFRESH_TOKEN' };
+
+  static accessTokenExpiresIn(): string {
+    return '15m';
+  }
+
+  static refreshTokenExpiresIn(): string {
+    return '7d';
+  }
 }

@@ -3,7 +3,7 @@ import { IsEmail, IsString, MinLength } from 'class-validator';
 
 import { i18nMsg } from '@common/helpers';
 
-import { AuthConstants, AuthErrorMessageConstants } from '../../constants';
+import { AuthConstants, AuthErrorMessageConstants } from '@apps/auth/src/constants';
 
 export class LoginRequestDto {
   @ApiProperty()

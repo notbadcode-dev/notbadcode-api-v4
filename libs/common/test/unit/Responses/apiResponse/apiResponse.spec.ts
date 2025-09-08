@@ -16,65 +16,93 @@ describe('apiResponse', () => {
     };
   });
 
-  describe('apiResponseSuccess', () => {
-    it('should build a success response with data and default message', async () => {
-      const data = ApiResponseFixture.sampleObj;
+    describe('apiResponseSuccess', () => {
+      it('should build a success response with data and default message', async () => {
+        // Arrange
+        const data = ApiResponseFixture.sampleObj;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const result = await apiResponseSuccess(i18nService as any, data);
+        // Act
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const result = await apiResponseSuccess(i18nService as any, data);
 
-      expect(result.success).toBe(true);
-      expect(result.data).toEqual(data);
-      expect(result.messageList).toEqual([
-        {
-          message: `[${ApiResponseConstants.defaultApiSuccessResponse}]_translated`,
-          type: EApiResponseMessageType.Success,
-        },
-      ]);
+        // Assert
+        expect(result.success).toBe(true);
+        expect(result.data).toEqual(data);
+        expect(result.messageList).toEqual([
+          {
+            message: `[${ApiResponseConstants.defaultApiSuccessResponse}]_translated`,
+            type: EApiResponseMessageType.Success,
+          },
+        ]);
+      });
+
+      it('should translate custom messages if provided', async () => {
+        // Arrange
+        const data = ApiResponseFixture.sampleNumber;
+        const customMessages = ApiResponseFixture.customSuccessMessages;
+
+        // Act
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const result = await apiResponseSuccess(i18nService as any, data, customMessages);
+
+        // Assert
+        expect(result.success).toBe(true);
+        expect(result.data).toBe(data);
+        expect(result.messageList).toEqual([
+          {
+            message: '[custom.key]_translated',
+            type: EApiResponseMessageType.Info,
+          },
+          {
+            message: '[other.key]_translated',
+            type: EApiResponseMessageType.Warning,
+          },
+        ]);
+      });
     });
 
-    it('should translate custom messages if provided', async () => {
-      const data = ApiResponseFixture.sampleNumber;
-      const customMessages = ApiResponseFixture.customSuccessMessages;
+    describe('apiResponseFailure', () => {
+      it('should build a failure response with default message and code', async () => {
+        // Arrange
+        const code = ApiResponseFixture.code;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const result = await apiResponseSuccess(i18nService as any, data, customMessages);
+        // Act
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const result = await apiResponseFailure(i18nService as any, undefined, code);
 
-      expect(result.success).toBe(true);
-      expect(result.data).toBe(data);
+        // Assert
+        expect(result.success).toBe(false);
+        expect(result.data).toBeNull();
+        expect(result.code).toBe(code);
+        expect(result.messageList).toEqual([
+          {
+            message: `[${ApiResponseConstants.defaultApiFailureResponse}]_translated`,
+            type: EApiResponseMessageType.Error,
+          },
+        ]);
+      });
+
+      it('should translate custom failure messages if provided', async () => {
+        // Arrange
+        const customMessages = ApiResponseFixture.customFailureMessages;
+
+        // Act
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const result = await apiResponseFailure(i18nService as any, customMessages);
+
+        // Assert
+        expect(result.success).toBe(false);
+        expect(result.data).toBeNull();
+        expect(result.messageList).toEqual([
+          {
+            message: '[error.key1]_translated',
+            type: EApiResponseMessageType.Error,
+          },
+          {
+            message: '[error.key2]_translated',
+            type: EApiResponseMessageType.Error,
+          },
+        ]);
+      });
     });
   });
-
-  describe('apiResponseFailure', () => {
-    it('should build a failure response with default message and code', async () => {
-      const code = ApiResponseFixture.code;
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const result = await apiResponseFailure(i18nService as any, undefined, code);
-
-      expect(result.success).toBe(false);
-      expect(result.data).toBeNull();
-      expect(result.code).toBe(code);
-      expect(result.messageList).toEqual([
-        {
-          message: `[${ApiResponseConstants.defaultApiFailureResponse}]_translated`,
-          type: EApiResponseMessageType.Error,
-        },
-      ]);
-    });
-
-    it('should translate custom failure messages if provided', async () => {
-      const customMessages = ApiResponseFixture.customFailureMessages;
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const result = await apiResponseFailure(i18nService as any, customMessages);
-
-      expect(result.success).toBe(false);
-      expect(result.data).toBeNull();
-      expect(result.messageList).toEqual([
-        { message: '[error.key1]_translated' },
-        { message: '[error.key2]_translated' },
-      ]);
-    });
-  });
-});

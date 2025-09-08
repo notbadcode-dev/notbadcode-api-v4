@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { RedisSessionControlConstants } from '@common/constants/redisSessionControl.constants';
 
@@ -9,7 +9,10 @@ import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class CommonSessionControlService {
-  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    private readonly logger: Logger,
+  ) {}
 
   async setSession<T>(
     key: string,
@@ -18,7 +21,8 @@ export class CommonSessionControlService {
   ): Promise<string | null> {
     try {
       return await this.cache.set(key, JSON.stringify(value), ttl);
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       return null;
     }
   }
@@ -32,15 +36,21 @@ export class CommonSessionControlService {
 
     try {
       return JSON.parse(raw) as UserSession;
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       return null;
     }
   }
 
   async deleteSession(key: string): Promise<boolean | null> {
     try {
+      const exists = await this.cache.get(key);
+      if (!exists) {
+        return false;
+      }
       return await this.cache.del(key);
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       return null;
     }
   }

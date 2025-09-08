@@ -23,7 +23,9 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "paths": {
+      "@apps/auth/*": ["apps/auth/*"],
       "@common/*": ["libs/common/src/*"],
+      "@common/test/*": ["libs/common/test/*"],
       "@test/*": ["test/*"]
     }
   }

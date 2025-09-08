@@ -1,9 +1,11 @@
-import { type UUID } from 'node:crypto';
+import { randomUUID, type UUID } from 'node:crypto';
 
 import { PatternConstants } from '@common/constants';
 import { type ApiResponse, type ApiResponseService } from '@common/responses';
 
-import { AuthErrorMessageConstants } from '../../constants';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
+
+import { type JwtPayloadPlain } from './jwt-payload-plain.type';
 
 export class JwtPayload {
   private constructor(
@@ -17,14 +19,14 @@ export class JwtPayload {
       return apiResponse.error([AuthErrorMessageConstants.invalidUserId]);
     }
 
-    if (!email || !PatternConstants.patternValidationEmail.test(email)) {
+    if (!email || !PatternConstants.validationEmail.test(email)) {
       return apiResponse.error([AuthErrorMessageConstants.invalidEmail]);
     }
 
-    return apiResponse.success(new JwtPayload(userId, email, crypto.randomUUID()));
+    return apiResponse.success(new JwtPayload(userId, email, randomUUID()));
   }
 
-  toPlainObject(): { sub: number; email: string } {
-    return { sub: this.userId, email: this.email };
+  toPlainObject(): JwtPayloadPlain<number> {
+    return { sub: this.userId, email: this.email, jti: this.jti };
   }
 }

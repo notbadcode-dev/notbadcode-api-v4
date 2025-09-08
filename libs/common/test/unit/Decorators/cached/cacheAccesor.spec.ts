@@ -11,39 +11,71 @@ describe('CacheAccessor (unit)', () => {
   });
 
   it('sets cache on module init if not already initialized', () => {
+    // Arrange
     const accessor = new CacheAccessor(fakeCache);
+
+    // Act
     accessor.onModuleInit();
+
+    // Assert
     expect(CacheAccessor.cache).toBe(fakeCache);
   });
 
   it('does not overwrite cache if already initialized', () => {
+    // Arrange
     const firstCache = { get: jest.fn() } as unknown as Cache;
     CacheAccessor.setCache(firstCache);
-
     const anotherCache = { get: jest.fn() } as unknown as Cache;
     const accessor = new CacheAccessor(anotherCache);
+
+    // Act
     accessor.onModuleInit();
 
+    // Assert
     expect(CacheAccessor.cache).toBe(firstCache); // Should not be overwritten
   });
 
   it('static getter cache returns null if not initialized', () => {
+    // Arrange
     CacheAccessor.setCache(null as unknown as Cache);
-    expect(CacheAccessor.cache).toBeNull();
+
+    // Act
+    const result = CacheAccessor.cache;
+
+    // Assert
+    expect(result).toBeNull();
   });
 
   it('isInitialized should return true if cache is set', () => {
+    // Arrange
     CacheAccessor.setCache(fakeCache);
-    expect(CacheAccessor.isInitialized).toBe(true);
+
+    // Act
+    const result = CacheAccessor.isInitialized;
+
+    // Assert
+    expect(result).toBe(true);
   });
 
   it('isInitialized should return false if cache is null', () => {
+    // Arrange
     CacheAccessor.setCache(null as unknown as Cache);
-    expect(CacheAccessor.isInitialized).toBe(false);
+
+    // Act
+    const result = CacheAccessor.isInitialized;
+
+    // Assert
+    expect(result).toBe(false);
   });
 
   it('setCache should update the cache reference', () => {
-    CacheAccessor.setCache(fakeCache);
-    expect(CacheAccessor.cache).toBe(fakeCache);
+    // Arrange
+    const expected = fakeCache;
+
+    // Act
+    CacheAccessor.setCache(expected);
+
+    // Assert
+    expect(CacheAccessor.cache).toBe(expected);
   });
 });

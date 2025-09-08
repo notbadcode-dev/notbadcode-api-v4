@@ -1,4 +1,4 @@
 export const JwtConstants = {
-  expiresIn: '15m',
-  refreshExpiresIn: '7d',
+  LogJwtVerificationFailed: '[LogoutHandler] JWT verification failed',
+  LogJwtVerificationFailedNonError: '[LogoutHandler] JWT verification failed (non-Error)',
 };

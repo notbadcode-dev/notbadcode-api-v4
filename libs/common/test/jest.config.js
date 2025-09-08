@@ -11,7 +11,7 @@ module.exports = {
   moduleNameMapper: {
     '^@common/test/(.*)$': '<rootDir>/libs/common/test/$1',
     '^@common/(.*)$': '<rootDir>/libs/common/src/$1',
-    '^apps/(.*)$': '<rootDir>/apps/$1',
+    '^@apps/(.*)$': '<rootDir>/apps/$1',
     '^@test/(.*)$': '<rootDir>/test/$1',
   },
   coverageDirectory: '<rootDir>/test/coverage/common',

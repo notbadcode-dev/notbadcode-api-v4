@@ -18,12 +18,13 @@ import {
   EApiResponseMessageType,
 } from '@common/responses';
 
-import { AuthService } from '../../auth.service';
-import { AuthErrorMessageConstants } from '../../constants';
-import { User } from '../../domain/entities/user.entity';
-import { LoginCommand } from '../commands';
-import { LoginResponseDto } from '../dtos';
-import { JwtPayload } from '../value-objects';
+import { LoginCommand } from '@apps/auth/src/application/commands';
+import { LoginResponseDto } from '@apps/auth/src/application/dtos';
+import { JwtPayload } from '@apps/auth/src/application/value-objects';
+import { AuthService } from '@apps/auth/src/auth.service';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
+import { User } from '@apps/auth/src/domain/entities';
+
 
 @CommandHandler(LoginCommand)
 export class LoginHandler implements ICommandHandler<LoginCommand> {

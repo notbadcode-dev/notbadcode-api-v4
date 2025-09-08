@@ -1,5 +1,5 @@
 import { CacheModule } from '@nestjs/cache-manager';
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { CommonSessionControlService } from './commonSessionControl.service';
@@ -14,7 +14,7 @@ import { sessionControlConfigFactory } from './sessionControl.config';
       useFactory: sessionControlConfigFactory,
     }),
   ],
-  providers: [CommonSessionControlService],
+  providers: [CommonSessionControlService, Logger],
   exports: [CommonSessionControlService],
 })
 export class CommonSessionControlModule {}

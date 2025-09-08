@@ -44,6 +44,10 @@ export class CommonSessionControlService {
 
   async deleteSession(key: string): Promise<boolean | null> {
     try {
+      const exists = await this.cache.get(key);
+      if (!exists) {
+        return false;
+      }
       return await this.cache.del(key);
     } catch (error) {
       this.logger.error(error);

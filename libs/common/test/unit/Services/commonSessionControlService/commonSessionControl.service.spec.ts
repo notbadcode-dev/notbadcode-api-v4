@@ -89,56 +89,70 @@ describe('CommonSessionControlService', () => {
     expect(result).toBeNull();
   });
 
-  it('should delete a session', async () => {
-    // Arrange
-    const session = UserSessionFixture.create();
-    const key = service.getUserSessionKey(session);
-    cacheMock.del.mockResolvedValue(true);
+it('should delete a session', async () => {
+  // Arrange
+  const session = UserSessionFixture.create();
+  const key = service.getUserSessionKey(session);
 
-    // Act
-    const result = await service.deleteSession(key);
+  cacheMock.get.mockResolvedValueOnce('sessionData');
+  cacheMock.del.mockResolvedValueOnce(true);
 
-    // Assert
-    expect(cacheMock.del).toHaveBeenCalledWith(key);
-    expect(result).toBe(true);
-  });
+  // Act
+  const result = await service.deleteSession(key);
 
-  it('should return null if deleteSession throws', async () => {
-    // Arrange
-    const session = UserSessionFixture.create();
-    const key = service.getUserSessionKey(session);
-    cacheMock.del.mockRejectedValue(new Error('fail'));
+  // Assert
+  expect(cacheMock.del).toHaveBeenCalledWith(key);
+  expect(result).toBe(true);
+});
 
-    // Act
-    const result = await service.deleteSession(key);
+it('should return null if deleteSession throws', async () => {
+  // Arrange
+  const session = UserSessionFixture.create();
+  const key = service.getUserSessionKey(session);
+  cacheMock.get.mockResolvedValueOnce('sessionData'); // Simula que existe
+  cacheMock.del.mockRejectedValueOnce(new Error('fail'));
 
-    // Assert
-    expect(result).toBeNull();
-  });
+  // Act
+  const result = await service.deleteSession(key);
 
-  it('should return null if setSession throws', async () => {
-    // Arrange
-    cacheMock.set.mockRejectedValue(new Error('fail'));
-    const session = UserSessionFixture.create();
-    const key = service.getUserSessionKey(session);
+  // Assert
+  expect(result).toBeNull();
+});
 
-    // Act
-    const result = await service.setSession(key, session);
+it('should return null if setSession throws', async () => {
+  // Arrange
+  cacheMock.set.mockRejectedValue(new Error('fail'));
+  const session = UserSessionFixture.create();
+  const key = service.getUserSessionKey(session);
 
-    // Assert
-    expect(result).toBeNull();
-  });
+  // Act
+  const result = await service.setSession(key, session);
 
-  it('should return null if getSession throws on parse', async () => {
-    // Arrange
-    const session = UserSessionFixture.create();
-    const key = service.getUserSessionKey(session);
-    cacheMock.get.mockResolvedValue('not-a-json');
+  // Assert
+  expect(result).toBeNull();
+});
 
-    // Act
-    const result = await service.getSession(key);
+it('should return null if getSession throws on parse', async () => {
+  // Arrange
+  const session = UserSessionFixture.create();
+  const key = service.getUserSessionKey(session);
+  cacheMock.get.mockResolvedValue('not-a-json');
 
-    // Assert
-    expect(result).toBeNull();
-  });
+  // Act
+  const result = await service.getSession(key);
+
+  // Assert
+  expect(result).toBeNull();
+});
+
+it('should return false if session does not exist', async () => {
+  const session = UserSessionFixture.create();
+  const key = service.getUserSessionKey(session);
+  cacheMock.get.mockResolvedValueOnce(null);
+
+  const result = await service.deleteSession(key);
+
+  expect(cacheMock.del).not.toHaveBeenCalled();
+  expect(result).toBe(false);
+});
 });

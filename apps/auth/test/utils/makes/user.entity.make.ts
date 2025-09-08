@@ -1,4 +1,4 @@
-import { User } from 'apps/auth/src/domain/entities/user.entity';
+import { User } from '@apps/auth/src/domain/entities/user.entity';
 
 export const makeUser = (overrides: Partial<User> = {}): User => {
   const user = new User();

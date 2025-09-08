@@ -3,11 +3,12 @@ import { type UUID } from 'crypto';
 
 import { type ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
-import { LoginResponseDto } from 'apps/auth/src/application/dtos';
-import { type JwtPayload } from 'apps/auth/src/application/value-objects';
-import { User } from 'apps/auth/src/domain/entities/user.entity';
+import { LoginResponseDto } from '@apps/auth/src/application/dtos';
+import { type JwtPayload } from '@apps/auth/src/application/value-objects';
+import { User } from '@apps/auth/src/domain/entities/user.entity';
 
 import { AuthErrorMessageConstants } from '../../../../src/constants';
+
 
 export class LoginHandlerFixture {
   static testEmail(): string {

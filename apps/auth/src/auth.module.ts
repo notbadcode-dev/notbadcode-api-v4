@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,13 +10,13 @@ import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
 import { ApiResponseService } from '@common/responses';
 
-import { LoginHandler } from 'apps/auth/src/application/handlers/login.handler';
-import { LogoutHandler } from 'apps/auth/src/application/handlers/logout.handler';
-import { AuthController } from 'apps/auth/src/auth.controller';
-import { AuthService } from 'apps/auth/src/auth.service';
-import { User } from 'apps/auth/src/domain/entities/user.entity';
-import { AuthDatabaseModule } from 'apps/auth/src/infrastructure/database/authDatabase.module';
-import { JwtConfigService } from 'apps/auth/src/infrastructure/jwt/jwt-config.service';
+import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
+import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
+import { AuthController } from '@apps/auth/src/auth.controller';
+import { AuthService } from '@apps/auth/src/auth.service';
+import { User } from '@apps/auth/src/domain/entities/user.entity';
+import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database/authDatabase.module';
+import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.service';
 
 @Module({
   imports: [
@@ -33,6 +33,6 @@ import { JwtConfigService } from 'apps/auth/src/infrastructure/jwt/jwt-config.se
     CqrsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LoginHandler, LogoutHandler, JwtConfigService, ApiResponseService],
+  providers: [AuthService, LoginHandler, LogoutHandler, JwtConfigService, ApiResponseService, Logger],
 })
 export class AuthModule {}

@@ -6,8 +6,8 @@ import {
   type ApiSuccessResponse,
 } from '@common/responses';
 
-import { JwtPayload } from 'apps/auth/src/application/value-objects/jwt-payload.vo';
-import { AuthErrorMessageConstants } from 'apps/auth/src/constants/authErrorMessage.constants';
+import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
 
 export class JwtPayloadFixture {
   static validUserId(): number {

@@ -3,7 +3,7 @@ import { mockDeep } from 'jest-mock-extended';
 
 import { ENV_KEYS } from '@common/config';
 
-import { AuthService } from 'apps/auth/src/auth.service';
+import { AuthService } from '@apps/auth/src/auth.service';
 
 import { AuthServiceFixture } from './auth.service.fixture';
 

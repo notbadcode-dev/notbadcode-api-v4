@@ -7,12 +7,13 @@ import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
 import { safeObjectContaining } from '@common/test/utils/safeObjectContaining.helper';
 
+import { LoginCommand } from '@apps/auth/src/application/commands/login.command';
+import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
+import { JwtPayload } from '@apps/auth/src/application/value-objects';
+import { type AuthService } from '@apps/auth/src/auth.service';
+import { type User } from '@apps/auth/src/domain/entities/user.entity';
+
 import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
-import { LoginCommand } from 'apps/auth/src/application/commands/login.command';
-import { LoginHandler } from 'apps/auth/src/application/handlers/login.handler';
-import { JwtPayload } from 'apps/auth/src/application/value-objects';
-import { type AuthService } from 'apps/auth/src/auth.service';
-import { type User } from 'apps/auth/src/domain/entities/user.entity';
 
 import { LoginHandlerFixture } from './login.handler.fixture';
 
@@ -184,11 +185,11 @@ describe('LoginHandler', () => {
     spy.mockRestore();
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
     const expectedWhere = safeObjectContaining({ email: LoginHandlerFixture.testEmail() }) as {
       email: string;
     };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
     const expectedParam = safeObjectContaining({ where: expectedWhere }) as { where: { email: string } };
 
     expect(userRepository.findOne).toHaveBeenCalledWith(expectedParam);
@@ -217,63 +218,107 @@ describe('LoginHandler', () => {
       messageList: [],
     });
   });
-it('should return success but not update lastLoginAt if accessToken or refreshToken is empty', async () => {
-  // Arrange
-  userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-  (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
-  const emptyTokens = LoginHandlerFixture.emptyTokens();
-  authService.generateTokens.mockResolvedValueOnce(emptyTokens);
-  jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
-    success: true,
-    data: emptyTokens,
-    messageList: [],
+  it('should return success but not update lastLoginAt if accessToken or refreshToken is empty', async () => {
+    // Arrange
+    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
+    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    const emptyTokens = LoginHandlerFixture.emptyTokens();
+    authService.generateTokens.mockResolvedValueOnce(emptyTokens);
+    jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
+      success: true,
+      data: emptyTokens,
+      messageList: [],
+    });
+
+    const validJti = 'uuid-0000-0000-0000-000000000000';
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
+      success: true,
+      data: LoginHandlerFixture.mockJwtPayload(LoginHandlerFixture.validUser(), validJti),
+    });
+    const saveSpy = jest.spyOn(userRepository, 'save');
+
+    // Act
+    const result = await handler.execute(
+      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
+    );
+
+    // Assert
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
+    expect(result.data?.accessToken).toBe('');
+    expect(result.data?.refreshToken).toBe('');
+
+    spy.mockRestore();
   });
 
-  const validJti = 'uuid-0000-0000-0000-000000000000';
-  const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
-    success: true,
-    data: LoginHandlerFixture.mockJwtPayload(LoginHandlerFixture.validUser(), validJti),
-  });
-  const saveSpy = jest.spyOn(userRepository, 'save');
+  it('should NOT save session if jti is not a valid UUID', async () => {
+    // Arrange
+    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
+    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
+      success: true,
+      data: LoginHandlerFixture.mockJwtPayload(
+        LoginHandlerFixture.validUser(),
+        LoginHandlerFixture.getInvalidJti(),
+      ),
+    });
 
-  // Act
-  const result = await handler.execute(
-    new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
-  );
+    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
 
-  // Assert
-  expect(saveSpy).not.toHaveBeenCalled();
-  expect(result.success).toBe(true);
-  expect(result.data?.accessToken).toBe('');
-  expect(result.data?.refreshToken).toBe('');
+    // Act
+    const result = await handler.execute(
+      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
+    );
 
-  spy.mockRestore();
-});
+    // Assert
+    expect(setSessionSpy).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
 
-it('should NOT save session if jti is not a valid UUID', async () => {
-  // Arrange
-  userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-  (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
-  authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
-  const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
-    success: true,
-    data: LoginHandlerFixture.mockJwtPayload(
-      LoginHandlerFixture.validUser(),
-      LoginHandlerFixture.getInvalidJti(),
-    ),
+    spy.mockRestore();
   });
 
-  const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
+  it('should NOT update lastLoginAt if user.id is falsy (e.g. 0)', async () => {
+    // Arrange
+    const invalidUser = { ...LoginHandlerFixture.validUser(), id: 0 };
+    userRepository.findOne.mockResolvedValueOnce(invalidUser as User);
+    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    const tokens = LoginHandlerFixture.validTokens();
+    authService.generateTokens.mockResolvedValueOnce(tokens);
 
-  // Act
-  const result = await handler.execute(
-    new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
-  );
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
+      success: true,
+      data: LoginHandlerFixture.mockJwtPayload(invalidUser as User, LoginHandlerFixture.getValidJti()),
+    });
+    const saveSpy = jest.spyOn(userRepository, 'save');
 
-  // Assert
-  expect(setSessionSpy).not.toHaveBeenCalled();
-  expect(result.success).toBe(true);
+    // Act
+    const result = await handler.execute(
+      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
+    );
 
-  spy.mockRestore();
-});
+    // Assert
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
+
+    spy.mockRestore();
+  });
+
+  it('should return null if jti is empty', async () => {
+    // Arrange
+    const user = LoginHandlerFixture.validUser();
+
+    // Act
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const resultEmpty = await (handler as any).setCacheSession(user, '');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const resultNull = await (handler as any).setCacheSession(user, null);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const resultUndefined = await (handler as any).setCacheSession(user, undefined);
+
+    // Assert
+    expect(resultEmpty).toBeNull();
+    expect(resultNull).toBeNull();
+    expect(resultUndefined).toBeNull();
+  });
 });

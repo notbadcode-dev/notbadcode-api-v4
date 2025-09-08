@@ -4,8 +4,8 @@ import { ApiOkResponse } from '@nestjs/swagger';
 
 import { ApiResponse } from '@common/responses';
 
-import { LoginCommand, LogoutCommand } from '@apps/auth/src/application/commands';
-import { LoginRequestDto, LoginResponseDto, LogoutRequestDto } from '@apps/auth/src/application/dtos';
+import { LoginCommand, LogoutCommand, RefreshCommand } from '@apps/auth/src/application/commands';
+import { LoginRequestDto, LoginResponseDto, LogoutRequestDto, RefreshRequestDto } from '@apps/auth/src/application/dtos';
 
 @Controller('auth')
 export class AuthController {
@@ -21,5 +21,11 @@ export class AuthController {
   @ApiOkResponse()
   async logout(@Body() dto: LogoutRequestDto): Promise<ApiResponse<null>> {
     return this.commandBus.execute(new LogoutCommand(dto.accessToken));
+  }
+  
+  @Post('refresh')
+  @ApiOkResponse({ type: LoginResponseDto })
+  async refresh(@Body() dto: RefreshRequestDto): Promise<ApiResponse<LoginResponseDto>> {
+    return this.commandBus.execute(new RefreshCommand(dto.accessToken));
   }
 }

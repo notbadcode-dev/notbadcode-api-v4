@@ -12,6 +12,7 @@ import { ApiResponseService } from '@common/responses';
 
 import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
 import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
+import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
 import { AuthController } from '@apps/auth/src/auth.controller';
 import { AuthService } from '@apps/auth/src/auth.service';
 import { User } from '@apps/auth/src/domain/entities/user.entity';
@@ -33,6 +34,6 @@ import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.s
     CqrsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LoginHandler, LogoutHandler, JwtConfigService, ApiResponseService, Logger],
+  providers: [AuthService, LoginHandler, LogoutHandler, RefreshHandler, JwtConfigService, ApiResponseService, Logger],
 })
 export class AuthModule {}

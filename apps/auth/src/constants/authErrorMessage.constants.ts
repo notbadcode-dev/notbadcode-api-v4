@@ -8,4 +8,5 @@ export const AuthErrorMessageConstants = {
   invalidToken: `${AuthErrorMessageTag}.invalidToken`,
   invalidSessionId: `${AuthErrorMessageTag}.invalidSessionId`,
   sessionNotActive: `${AuthErrorMessageTag}.sessionNotActive`,
+  emailAlreadyExists: `${AuthErrorMessageTag}.emailAlreadyExists`,
 };

@@ -9,6 +9,7 @@ import { CommonLoggerModule } from '@common/loggers';
 import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
 import { ApiResponseService } from '@common/responses';
+import { JwtAuthGuard } from '@common/guards';
 
 import { LoginHandler, LogoutHandler, RefreshHandler, RegisterHandler } from '@apps/auth/src/application/handlers';
 import { AuthService } from '@apps/auth/src/application/services/auth.service';
@@ -40,6 +41,7 @@ import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.s
     RegisterHandler,
     JwtConfigService,
     ApiResponseService,
+    JwtAuthGuard,
     Logger,
   ],
 })

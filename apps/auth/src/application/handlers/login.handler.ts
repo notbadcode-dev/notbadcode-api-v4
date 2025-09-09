@@ -71,7 +71,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     return await this.commonSessionControlService.setSession<UserSession>(userSessionKey, userSession);
   }
 
-  private async addLastLoginAt(tokens: LoginResponseDto, user: User) {
+  private async addLastLoginAt(tokens: LoginResponseDto, user: User): Promise<void> {
     if (!user?.id || !tokens.accessToken?.length || !tokens.refreshToken.length) {
       return;
     }

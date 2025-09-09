@@ -92,7 +92,7 @@ export class RefreshHandler implements ICommandHandler<RefreshCommand> {
     return await apiResponseSuccess(this.i18nService, tokens);
   }
 
-  private logErrorJwtVerify(error: unknown) {
+  private logErrorJwtVerify(error: unknown): void {
     if (error instanceof Error) {
       this.logger.error(JwtConstants.LogJwtVerificationFailed, error.stack);
     } else {

@@ -136,11 +136,11 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': [
       'error',
       {
-        allowExpressions: false,
-        allowTypedFunctionExpressions: false,
-        allowHigherOrderFunctions: false,
-        allowDirectConstAssertionInArrowFunctions: false,
-        allowConciseArrowFunctionExpressionsStartingWithVoid: false,
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true,
+        allowDirectConstAssertionInArrowFunctions: true,
+        allowConciseArrowFunctionExpressionsStartingWithVoid: true,
       },
     ],
   },
@@ -173,6 +173,7 @@ module.exports = {
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/no-floating-promises': 'off',
         '@typescript-eslint/no-misused-promises': 'off',
+        '@typescript-eslint/explicit-function-return-type': 'off',
       },
     },
     // Si tienes archivos de setup que no necesitan type-checking

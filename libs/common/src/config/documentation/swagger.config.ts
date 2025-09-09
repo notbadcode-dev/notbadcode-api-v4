@@ -4,7 +4,7 @@ import { DocumentBuilder, type SwaggerCustomOptions, SwaggerModule } from '@nest
 import { SwaggerConstants } from '@common/constants';
 import { type SwaggerInfo } from '@common/value-objects';
 
-export function buildSwaggerConfig(app: INestApplication, info: SwaggerInfo) {
+export function buildSwaggerConfig(app: INestApplication, info: SwaggerInfo): void {
   const documentBuilder = new DocumentBuilder()
     .setTitle(info.title)
     .setDescription(info.description)

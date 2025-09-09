@@ -2,9 +2,8 @@ import { PatternConstants } from '@common/constants';
 import { type I18nService } from '@common/i18n';
 import { type ApiFailureResponse, EApiResponseMessageType, apiResponseFailure } from '@common/responses';
 
-import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects/';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
-import { type EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 
 export class TokenValidationHelper {
   static async invalidToken(i18nService: I18nService): Promise<ApiFailureResponse> {

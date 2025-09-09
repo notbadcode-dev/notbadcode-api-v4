@@ -5,7 +5,7 @@ import { type ApiFailureResponse, EApiResponseMessageType } from '@common/respon
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { type JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType } from '@common/auth';
 
 export class RefreshHandlerFixture {
   static accessToken(): string {

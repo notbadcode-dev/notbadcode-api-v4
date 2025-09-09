@@ -3,9 +3,8 @@ import { randomUUID, type UUID } from 'node:crypto';
 import { PatternConstants } from '@common/constants';
 import { type ApiResponse, type ApiResponseService } from '@common/responses';
 
-import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 
 export class JwtPayload {
   private constructor(

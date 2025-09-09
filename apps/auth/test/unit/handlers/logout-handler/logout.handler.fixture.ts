@@ -4,10 +4,9 @@ import { type UUID } from 'crypto';
 import { type UserSession } from '@common/redis/session/userSession.model';
 import { EApiResponseMessageType, type ApiFailureResponse } from '@common/responses';
 
-import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { type User } from '@apps/auth/src/domain/entities';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 
 export class LogoutHandlerFixture {
   static validToken(): string {

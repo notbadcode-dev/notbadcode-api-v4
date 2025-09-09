@@ -1,6 +1,6 @@
 import { type UUID } from 'node:crypto';
 
-import { type EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { type EJwtType } from './jwt-type.enum';
 
 export interface JwtPayloadPlain<T> {
   sub: T;

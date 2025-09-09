@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type Logger } from '@nestjs/common';
 import { type JwtService } from '@nestjs/jwt';
 import { mockDeep } from 'jest-mock-extended';
@@ -150,14 +151,16 @@ describe('LogoutHandler', () => {
   it('returns failure when jti is not a valid UUID', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce({
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       sub: 2,
       jti: LogoutHandlerFixture.invalidJti(),
-      email: 'test@test.com',
+      email: LogoutHandlerFixture.validEmail(),
+      tokenType: 'access',
     });
     userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
+
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(
       i18nService,
@@ -165,7 +168,6 @@ describe('LogoutHandler', () => {
     );
     expect(result.success).toBe(false);
   });
-
   it('returns failure when user is not found', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validDecoded());
@@ -182,11 +184,13 @@ describe('LogoutHandler', () => {
 
   it('returns failure when session is not active (not in Redis)', async () => {
     // Arrange
-    jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validDecoded());
+    jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
     userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
     commonSessionControlService.getSession.mockResolvedValue(null);
+
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalledWith(
@@ -274,5 +278,46 @@ describe('LogoutHandler', () => {
       data: false,
       messageList: [],
     });
+  });
+
+  it('returns failure when tokenType is not "access"', async () => {
+    // Arrange
+    jwtService.verify.mockReturnValueOnce({
+      sub: 2,
+      jti: LogoutHandlerFixture.getValidUUID(),
+      email: 'test@test.com',
+      tokenType: 'refresh',
+    });
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+
+    // Act
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+
+    // Assert
+    expect(apiResponseFailure).toHaveBeenCalledWith(
+      i18nService,
+      LogoutHandlerFixture.invalidTokenResponse().messageList,
+    );
+    expect(result.success).toBe(false);
+  });
+
+  it('returns failure when tokenType is missing', async () => {
+    // Arrange
+    jwtService.verify.mockReturnValueOnce({
+      sub: 2,
+      jti: LogoutHandlerFixture.getValidUUID(),
+      email: 'test@test.com',
+    });
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+
+    // Act
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+
+    // Assert
+    expect(apiResponseFailure).toHaveBeenCalledWith(
+      i18nService,
+      LogoutHandlerFixture.invalidTokenResponse().messageList,
+    );
+    expect(result.success).toBe(false);
   });
 });

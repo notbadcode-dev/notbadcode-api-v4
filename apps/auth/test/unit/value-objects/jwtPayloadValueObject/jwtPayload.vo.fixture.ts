@@ -8,6 +8,7 @@ import {
 
 import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
+import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 export class JwtPayloadFixture {
   static validUserId(): number {
@@ -30,8 +31,13 @@ export class JwtPayloadFixture {
     return '';
   }
 
-  static expectedPlainObject(jti: string): Readonly<{ sub: number; email: string; jti: string }> {
-    return { sub: this.validUserId(), email: this.validEmail(), jti } as const;
+  static expectedPlainObject(jti: string) {
+    return {
+      sub: this.validUserId(),
+      jti,
+      email: this.validEmail(),
+      tokenType: EJwtType.ACCESS,
+    };
   }
 
   static apiResponse(): ApiResponseService {

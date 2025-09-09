@@ -3,27 +3,37 @@ import { type UUID } from 'crypto';
 
 import { EApiResponseMessageType, type ApiFailureResponse } from '@common/responses';
 
+import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
+import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 export class LogoutHandlerFixture {
   static validToken(): string {
     return 'valid.jwt.token';
   }
+
   static emptyToken(): string {
     return '';
   }
+
   static spacesToken(): string {
     return '     ';
   }
+
   static invalidToken(): string {
     return 'invalid.jwt.token';
   }
 
-  static validJwtPayload(): { sub: number; jti: string; email: string } {
+  static getValidUUID(): UUID {
+    return '123e4567-e89b-12d3-a456-426614174000' as UUID;
+  }
+
+  static validJwtPayload(): JwtPayloadPlain<number> {
     return {
       sub: 2,
-      jti: this.validJti(),
+      jti: this.validJti() as UUID,
       email: this.validEmail(),
+      tokenType: EJwtType.ACCESS,
     };
   }
 

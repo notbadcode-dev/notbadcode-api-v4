@@ -5,26 +5,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
-import { PatternConstants } from '@common/constants';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
-import {
-  ApiFailureResponse,
-  ApiResponse,
-  apiResponseFailure,
-  ApiResponseService,
-  apiResponseSuccess,
-  EApiResponseMessageType,
-} from '@common/responses';
+import { ApiResponse, ApiResponseService, apiResponseSuccess } from '@common/responses';
 
 import { LoginCommand } from '@apps/auth/src/application/commands';
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
+import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthService } from '@apps/auth/src/auth.service';
-import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
-
 
 @CommandHandler(LoginCommand)
 export class LoginHandler implements ICommandHandler<LoginCommand> {
@@ -42,13 +33,13 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      return this.returnInvalidCredentials();
+      return await TokenValidationHelper.invalidCredentials(this.i18nService);
     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      return this.returnInvalidCredentials();
+      return await TokenValidationHelper.invalidCredentials(this.i18nService);
     }
 
     const payloadResult = JwtPayload.create(user.id, user.email, this.apiResponseService);
@@ -66,13 +57,8 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   }
 
   private async setCacheSession(user: User, jti: string): Promise<string | null> {
-    if (!jti?.length) {
-      return null;
-    }
-
-    const validateUUID = PatternConstants.validationUUID.test(jti);
-
-    if (!validateUUID) {
+    const uuidError = await TokenValidationHelper.validateUUID(jti, this.i18nService);
+    if (uuidError) {
       return null;
     }
 
@@ -92,14 +78,5 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     user.lastLoginAt = new Date();
     await this.userRepository.save(user);
-  }
-
-  private async returnInvalidCredentials(): Promise<ApiFailureResponse> {
-    return await apiResponseFailure(this.i18nService, [
-      {
-        type: EApiResponseMessageType.Error,
-        message: AuthErrorMessageConstants.invalidCredentials,
-      },
-    ]);
   }
 }

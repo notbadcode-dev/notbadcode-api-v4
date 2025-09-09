@@ -3,9 +3,9 @@ import { randomUUID, type UUID } from 'node:crypto';
 import { PatternConstants } from '@common/constants';
 import { type ApiResponse, type ApiResponseService } from '@common/responses';
 
+import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
-
-import { type JwtPayloadPlain } from './jwt-payload-plain.type';
+import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 export class JwtPayload {
   private constructor(
@@ -27,6 +27,6 @@ export class JwtPayload {
   }
 
   toPlainObject(): JwtPayloadPlain<number> {
-    return { sub: this.userId, email: this.email, jti: this.jti };
+    return { sub: this.userId, email: this.email, jti: this.jti, tokenType: EJwtType.ACCESS };
   }
 }

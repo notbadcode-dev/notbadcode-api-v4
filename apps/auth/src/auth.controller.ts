@@ -12,7 +12,7 @@ export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post('login')
-  @ApiOkResponse({ type: LoginResponseDto })
+  @ApiOkResponse()
   async login(@Body() dto: LoginRequestDto): Promise<ApiResponse<LoginResponseDto>> {
     return this.commandBus.execute(new LoginCommand(dto.email, dto.password));
   }
@@ -22,10 +22,10 @@ export class AuthController {
   async logout(@Body() dto: LogoutRequestDto): Promise<ApiResponse<null>> {
     return this.commandBus.execute(new LogoutCommand(dto.accessToken));
   }
-  
+
   @Post('refresh')
-  @ApiOkResponse({ type: LoginResponseDto })
+  @ApiOkResponse()
   async refresh(@Body() dto: RefreshRequestDto): Promise<ApiResponse<LoginResponseDto>> {
-    return this.commandBus.execute(new RefreshCommand(dto.accessToken));
+    return this.commandBus.execute(new RefreshCommand(dto.refreshToken));
   }
 }

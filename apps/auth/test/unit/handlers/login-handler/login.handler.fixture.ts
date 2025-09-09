@@ -6,9 +6,9 @@ import { type ApiFailureResponse, EApiResponseMessageType } from '@common/respon
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { type JwtPayload } from '@apps/auth/src/application/value-objects';
 import { User } from '@apps/auth/src/domain/entities/user.entity';
+import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 import { AuthErrorMessageConstants } from '../../../../src/constants';
-
 
 export class LoginHandlerFixture {
   static testEmail(): string {
@@ -85,6 +85,7 @@ export class LoginHandlerFixture {
         sub: user.id,
         email: user.email,
         jti: jti as UUID,
+        tokenType: EJwtType.ACCESS,
       }),
     };
   }

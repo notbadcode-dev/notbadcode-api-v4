@@ -4,22 +4,17 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PatternConstants } from '@common/constants';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
-import {
-  ApiFailureResponse,
-  ApiResponse,
-  apiResponseFailure,
-  apiResponseSuccess,
-  EApiResponseMessageType,
-} from '@common/responses';
+import { ApiResponse, apiResponseSuccess } from '@common/responses';
 
 import { LogoutCommand } from '@apps/auth/src/application/commands';
+import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
 import { JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
-import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constants';
-import { User } from '@apps/auth/src/domain/entities/user.entity';
+import { JwtConstants } from '@apps/auth/src/constants';
+import { User } from '@apps/auth/src/domain/entities';
+import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 @CommandHandler(LogoutCommand)
 export class LogoutHandler implements ICommandHandler<LogoutCommand> {
@@ -34,36 +29,45 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
   async execute(command: LogoutCommand): Promise<ApiResponse<boolean>> {
     const { accessToken } = command;
 
-    if (!accessToken?.trim()) {
-      return this.returnInvalidToken();
+    const tokenPresenceError = await TokenValidationHelper.validateTokenPresence(
+      accessToken,
+      this.i18nService,
+    );
+    if (tokenPresenceError) {
+      return tokenPresenceError;
     }
 
     let payload: JwtPayloadPlain<number> | null;
-
     try {
       payload = this.jwtService.verify<JwtPayloadPlain<number>>(accessToken);
     } catch (error: unknown) {
       this.logErrorJwtVerify(error);
-      return this.returnInvalidToken();
+      return await TokenValidationHelper.invalidToken(this.i18nService);
     }
 
-    if (!payload) {
-      return this.returnInvalidToken();
+    const payloadError = await TokenValidationHelper.validatePayload(payload, this.i18nService);
+    if (payloadError) {
+      return payloadError;
     }
 
     const { sub, jti, email } = payload;
-
-    if (typeof sub !== 'number' || !jti || !email) {
-      return this.returnInvalidToken();
+    const tokenTypeError = await TokenValidationHelper.validateTokenType(
+      payload,
+      EJwtType.ACCESS,
+      this.i18nService,
+    );
+    if (tokenTypeError) {
+      return tokenTypeError;
     }
 
-    if (!PatternConstants.validationUUID.test(jti)) {
-      return this.returnInvalidSessionId();
+    const uuidError = await TokenValidationHelper.validateUUID(jti, this.i18nService);
+    if (uuidError) {
+      return uuidError;
     }
 
     const user = await this.userRepository.findOne({ where: { id: sub, email } });
     if (!user) {
-      return this.returnInvalidCredentials();
+      return await TokenValidationHelper.invalidCredentials(this.i18nService);
     }
 
     const userSession: UserSession = {
@@ -74,11 +78,10 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     const key = this.commonSessionControlService.getUserSessionKey(userSession);
     const activeSession = await this.commonSessionControlService.getSession(key);
     if (!activeSession) {
-      return this.returnSessionNotActive();
+      return await TokenValidationHelper.sessionNotActive(this.i18nService);
     }
 
     const resultDelete = (await this.commonSessionControlService.deleteSession(key)) ?? false;
-
     return apiResponseSuccess(this.i18nService, resultDelete);
   }
 
@@ -88,41 +91,5 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     } else {
       this.logger.error(JwtConstants.LogJwtVerificationFailedNonError, String(error));
     }
-  }
-
-  private returnInvalidToken(): Promise<ApiFailureResponse> {
-    return apiResponseFailure(this.i18nService, [
-      {
-        type: EApiResponseMessageType.Error,
-        message: AuthErrorMessageConstants.invalidToken,
-      },
-    ]);
-  }
-
-  private returnInvalidCredentials(): Promise<ApiFailureResponse> {
-    return apiResponseFailure(this.i18nService, [
-      {
-        type: EApiResponseMessageType.Error,
-        message: AuthErrorMessageConstants.invalidCredentials,
-      },
-    ]);
-  }
-
-  private returnInvalidSessionId(): Promise<ApiFailureResponse> {
-    return apiResponseFailure(this.i18nService, [
-      {
-        type: EApiResponseMessageType.Error,
-        message: AuthErrorMessageConstants.invalidSessionId,
-      },
-    ]);
-  }
-
-  private returnSessionNotActive(): Promise<ApiFailureResponse> {
-    return apiResponseFailure(this.i18nService, [
-      {
-        type: EApiResponseMessageType.Error,
-        message: AuthErrorMessageConstants.sessionNotActive,
-      },
-    ]);
   }
 }

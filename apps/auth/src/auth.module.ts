@@ -10,9 +10,7 @@ import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
 import { ApiResponseService } from '@common/responses';
 
-import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
-import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
-import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
+import { LoginHandler, LogoutHandler, RefreshHandler } from '@apps/auth/src/application/handlers';
 import { AuthController } from '@apps/auth/src/auth.controller';
 import { AuthService } from '@apps/auth/src/auth.service';
 import { User } from '@apps/auth/src/domain/entities/user.entity';

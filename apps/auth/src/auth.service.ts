@@ -4,8 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 
 import { ENV_KEYS } from '@common/config';
 
-import { LoginResponseDto } from './application/dtos';
-import { JwtPayload } from './application/value-objects/jwt-payload.vo';
+import { LoginResponseDto } from '@apps/auth/src/application/dtos';
+import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
+import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -15,13 +16,19 @@ export class AuthService {
   ) {}
 
   async generateTokens(payload: JwtPayload): Promise<LoginResponseDto> {
-    const accessToken = await this.jwtService.signAsync(payload.toPlainObject(), {
-      expiresIn: this.configService.get<string>(ENV_KEYS.AUTH_JWT_EXPIRES_IN),
-    });
+    const accessToken = await this.jwtService.signAsync(
+      { ...payload.toPlainObject(), tokenType: EJwtType.ACCESS },
+      {
+        expiresIn: this.configService.get<string>(ENV_KEYS.AUTH_JWT_EXPIRES_IN),
+      },
+    );
 
-    const refreshToken = await this.jwtService.signAsync(payload.toPlainObject(), {
-      expiresIn: this.configService.get<string>(ENV_KEYS.AUTH_JWT_REFRESH_EXPIRES_IN),
-    });
+    const refreshToken = await this.jwtService.signAsync(
+      { ...payload.toPlainObject(), tokenType: EJwtType.REFRESH },
+      {
+        expiresIn: this.configService.get<string>(ENV_KEYS.AUTH_JWT_REFRESH_EXPIRES_IN),
+      },
+    );
 
     return new LoginResponseDto(accessToken, refreshToken);
   }

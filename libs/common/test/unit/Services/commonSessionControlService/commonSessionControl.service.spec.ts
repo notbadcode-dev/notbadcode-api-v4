@@ -33,6 +33,15 @@ describe('CommonSessionControlService', () => {
     expect(service).toBeDefined();
   });
 
+  it('can be constructed', () => {
+    expect(() =>
+      new CommonSessionControlService(
+        cacheMock as any,
+        loggerMock as unknown as Logger,
+      ),
+    ).not.toThrow();
+  });
+
   it('should generate a session key', () => {
     // Arrange
     const session = UserSessionFixture.create();

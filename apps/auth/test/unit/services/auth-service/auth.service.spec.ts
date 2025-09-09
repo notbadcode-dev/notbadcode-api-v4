@@ -19,7 +19,11 @@ describe('AuthService', () => {
     service = new AuthService(jwtService, configService as any);
   });
 
-it('should generate access and refresh tokens using JwtService', async () => {
+  it('can be constructed', () => {
+    expect(() => new AuthService(jwtService, configService as any)).not.toThrow();
+  });
+
+  it('should generate access and refresh tokens using JwtService', async () => {
   // Arrange
   jwtService.signAsync
     .mockResolvedValueOnce(AuthServiceFixture.validAccessToken)
@@ -53,8 +57,7 @@ it('should generate access and refresh tokens using JwtService', async () => {
   expect(result).toBeInstanceOf(AuthServiceFixture.validLoginResponse.constructor);
   expect(result.accessToken).toBe(AuthServiceFixture.validAccessToken);
   expect(result.refreshToken).toBe(AuthServiceFixture.validRefreshToken);
-});
-
+  });
 
   it('should propagate errors from JwtService', async () => {
     // Arrange

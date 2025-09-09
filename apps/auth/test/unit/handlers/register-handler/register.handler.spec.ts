@@ -90,6 +90,20 @@ describe('RegisterHandler', () => {
     );
   });
 
+  it('can be constructed', () => {
+    expect(() =>
+      new RegisterHandler(
+        userRepository,
+        authService,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        i18nService as any,
+        apiResponseService,
+        commonSessionControlService,
+        hashService,
+      ),
+    ).not.toThrow();
+  });
+
   it('returns failure when the email already exists', async () => {
     // Arrange
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.emailExistsResponse());

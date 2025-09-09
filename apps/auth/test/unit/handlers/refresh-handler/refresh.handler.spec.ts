@@ -89,6 +89,21 @@ describe('RefreshHandler', () => {
     );
   });
 
+  it('can be constructed', () => {
+    expect(() =>
+      new RefreshHandler(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        jwtService as any,
+        authService,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        i18nService as any,
+        apiResponseService,
+        commonSessionControlService,
+        logger,
+      ),
+    ).not.toThrow();
+  });
+
   it('returns failure when token is invalid', async () => {
     // Arrange
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RefreshHandlerFixture.invalidTokenResponse());

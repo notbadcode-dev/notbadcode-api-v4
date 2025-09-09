@@ -200,6 +200,30 @@ it('returns failure if JwtPayload.create fails', async () => {
     expect(result.data?.refreshToken).toBe('');
   });
 
+  it('should NOT update lastLoginAt if refreshToken is empty', async () => {
+    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
+    hashService.compare.mockResolvedValueOnce(true);
+    const partialTokens = { accessToken: 'token', refreshToken: '' };
+    authService.generateTokens.mockResolvedValueOnce(partialTokens);
+    jest.spyOn(JwtPayload, 'create').mockReturnValue({
+      success: true,
+      data: LoginHandlerFixture.mockJwtPayload(
+        LoginHandlerFixture.validUser(),
+        LoginHandlerFixture.getValidJti(),
+      ),
+    });
+
+    const saveSpy = jest.spyOn(userRepository, 'save');
+
+    const result = await handler.execute(
+      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
+    );
+
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
+    expect(result.data?.refreshToken).toBe('');
+  });
+
   it('should NOT save session if jti is not a valid UUID', async () => {
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
     hashService.compare.mockResolvedValueOnce(true);

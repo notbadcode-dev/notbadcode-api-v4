@@ -60,6 +60,19 @@ describe('LogoutHandler', () => {
     );
   });
 
+  it('can be constructed', () => {
+    expect(() =>
+      new LogoutHandler(
+        userRepository,
+        jwtService,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        i18nService as any,
+        commonSessionControlService,
+        logger,
+      ),
+    ).not.toThrow();
+  });
+
   it('returns failure when token is empty', async () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.emptyToken()));

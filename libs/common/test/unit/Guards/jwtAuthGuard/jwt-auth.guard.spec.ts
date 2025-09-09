@@ -18,6 +18,10 @@ describe('JwtAuthGuard (unit)', () => {
   const jwtService = new JwtService({ secret: JwtAuthGuardFixture.secret });
   const guard = new JwtAuthGuard(jwtService);
 
+  it('can be constructed', () => {
+    expect(() => new JwtAuthGuard(jwtService)).not.toThrow();
+  });
+
   it('allows request with valid access token', async () => {
     const token = await jwtService.signAsync(JwtAuthGuardFixture.validPayload);
     const context = createContext(`Bearer ${token}`);

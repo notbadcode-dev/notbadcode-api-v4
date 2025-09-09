@@ -13,6 +13,10 @@ describe('I18nService', () => {
     i18nService = new I18nService(mockNestI18nService as any);
   });
 
+  it('can be constructed', () => {
+    expect(() => new I18nService(mockNestI18nService as any)).not.toThrow();
+  });
+
   it('should call i18n.t with key and options in translate', async () => {
     // Arrange
     mockNestI18nService.t.mockResolvedValue(I18nServiceFixture.translatedSimple);

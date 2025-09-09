@@ -333,4 +333,28 @@ describe('LogoutHandler', () => {
     );
     expect(result.success).toBe(false);
   });
+
+  it('calls addLastLogoutAt and saves user on successful logout', async () => {
+    // Arrange
+    jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
+    const user = LogoutHandlerFixture.userFound();
+    userRepository.findOne.mockResolvedValue(user);
+    commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
+    commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
+    commonSessionControlService.deleteSession.mockResolvedValue(true);
+
+    // Act
+    await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+
+    // Assert
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(userRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...user,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        lastLogoutAt: expect.any(Date),
+      }),
+    );
+  });
+
 });

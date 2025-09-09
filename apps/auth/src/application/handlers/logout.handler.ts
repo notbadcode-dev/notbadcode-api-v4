@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { EJwtType, JwtPayloadPlain } from '@common/auth';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
@@ -13,7 +14,6 @@ import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
 import { JwtConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
-import { EJwtType, JwtPayloadPlain } from '@common/auth';
 
 @CommandHandler(LogoutCommand)
 export class LogoutHandler implements ICommandHandler<LogoutCommand> {
@@ -81,7 +81,19 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     }
 
     const resultDelete = (await this.commonSessionControlService.deleteSession(key)) ?? false;
+
+    await this.addLastLogoutAt(accessToken, user);
+
     return apiResponseSuccess(this.i18nService, resultDelete);
+  }
+
+  private async addLastLogoutAt(accessToken: string, user: User): Promise<void> {
+    if (!user?.id || !accessToken?.length) {
+      return;
+    }
+
+    user.lastLogoutAt = new Date();
+    await this.userRepository.save(user);
   }
 
   private logErrorJwtVerify(error: unknown): void {

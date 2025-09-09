@@ -40,7 +40,7 @@ export class LoginHandlerFixture {
     return u;
   }
 
-  static validTokens() {
+  static validTokens(): LoginResponseDto {
     return { accessToken: 'a', refreshToken: 'r' } as const;
   }
 

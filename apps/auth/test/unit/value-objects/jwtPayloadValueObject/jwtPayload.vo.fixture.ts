@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { type UUID } from 'crypto';
+
 import {
   EApiResponseMessageType,
   type ApiFailureResponse,
+  type ApiResponse,
   type ApiResponseService,
   type ApiSuccessResponse,
 } from '@common/responses';
 
+import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
 import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
@@ -31,10 +35,10 @@ export class JwtPayloadFixture {
     return '';
   }
 
-  static expectedPlainObject(jti: string) {
+  static expectedPlainObject(jti: string): JwtPayloadPlain<number> {
     return {
       sub: this.validUserId(),
-      jti,
+      jti: jti as UUID,
       email: this.validEmail(),
       tokenType: EJwtType.ACCESS,
     };
@@ -66,11 +70,14 @@ export class JwtPayloadFixture {
     };
   }
 
-  static validPayloadInstance(userId: number = this.validUserId(), email: string = this.validEmail()) {
+  static validPayloadInstance(
+    userId: number = this.validUserId(),
+    email: string = this.validEmail(),
+  ): ApiResponse<JwtPayload> {
     return JwtPayload.create(userId, email, this.apiResponse());
   }
 
-  static errors() {
+  static errors(): { invalidUserId: string; invalidEmail: string } {
     return {
       invalidUserId: AuthErrorMessageConstants.invalidUserId,
       invalidEmail: AuthErrorMessageConstants.invalidEmail,

@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax */
+import { type ApiResponseMessage } from '@common/responses';
 import { EApiResponseMessageType } from '@common/responses/apiResponseMessageType';
 
 export class ApiResponseServiceFixture {
@@ -13,15 +14,15 @@ export class ApiResponseServiceFixture {
   static readonly errorMessages = ['Critical error'] as const;
   static readonly warningMessages = ['Warning 1', 'Warning 2'] as const;
 
-  static expectedInfoList(messages: readonly string[]) {
+  static expectedInfoList(messages: readonly string[]): ApiResponseMessage[] {
     return messages.map((m) => ({ type: EApiResponseMessageType.Info, message: m }));
   }
 
-  static expectedErrorList(messages: readonly string[]) {
+  static expectedErrorList(messages: readonly string[]): ApiResponseMessage[] {
     return messages.map((m) => ({ type: EApiResponseMessageType.Error, message: m }));
   }
 
-  static expectedWarningList(messages: readonly string[]) {
+  static expectedWarningList(messages: readonly string[]): ApiResponseMessage[] {
     return messages.map((m) => ({ type: EApiResponseMessageType.Warning, message: m }));
   }
 }

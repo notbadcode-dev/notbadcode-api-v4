@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type Logger } from '@nestjs/common';
 import { mockDeep } from 'jest-mock-extended';
 
@@ -28,6 +29,7 @@ jest.mock('@common/responses', () => {
       _i18n: Parameters<typeof actual.apiResponseSuccess>[0],
       data: T,
       messageList?: Parameters<typeof actual.apiResponseSuccess>[2],
+      // eslint-disable-next-line @typescript-eslint/consistent-type-imports
     ): Promise<import('@common/responses').ApiSuccessResponse<T>> =>
       Promise.resolve({
         success: true,
@@ -40,9 +42,11 @@ jest.mock('@common/responses', () => {
     (
       _i18n: Parameters<typeof actual.apiResponseFailure>[0],
       messages: Parameters<typeof actual.apiResponseFailure>[1],
+        // eslint-disable-next-line @typescript-eslint/consistent-type-imports
     ): Promise<import('@common/responses').ApiFailureResponse> =>
       Promise.resolve({
         success: false,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-imports
         messageList: messages as import('@common/responses').ApiResponseMessage[],
       }),
   ) as unknown as jest.MockedFunction<typeof actual.apiResponseFailure>;

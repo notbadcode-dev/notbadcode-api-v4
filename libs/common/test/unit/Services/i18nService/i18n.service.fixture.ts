@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type TranslateOptions } from 'nestjs-i18n';
 
+type NestI18nMock = {
+  t: jest.Mock<Promise<string>, [string, TranslateOptions?]>;
+};
+
 export class I18nServiceFixture {
   static readonly simpleKey = 'common.hello';
   static readonly keyWithArguments = 'common.hello.name';
@@ -29,7 +33,7 @@ export class I18nServiceFixture {
   static readonly translatedOnlyArguments = 'with only arguments';
   static readonly translatedOnlyArgs = I18nServiceFixture.translatedOnlyArguments;
 
-  static makeNestI18nMock() {
+  static makeNestI18nMock(): NestI18nMock {
     return {
       t: jest.fn<Promise<string>, [string, TranslateOptions?]>(),
     };

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type UUID } from 'crypto';
 
+import { type UserSession } from '@common/redis/session/userSession.model';
 import { EApiResponseMessageType, type ApiFailureResponse } from '@common/responses';
 
 import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
+import { type User } from '@apps/auth/src/domain/entities';
 import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
 
 export class LogoutHandlerFixture {
@@ -58,22 +60,22 @@ export class LogoutHandlerFixture {
   static validEmail(): string {
     return 'test@test.com';
   }
-  static userFound() {
+  static userFound(): Partial<User> {
     return { id: 2, email: this.validEmail() };
   }
-  static userNotFound() {
+  static userNotFound(): UserSession | null {
     return null;
   }
-  static userSession() {
+  static userSession(): UserSession {
     return {
       userId: 2,
       sessionId: this.validJti() as UUID,
     };
   }
-  static sessionActive() {
+  static sessionActive(): UserSession {
     return { ...this.userSession() };
   }
-  static sessionInactive() {
+  static sessionInactive(): UserSession | null {
     return null;
   }
   static getUserSessionKey(): string {

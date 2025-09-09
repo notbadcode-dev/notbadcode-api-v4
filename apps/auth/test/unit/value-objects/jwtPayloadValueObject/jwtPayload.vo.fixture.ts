@@ -9,10 +9,9 @@ import {
   type ApiSuccessResponse,
 } from '@common/responses';
 
-import { type JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 
 export class JwtPayloadFixture {
   static validUserId(): number {

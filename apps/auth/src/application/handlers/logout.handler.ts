@@ -11,10 +11,9 @@ import { ApiResponse, apiResponseSuccess } from '@common/responses';
 
 import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
-import { JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
 import { JwtConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType, JwtPayloadPlain } from '@common/auth';
 
 @CommandHandler(LogoutCommand)
 export class LogoutHandler implements ICommandHandler<LogoutCommand> {

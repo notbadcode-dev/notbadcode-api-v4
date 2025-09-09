@@ -14,7 +14,7 @@ import { RefreshCommand } from '@apps/auth/src/application/commands';
 import { RefreshHandler } from '@apps/auth/src/application/handlers';
 import { type AuthService } from '@apps/auth/src/application/services';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType } from '@common/auth';
 
 import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
 

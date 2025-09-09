@@ -6,7 +6,7 @@ import { type ApiFailureResponse, EApiResponseMessageType } from '@common/respon
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { type JwtPayload } from '@apps/auth/src/application/value-objects';
 import { User } from '@apps/auth/src/domain/entities/user.entity';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType } from '@common/auth';
 
 import { AuthErrorMessageConstants } from '../../../../src/constants';
 

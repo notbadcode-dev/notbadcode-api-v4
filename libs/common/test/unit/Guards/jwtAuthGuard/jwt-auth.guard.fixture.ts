@@ -1,4 +1,4 @@
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType } from '@common/auth';
 
 export class JwtAuthGuardFixture {
   static readonly secret = 'test-secret';

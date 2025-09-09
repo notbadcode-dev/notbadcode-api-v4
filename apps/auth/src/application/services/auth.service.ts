@@ -6,7 +6,7 @@ import { ENV_KEYS } from '@common/config';
 
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType } from '@common/auth';
 
 @Injectable()
 export class AuthService {

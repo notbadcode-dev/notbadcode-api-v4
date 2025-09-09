@@ -11,10 +11,10 @@ import { RefreshCommand } from '@apps/auth/src/application/commands';
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
 import { AuthService } from '@apps/auth/src/application/services/auth.service';
-import { JwtPayload, JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
+import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { JwtConstants } from '@apps/auth/src/constants';
 
-import { EJwtType } from '../../infrastructure/jwt/jwt-type.enum';
+import { EJwtType, JwtPayloadPlain } from '@common/auth';
 
 @CommandHandler(RefreshCommand)
 export class RefreshHandler implements ICommandHandler<RefreshCommand> {

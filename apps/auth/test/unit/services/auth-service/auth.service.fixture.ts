@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
-import { EJwtType } from '@apps/auth/src/infrastructure/jwt/jwt-type.enum';
+import { EJwtType } from '@common/auth';
 
 export class AuthServiceFixture {
   static validJwtPayload: JwtPayload = {

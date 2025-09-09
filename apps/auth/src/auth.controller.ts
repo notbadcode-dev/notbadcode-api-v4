@@ -4,12 +4,24 @@ import { ApiOkResponse } from '@nestjs/swagger';
 
 import { ApiResponse } from '@common/responses';
 
-import { LoginCommand, LogoutCommand, RefreshCommand } from '@apps/auth/src/application/commands';
-import { LoginRequestDto, LoginResponseDto, LogoutRequestDto, RefreshRequestDto } from '@apps/auth/src/application/dtos';
+import { LoginCommand, LogoutCommand, RefreshCommand, RegisterCommand } from '@apps/auth/src/application/commands';
+import {
+  LoginRequestDto,
+  LoginResponseDto,
+  LogoutRequestDto,
+  RefreshRequestDto,
+  RegisterRequestDto,
+} from '@apps/auth/src/application/dtos';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
+
+  @Post('register')
+  @ApiOkResponse()
+  async register(@Body() dto: RegisterRequestDto): Promise<ApiResponse<LoginResponseDto>> {
+    return this.commandBus.execute(new RegisterCommand(dto.email, dto.password));
+  }
 
   @Post('login')
   @ApiOkResponse()

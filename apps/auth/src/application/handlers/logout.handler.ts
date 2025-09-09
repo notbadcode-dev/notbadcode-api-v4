@@ -85,7 +85,7 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     return apiResponseSuccess(this.i18nService, resultDelete);
   }
 
-  private logErrorJwtVerify(error: unknown) {
+  private logErrorJwtVerify(error: unknown): void {
     if (error instanceof Error) {
       this.logger.error(JwtConstants.LogJwtVerificationFailed, error.stack);
     } else {

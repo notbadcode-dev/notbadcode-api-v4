@@ -23,7 +23,7 @@ export class CacheAccessor implements OnModuleInit {
     return CacheAccessor._cache !== null;
   }
 
-  static setCache(cache: Cache) {
+  static setCache(cache: Cache): void {
     CacheAccessor._cache = cache;
   }
 }

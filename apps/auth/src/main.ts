@@ -17,7 +17,7 @@ import { SwaggerInfo } from '@common/value-objects';
 import { AuthModule } from 'apps/auth/src/auth.module';
 import { AuthConstants } from 'apps/auth/src/constants';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await createApp();
 
   addSwaggerConfiguration(app);
@@ -47,7 +47,7 @@ async function bootstrap() {
 
 void bootstrap();
 
-async function createApp() {
+async function createApp(): Promise<INestApplication> {
   const key = fs.readFileSync(process.env.SSL_KEY_PATH ?? path.resolve(ENV_DEFAULTS[ENV_KEYS.SSL_KEY_PATH]));
   const cert = fs.readFileSync(
     process.env.SSL_CERT_PATH ?? path.resolve(ENV_DEFAULTS[ENV_KEYS.SSL_CERT_PATH]),
@@ -62,7 +62,7 @@ async function createApp() {
   });
 }
 
-function addSwaggerConfiguration(app: INestApplication) {
+function addSwaggerConfiguration(app: INestApplication): void {
   const info = SwaggerInfo.create(
     AuthConstants.swaggerTitle,
     AuthConstants.swaggerDescription,

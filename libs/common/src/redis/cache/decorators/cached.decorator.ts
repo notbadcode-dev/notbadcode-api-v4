@@ -6,6 +6,11 @@ import { apiResponseFailure, EApiResponseMessageType } from '@common/responses';
 import { CacheAccessor } from '../cacheAccessor';
 
 type AsyncMethod<This, A extends unknown[], R> = (this: This, ...args: A) => Promise<R>;
+type AsyncMethodDecorator = <This, A extends unknown[], R>(
+  target: unknown,
+  propertyKey: string | symbol,
+  descriptor: TypedPropertyDescriptor<AsyncMethod<This, A, R>>,
+) => TypedPropertyDescriptor<AsyncMethod<This, A, R>>;
 
 export function stableReplacer(_key: string, value: unknown): unknown {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -43,7 +48,7 @@ export async function returnCacheError<R>(i18nService?: I18nService): Promise<R>
   return null as unknown as R;
 }
 
-export function Cached(ttlSeconds: number, i18nService?: I18nService) {
+export function Cached(ttlSeconds: number, i18nService?: I18nService): AsyncMethodDecorator {
   return function <This, A extends unknown[], R>(
     _target: unknown,
     propertyKey: string | symbol,

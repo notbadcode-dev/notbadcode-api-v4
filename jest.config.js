@@ -1,7 +1,6 @@
 /** @type {import('jest').Config} */
 module.exports = {
   verbose: true,
-  maxWorkers: 1,
   collectCoverage: false,
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: '<rootDir>/test/coverage',

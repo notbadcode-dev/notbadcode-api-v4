@@ -2,7 +2,6 @@ import { UUID } from 'node:crypto';
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { I18nService } from '@common/i18n';
@@ -10,8 +9,8 @@ import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
 import {
   ApiResponse,
-  ApiResponseService,
   apiResponseFailure,
+  ApiResponseService,
   apiResponseSuccess,
   EApiResponseMessageType,
 } from '@common/responses';
@@ -19,8 +18,9 @@ import {
 import { RegisterCommand } from '@apps/auth/src/application/commands/register.command';
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
+import { AuthService } from '@apps/auth/src/application/services/auth.service';
+import { HashService } from '@apps/auth/src/application/services/hash.service';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
-import { AuthService } from '@apps/auth/src/auth.service';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
 
@@ -32,6 +32,7 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
     private readonly i18nService: I18nService,
     private readonly apiResponseService: ApiResponseService,
     private readonly commonSessionControlService: CommonSessionControlService,
+    private readonly hashService: HashService,
   ) {}
 
   async execute(command: RegisterCommand): Promise<ApiResponse<LoginResponseDto>> {
@@ -44,7 +45,7 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
       ]);
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await this.hashService.hash(password);
 
     const user = this.userRepository.create({ email, passwordHash });
     const savedUser = await this.userRepository.save(user);
@@ -55,8 +56,6 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
     }
 
     const tokens = await this.authService.generateTokens(payloadResult.data);
-
-    await this.addLastLoginAt(tokens, savedUser);
 
     await this.setCacheSession(savedUser, payloadResult.data.jti);
 
@@ -76,14 +75,5 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
     };
     const userSessionKey = this.commonSessionControlService.getUserSessionKey(userSession);
     return await this.commonSessionControlService.setSession<UserSession>(userSessionKey, userSession);
-  }
-
-  private async addLastLoginAt(tokens: LoginResponseDto, user: User): Promise<void> {
-    if (!user?.id || !tokens.accessToken?.length || !tokens.refreshToken.length) {
-      return;
-    }
-
-    user.lastLoginAt = new Date();
-    await this.userRepository.save(user);
   }
 }

@@ -10,4 +10,5 @@ export const AuthConstants = {
   swaggerVersion: '1.0.0',
 
   userPasswordMinLength: 6,
+  saltsRounds: 10,
 };

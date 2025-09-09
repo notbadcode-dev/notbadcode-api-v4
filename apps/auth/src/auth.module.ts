@@ -11,8 +11,8 @@ import { CommonSessionControlModule } from '@common/redis/session';
 import { ApiResponseService } from '@common/responses';
 
 import { LoginHandler, LogoutHandler, RefreshHandler, RegisterHandler } from '@apps/auth/src/application/handlers';
+import { AuthService } from '@apps/auth/src/application/services/auth.service';
 import { AuthController } from '@apps/auth/src/auth.controller';
-import { AuthService } from '@apps/auth/src/auth.service';
 import { User } from '@apps/auth/src/domain/entities/user.entity';
 import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database/authDatabase.module';
 import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.service';

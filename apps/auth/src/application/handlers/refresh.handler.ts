@@ -10,8 +10,8 @@ import { ApiResponse, ApiResponseService, apiResponseSuccess } from '@common/res
 import { RefreshCommand } from '@apps/auth/src/application/commands';
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
+import { AuthService } from '@apps/auth/src/application/services/auth.service';
 import { JwtPayload, JwtPayloadPlain } from '@apps/auth/src/application/value-objects';
-import { AuthService } from '@apps/auth/src/auth.service';
 import { JwtConstants } from '@apps/auth/src/constants';
 
 import { EJwtType } from '../../infrastructure/jwt/jwt-type.enum';

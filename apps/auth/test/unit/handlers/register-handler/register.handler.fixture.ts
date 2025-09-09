@@ -21,7 +21,7 @@ export class RegisterHandlerFixture {
 
   static existingUser(): User {
     const u = new User();
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+     
     u.id = 1;
     u.email = this.testEmail();
     u.passwordHash = 'hash';
@@ -95,5 +95,9 @@ export class RegisterHandlerFixture {
 
   static emptyTokens(): LoginResponseDto {
     return new LoginResponseDto('', '');
+  }
+
+  static sessionKey(): string {
+    return 'mocked-session-key';
   }
 }

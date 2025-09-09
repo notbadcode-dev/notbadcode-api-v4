@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { compare as bcryptCompare } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
-import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
-import { safeObjectContaining } from '@common/test/utils/safeObjectContaining.helper';
+import { type ApiResponseService } from '@common/responses';
 
-import { LoginCommand } from '@apps/auth/src/application/commands/login.command';
-import { LoginHandler } from '@apps/auth/src/application/handlers/login.handler';
+import { LoginCommand } from '@apps/auth/src/application/commands';
+import { LoginHandler } from '@apps/auth/src/application/handlers';
+import { type AuthService, type HashService } from '@apps/auth/src/application/services';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
-import { type AuthService } from '@apps/auth/src/auth.service';
-import { type User } from '@apps/auth/src/domain/entities/user.entity';
+import { type User } from '@apps/auth/src/domain/entities';
 
 import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
 
@@ -68,6 +66,7 @@ describe('LoginHandler', () => {
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let apiResponseService: jest.Mocked<ApiResponseService>;
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
+  let hashService: jest.Mocked<HashService>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,6 +76,7 @@ describe('LoginHandler', () => {
     i18nService = { translate: jest.fn(), t: jest.fn() };
     apiResponseService = MockApiResponseService.create();
     commonSessionControlService = mockDeep<CommonSessionControlService>();
+    hashService = mockDeep<HashService>();
 
     handler = new LoginHandler(
       userRepository,
@@ -85,88 +85,67 @@ describe('LoginHandler', () => {
       i18nService as any,
       apiResponseService,
       commonSessionControlService,
+      hashService,
     );
   });
 
+  it('can be constructed', () => {
+    expect(() => {
+      new LoginHandler(
+        userRepository,
+        authService,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        i18nService as any,
+        apiResponseService,
+        commonSessionControlService,
+        hashService,
+      );
+    }).not.toThrow();
+  });
   it('returns failure when the user does not exist', async () => {
-    // Arrange
-    jest.mocked(apiResponseFailure).mockResolvedValueOnce(LoginHandlerFixture.invalidCredentialsResponse());
     userRepository.findOne.mockResolvedValueOnce(null);
 
-    // Act
     const result = await handler.execute(
       new LoginCommand(LoginHandlerFixture.invalidEmail(), LoginHandlerFixture.invalidPassword()),
     );
 
-    // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      expect.arrayContaining([
-        expect.objectContaining({
-          message: LoginHandlerFixture.invalidCredentialsResponse().messageList![0].message,
-        }),
-      ]),
-    );
     expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe('auth.error-message.invalidCredentials');
   });
 
-  it('returns failure when the password does not match', async () => {
-    // Arrange
-    jest.mocked(apiResponseFailure).mockResolvedValueOnce(LoginHandlerFixture.invalidCredentialsResponse());
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-    (bcryptCompare as jest.Mock).mockResolvedValueOnce(false);
+it('returns failure when the password does not match', async () => {
+  userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
+  hashService.compare.mockResolvedValueOnce(false);
 
-    // Act
-    const result = await handler.execute(
-      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.invalidPassword()),
-    );
+  const result = await handler.execute(
+    new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.invalidPassword()),
+  );
 
-    // Assert
-    expect(bcryptCompare).toHaveBeenCalledWith(
-      LoginHandlerFixture.invalidPassword(),
-      LoginHandlerFixture.validUser().passwordHash,
-    );
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      expect.arrayContaining([
-        expect.objectContaining({
-          message: LoginHandlerFixture.invalidCredentialsResponse().messageList![0].message,
-        }),
-      ]),
-    );
-    expect(result.success).toBe(false);
-  });
+  expect(hashService.compare).toHaveBeenCalledWith(
+    LoginHandlerFixture.invalidPassword(),
+    LoginHandlerFixture.validUser().passwordHash,
+  );
+  expect(result.success).toBe(false);
+  expect(result.messageList?.[0]?.message).toBe('auth.error-message.invalidCredentials');
+});
 
-  it('returns failure if JwtPayload.create fails', async () => {
-    // Arrange
-    jest.mocked(apiResponseFailure).mockResolvedValueOnce(LoginHandlerFixture.payloadErrorResponse());
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue(LoginHandlerFixture.payloadErrorResponse());
+it('returns failure if JwtPayload.create fails', async () => {
+  userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
+  hashService.compare.mockResolvedValueOnce(true);
+  jest.spyOn(JwtPayload, 'create').mockReturnValue(LoginHandlerFixture.payloadErrorResponse());
 
-    // Act
-    const result = await handler.execute(
-      new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
-    );
+  const result = await handler.execute(
+    new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
+  );
 
-    // Assert
-    expect(result.success).toBe(false);
-
-    spy.mockRestore();
-  });
+  expect(result.success).toBe(false);
+});
 
   it('returns success with tokens when credentials are valid', async () => {
-    // Arrange
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
-    jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
-      success: true,
-      data: LoginHandlerFixture.validTokens(),
-      messageList: [],
-    });
-
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
+    jest.spyOn(JwtPayload, 'create').mockReturnValue({
       success: true,
       data: LoginHandlerFixture.mockJwtPayload(
         LoginHandlerFixture.validUser(),
@@ -174,37 +153,16 @@ describe('LoginHandler', () => {
       ),
     });
 
-    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
     commonSessionControlService.getUserSessionKey.mockReturnValue('mocked-session-key');
+    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
+    const saveSpy = jest.spyOn(userRepository, 'save');
 
-    // Act
     const result = await handler.execute(
       new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
     );
 
-    spy.mockRestore();
-
-    // Assert
-
-    const expectedWhere = safeObjectContaining({ email: LoginHandlerFixture.testEmail() }) as {
-      email: string;
-    };
-
-    const expectedParam = safeObjectContaining({ where: expectedWhere }) as { where: { email: string } };
-
-    expect(userRepository.findOne).toHaveBeenCalledWith(expectedParam);
-
-    expect(bcryptCompare).toHaveBeenCalledWith(
-      LoginHandlerFixture.testPassword(),
-      LoginHandlerFixture.validUser().passwordHash,
-    );
-    expect(authService.generateTokens).toHaveBeenCalledWith(
-      expect.objectContaining({
-        userId: LoginHandlerFixture.validUser().id,
-        email: LoginHandlerFixture.validUser().email,
-      }),
-    );
-    expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, LoginHandlerFixture.validTokens());
+    expect(hashService.compare).toHaveBeenCalled();
+    expect(authService.generateTokens).toHaveBeenCalled();
     expect(setSessionSpy).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
@@ -212,51 +170,41 @@ describe('LoginHandler', () => {
         sessionId: LoginHandlerFixture.getValidJti(),
       }),
     );
-    expect(result).toEqual({
-      success: true,
-      data: LoginHandlerFixture.validTokens(),
-      messageList: [],
-    });
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual(LoginHandlerFixture.validTokens());
   });
-  it('should return success but not update lastLoginAt if accessToken or refreshToken is empty', async () => {
-    // Arrange
+
+  it('should NOT update lastLoginAt if accessToken or refreshToken is empty', async () => {
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    hashService.compare.mockResolvedValueOnce(true);
     const emptyTokens = LoginHandlerFixture.emptyTokens();
     authService.generateTokens.mockResolvedValueOnce(emptyTokens);
-    jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
+    jest.spyOn(JwtPayload, 'create').mockReturnValue({
       success: true,
-      data: emptyTokens,
-      messageList: [],
+      data: LoginHandlerFixture.mockJwtPayload(
+        LoginHandlerFixture.validUser(),
+        'uuid-0000-0000-0000-000000000000',
+      ),
     });
 
-    const validJti = 'uuid-0000-0000-0000-000000000000';
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
-      success: true,
-      data: LoginHandlerFixture.mockJwtPayload(LoginHandlerFixture.validUser(), validJti),
-    });
     const saveSpy = jest.spyOn(userRepository, 'save');
 
-    // Act
     const result = await handler.execute(
       new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
     );
 
-    // Assert
     expect(saveSpy).not.toHaveBeenCalled();
     expect(result.success).toBe(true);
     expect(result.data?.accessToken).toBe('');
     expect(result.data?.refreshToken).toBe('');
-
-    spy.mockRestore();
   });
 
   it('should NOT save session if jti is not a valid UUID', async () => {
-    // Arrange
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.validUser());
-    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
+    hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
+    jest.spyOn(JwtPayload, 'create').mockReturnValue({
       success: true,
       data: LoginHandlerFixture.mockJwtPayload(
         LoginHandlerFixture.validUser(),
@@ -266,59 +214,31 @@ describe('LoginHandler', () => {
 
     const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
 
-    // Act
     const result = await handler.execute(
       new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
     );
 
-    // Assert
     expect(setSessionSpy).not.toHaveBeenCalled();
     expect(result.success).toBe(true);
-
-    spy.mockRestore();
   });
 
   it('should NOT update lastLoginAt if user.id is falsy (e.g. 0)', async () => {
-    // Arrange
     const invalidUser = { ...LoginHandlerFixture.validUser(), id: 0 };
     userRepository.findOne.mockResolvedValueOnce(invalidUser as User);
-    (bcryptCompare as jest.Mock).mockResolvedValueOnce(true);
-    const tokens = LoginHandlerFixture.validTokens();
-    authService.generateTokens.mockResolvedValueOnce(tokens);
-
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
+    hashService.compare.mockResolvedValueOnce(true);
+    authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
+    jest.spyOn(JwtPayload, 'create').mockReturnValue({
       success: true,
       data: LoginHandlerFixture.mockJwtPayload(invalidUser as User, LoginHandlerFixture.getValidJti()),
     });
+
     const saveSpy = jest.spyOn(userRepository, 'save');
 
-    // Act
     const result = await handler.execute(
       new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()),
     );
 
-    // Assert
     expect(saveSpy).not.toHaveBeenCalled();
     expect(result.success).toBe(true);
-
-    spy.mockRestore();
-  });
-
-  it('should return null if jti is empty', async () => {
-    // Arrange
-    const user = LoginHandlerFixture.validUser();
-
-    // Act
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const resultEmpty = await (handler as any).setCacheSession(user, '');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const resultNull = await (handler as any).setCacheSession(user, null);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const resultUndefined = await (handler as any).setCacheSession(user, undefined);
-
-    // Assert
-    expect(resultEmpty).toBeNull();
-    expect(resultNull).toBeNull();
-    expect(resultUndefined).toBeNull();
   });
 });

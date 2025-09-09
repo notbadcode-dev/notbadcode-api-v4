@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { hash as bcryptHash } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
@@ -7,11 +6,11 @@ import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess, type ApiResponseService } from '@common/responses';
 import { safeObjectContaining } from '@common/test/utils/safeObjectContaining.helper';
 
-import { RegisterCommand } from '@apps/auth/src/application/commands/register.command';
-import { RegisterHandler } from '@apps/auth/src/application/handlers/register.handler';
+import { RegisterCommand } from '@apps/auth/src/application/commands';
+import { RegisterHandler } from '@apps/auth/src/application/handlers';
+import { type AuthService, type HashService } from '@apps/auth/src/application/services';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
-import { type AuthService } from '@apps/auth/src/auth.service';
-import { type User } from '@apps/auth/src/domain/entities/user.entity';
+import { type User } from '@apps/auth/src/domain/entities';
 
 import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
 
@@ -68,6 +67,7 @@ describe('RegisterHandler', () => {
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let apiResponseService: jest.Mocked<ApiResponseService>;
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
+  let hashService: jest.Mocked<HashService>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,6 +77,7 @@ describe('RegisterHandler', () => {
     i18nService = { translate: jest.fn(), t: jest.fn() };
     apiResponseService = MockApiResponseService.create();
     commonSessionControlService = mockDeep<CommonSessionControlService>();
+    hashService = mockDeep<HashService>();
 
     handler = new RegisterHandler(
       userRepository,
@@ -85,24 +86,18 @@ describe('RegisterHandler', () => {
       i18nService as any,
       apiResponseService,
       commonSessionControlService,
+      hashService,
     );
   });
 
   it('returns failure when the email already exists', async () => {
     // Arrange
-    jest
-      .mocked(apiResponseFailure)
-      .mockResolvedValueOnce(RegisterHandlerFixture.emailExistsResponse());
-    userRepository.findOne.mockResolvedValueOnce(
-      RegisterHandlerFixture.existingUser(),
-    );
+    jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.emailExistsResponse());
+    userRepository.findOne.mockResolvedValueOnce(RegisterHandlerFixture.existingUser());
 
     // Act
     const result = await handler.execute(
-      new RegisterCommand(
-        RegisterHandlerFixture.testEmail(),
-        RegisterHandlerFixture.testPassword(),
-      ),
+      new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()),
     );
 
     // Assert
@@ -122,23 +117,17 @@ describe('RegisterHandler', () => {
     userRepository.findOne.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
-    jest.mocked(apiResponseFailure).mockResolvedValueOnce(
-      RegisterHandlerFixture.payloadErrorResponse(),
-    );
+    jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.payloadErrorResponse());
 
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce({
       success: false,
       data: undefined as never,
-      messageList:
-        RegisterHandlerFixture.payloadErrorResponse().messageList,
+      messageList: RegisterHandlerFixture.payloadErrorResponse().messageList,
     });
 
     // Act
     const result = await handler.execute(
-      new RegisterCommand(
-        RegisterHandlerFixture.testEmail(),
-        RegisterHandlerFixture.testPassword(),
-      ),
+      new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()),
     );
 
     // Assert
@@ -156,9 +145,7 @@ describe('RegisterHandler', () => {
     userRepository.findOne.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
-    authService.generateTokens.mockResolvedValueOnce(
-      RegisterHandlerFixture.validTokens(),
-    );
+    authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
     jest.mocked(apiResponseSuccess).mockResolvedValueOnce({
       success: true,
       data: RegisterHandlerFixture.validTokens(),
@@ -167,33 +154,26 @@ describe('RegisterHandler', () => {
 
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce({
       success: true,
-      data: RegisterHandlerFixture.mockJwtPayload(
-        RegisterHandlerFixture.createdUser(),
-      ),
+      data: RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser()),
     });
 
-    const setSessionSpy = jest.spyOn(
-      commonSessionControlService,
-      'setSession',
-    );
+    const sessionKey = RegisterHandlerFixture.sessionKey();
+    commonSessionControlService.getUserSessionKey.mockReturnValue(sessionKey);
+
+    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
     const saveSpy = jest.spyOn(userRepository, 'save');
 
     // Act
     const result = await handler.execute(
-      new RegisterCommand(
-        RegisterHandlerFixture.testEmail(),
-        RegisterHandlerFixture.testPassword(),
-      ),
+      new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()),
     );
 
     // Assert
-    expect(saveSpy).toHaveBeenCalledTimes(2);
-    expect(apiResponseSuccess).toHaveBeenCalledWith(
-      i18nService,
-      RegisterHandlerFixture.validTokens(),
-    );
+
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, RegisterHandlerFixture.validTokens());
     expect(setSessionSpy).toHaveBeenCalledWith(
-      expect.any(String),
+      sessionKey,
       safeObjectContaining({
         userId: RegisterHandlerFixture.createdUser().id,
         sessionId: RegisterHandlerFixture.getValidJti(),
@@ -213,9 +193,7 @@ describe('RegisterHandler', () => {
     userRepository.findOne.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
-    authService.generateTokens.mockResolvedValueOnce(
-      RegisterHandlerFixture.validTokens(),
-    );
+    authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce({
       success: true,
       data: RegisterHandlerFixture.mockJwtPayload(
@@ -224,17 +202,11 @@ describe('RegisterHandler', () => {
       ),
     });
 
-    const setSessionSpy = jest.spyOn(
-      commonSessionControlService,
-      'setSession',
-    );
+    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
 
     // Act
     const result = await handler.execute(
-      new RegisterCommand(
-        RegisterHandlerFixture.testEmail(),
-        RegisterHandlerFixture.testPassword(),
-      ),
+      new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()),
     );
 
     // Assert
@@ -259,18 +231,13 @@ describe('RegisterHandler', () => {
 
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce({
       success: true,
-      data: RegisterHandlerFixture.mockJwtPayload(
-        RegisterHandlerFixture.createdUser(),
-      ),
+      data: RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser()),
     });
     const saveSpy = jest.spyOn(userRepository, 'save');
 
     // Act
     const result = await handler.execute(
-      new RegisterCommand(
-        RegisterHandlerFixture.testEmail(),
-        RegisterHandlerFixture.testPassword(),
-      ),
+      new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()),
     );
 
     // Assert
@@ -287,25 +254,17 @@ describe('RegisterHandler', () => {
     userRepository.findOne.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(invalidUser as User);
-    authService.generateTokens.mockResolvedValueOnce(
-      RegisterHandlerFixture.validTokens(),
-    );
+    authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
 
     const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce({
       success: true,
-      data: RegisterHandlerFixture.mockJwtPayload(
-        invalidUser as User,
-        RegisterHandlerFixture.getValidJti(),
-      ),
+      data: RegisterHandlerFixture.mockJwtPayload(invalidUser as User, RegisterHandlerFixture.getValidJti()),
     });
     const saveSpy = jest.spyOn(userRepository, 'save');
 
     // Act
     const result = await handler.execute(
-      new RegisterCommand(
-        RegisterHandlerFixture.testEmail(),
-        RegisterHandlerFixture.testPassword(),
-      ),
+      new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()),
     );
 
     // Assert
@@ -325,10 +284,7 @@ describe('RegisterHandler', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const resultNull = await (handler as any).setCacheSession(user, null);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const resultUndefined = await (handler as any).setCacheSession(
-      user,
-      undefined,
-    );
+    const resultUndefined = await (handler as any).setCacheSession(user, undefined);
 
     // Assert
     expect(resultEmpty).toBeNull();

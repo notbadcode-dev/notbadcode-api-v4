@@ -98,9 +98,40 @@ services:
         condition: service_healthy
     networks: [app-net]
 
+  links:
+    build:
+      context: .
+      dockerfile: apps/links/Dockerfile
+    container_name: links
+    profiles: ["prod"]
+    env_file:
+      - apps/links/.env
+    command: sh -lc "npm ci && npm run start:links:debug"
+    environment:
+      - AUTH_DB_HOST=${DB_HOST}
+      - AUTH_DB_PORT=${DB_PORT}
+      - AUTH_DB_USER=${DB_USER}
+      - AUTH_DB_PASS=${DB_PASSWORD}
+      - AUTH_DB_NAME=${DB_NAME}
+      - REDIS_CACHE_URL=${REDIS_CACHE_URL}
+      - REDIS_SESSION_URL=${REDIS_SESSION_URL}
+      - SSL_KEY_PATH=${SSL_KEY_PATH}
+      - SSL_CERT_PATH=${SSL_CERT_PATH}
+      - I18N_DIR=/app/dist/libs/common/src/i18n
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      redis-session:
+        condition: service_healthy
+    networks: [app-net]
+
+
 volumes:
   mariadb-data:
   auth_node_modules:
+  links_node_modules:
 
 networks:
   app-net:

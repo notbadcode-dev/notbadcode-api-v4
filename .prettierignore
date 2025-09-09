@@ -14,5 +14,6 @@ libs/**/dist/
 mariadb-data/
 redis-data/
 auth_node_modules/
+links_node_modules/
 .nx/
 .turbo/

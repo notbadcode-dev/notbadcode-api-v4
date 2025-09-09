@@ -24,6 +24,7 @@
     "noImplicitReturns": true,
     "paths": {
       "@apps/auth/*": ["apps/auth/*"],
+      "@apps/links/*": ["apps/links/*"],
       "@common/*": ["libs/common/src/*"],
       "@common/test/*": ["libs/common/test/*"],
       "@test/*": ["test/*"]

@@ -12,10 +12,16 @@ import {
 } from '.';
 import { REDIS_DB_SUFFIX } from '../helpers/requireRedisDb.helper';
 
-// --- Servicio ---
-const serviceSchema = {
-  [ENV_KEYS.SERVICE_NAME]: Joi.string().trim().default(ENV_DEFAULTS[ENV_KEYS.SERVICE_NAME]),
+// --- Auth Servicio ---
+const authServiceSchema = {
+  [ENV_KEYS.AUTH_SERVICE_NAME]: Joi.string().trim().default(ENV_DEFAULTS[ENV_KEYS.AUTH_SERVICE_NAME]),
   [ENV_KEYS.AUTH_PORT]: Joi.number().port().default(ENV_DEFAULTS[ENV_KEYS.AUTH_PORT]),
+};
+
+// --- Links Servicio ---
+const linksServiceSchema = {
+  [ENV_KEYS.LINKS_SERVICE_NAME]: Joi.string().trim().default(ENV_DEFAULTS[ENV_KEYS.LINKS_SERVICE_NAME]),
+  [ENV_KEYS.LINKS_PORT]: Joi.number().port().default(ENV_DEFAULTS[ENV_KEYS.LINKS_PORT]),
 };
 
 // --- JWT ---
@@ -90,7 +96,8 @@ const redisSchema = {
 };
 
 export const envValidationSchema = Joi.object({
-  ...serviceSchema,
+  ...authServiceSchema,
+  ...linksServiceSchema,
   ...jwtSchema,
   ...authDbSchema,
   ...dbSchema,

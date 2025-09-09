@@ -55,7 +55,7 @@ Crea un archivo `.env` en la raíz del microservicio `auth` basado en el siguien
 
 ```dotenv
 # Nombre del microservicio
-SERVICE_NAME=auth
+AUTH_SERVICE_NAME=auth
 
 # Puerto de escucha
 AUTH_PORT=60200

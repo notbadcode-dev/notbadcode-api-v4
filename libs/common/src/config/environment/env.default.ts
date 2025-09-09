@@ -4,8 +4,13 @@ import { ENV_KEYS } from './env.keys';
 
 
 export const ENV_DEFAULTS = {
+  [ENV_KEYS.AUTH_SERVICE_NAME]: 'unknown-service',
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   [ENV_KEYS.AUTH_PORT]: 60200,
+
+  [ENV_KEYS.LINKS_SERVICE_NAME]: 'unknown-service',
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  [ENV_KEYS.LINKS_PORT]: 60201,
 
   [ENV_KEYS.AUTH_JWT_EXPIRES_IN]: '15m',
   [ENV_KEYS.AUTH_JWT_REFRESH_EXPIRES_IN]: '7d',
@@ -13,8 +18,6 @@ export const ENV_DEFAULTS = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   [ENV_KEYS.AUTH_DB_PORT]: 3306,
   [ENV_KEYS.AUTH_DB_NAME]: 'mysql',
-
-  [ENV_KEYS.SERVICE_NAME]: 'unknown-service',
 
   [ENV_KEYS.SSL_KEY_PATH]: 'certs/dev-key.pem',
   [ENV_KEYS.SSL_CERT_PATH]: 'certs/dev-cert.pem',

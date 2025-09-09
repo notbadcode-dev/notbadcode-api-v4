@@ -6,7 +6,14 @@ module.exports = {
   rootDir: '../../..',
   testMatch: ['<rootDir>/apps/auth/test/unit/**/*.spec.ts'],
   transform: {
-    '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/apps/auth/tsconfig.spec.json' }],
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/apps/auth/tsconfig.spec.json',
+        diagnostics: false,
+        isolatedModules: true,
+      },
+    ],
   },
   moduleNameMapper: {
     '^@common/test/(.*)$': '<rootDir>/libs/common/test/$1',

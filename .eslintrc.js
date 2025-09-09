@@ -131,6 +131,18 @@ module.exports = {
 
     // En monorepo suele dar falsos positivos por paths configurados
     'import/no-unresolved': 'off',
+
+    // Obligatorio tipar el tipo de retorno de *todas* las funciones y métodos
+    '@typescript-eslint/explicit-function-return-type': [
+      'error',
+      {
+        allowExpressions: false,
+        allowTypedFunctionExpressions: false,
+        allowHigherOrderFunctions: false,
+        allowDirectConstAssertionInArrowFunctions: false,
+        allowConciseArrowFunctionExpressionsStartingWithVoid: false,
+      },
+    ],
   },
 
   overrides: [

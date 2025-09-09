@@ -1,11 +1,15 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiOkResponse } from '@nestjs/swagger';
 
 import { ApiResponse } from '@common/responses';
-import { JwtAuthGuard } from '@common/guards';
 
-import { LoginCommand, LogoutCommand, RefreshCommand, RegisterCommand } from '@apps/auth/src/application/commands';
+import {
+  LoginCommand,
+  LogoutCommand,
+  RefreshCommand,
+  RegisterCommand,
+} from '@apps/auth/src/application/commands';
 import {
   LoginRequestDto,
   LoginResponseDto,
@@ -37,7 +41,6 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(JwtAuthGuard)
   @ApiOkResponse()
   async refresh(@Body() dto: RefreshRequestDto): Promise<ApiResponse<LoginResponseDto>> {
     return this.commandBus.execute(new RefreshCommand(dto.refreshToken));

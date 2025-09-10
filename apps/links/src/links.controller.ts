@@ -5,7 +5,7 @@ import { ApiOkResponse } from '@nestjs/swagger';
 export class LinksController {
   constructor() {}
 
-  @Post('register')
+  @Post('test')
   @ApiOkResponse()
   async test(): Promise<boolean> {
     return true;

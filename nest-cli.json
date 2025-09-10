@@ -14,6 +14,15 @@
         "tsConfigPath": "apps/auth/tsconfig.build.json"
       }
     },
+    "links": {
+      "type": "application",
+      "root": "apps/links",
+      "entryFile": "main",
+      "sourceRoot": "apps/links/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/links/tsconfig.build.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",

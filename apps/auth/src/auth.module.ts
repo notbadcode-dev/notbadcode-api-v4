@@ -24,6 +24,7 @@ import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database/authD
 import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.service';
 
 import { HashService } from './application/services';
+import { AuthHealthController } from './auth-healtz.controller';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { HashService } from './application/services';
     }),
     CqrsModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, AuthHealthController],
   providers: [
     AuthService,
     HashService,

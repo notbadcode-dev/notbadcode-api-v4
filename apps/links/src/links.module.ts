@@ -9,6 +9,8 @@ import { CommonSessionControlModule } from '@common/redis/session';
 
 import { LinksController } from '@apps/links/src/links.controller';
 
+import { LinksHealthController } from './links-healtz.controller';
+
 @Module({
   imports: [
     CommonConfigModule,
@@ -18,7 +20,7 @@ import { LinksController } from '@apps/links/src/links.controller';
     CommonSessionControlModule,
     CqrsModule,
   ],
-  controllers: [LinksController],
+  controllers: [LinksController, LinksHealthController],
   providers: [],
 })
 export class LinksModule {}

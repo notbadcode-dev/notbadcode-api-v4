@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { type ApiResponseMessage } from '@common/responses';
-import { EApiResponseMessageType } from '@common/responses/apiResponseMessageType';
+import { EApiResponseMessageType, type ApiResponseMessage } from '@common/responses';
 
 export class ApiResponseServiceFixture {
   static readonly dataObj = { foo: 'bar' } as const;

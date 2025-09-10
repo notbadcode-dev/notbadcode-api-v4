@@ -1,4 +1,4 @@
-import { ApiResponseService } from '@common/responses/apiResponse.service';
+import { ApiResponseService } from '@common/responses';
 
 import { ApiResponseServiceFixture as F } from './apiResponse.service.fixture';
 

@@ -21,8 +21,12 @@ import {
   returnCacheError,
   stableReplacer,
 } from '@common/redis/cache/decorators/cached.decorator';
-import { ApiFailureResponse, apiResponseFailure, ApiResponseMessage } from '@common/responses';
-import { EApiResponseMessageType } from '@common/responses/apiResponseMessageType';
+import {
+  ApiFailureResponse,
+  apiResponseFailure,
+  ApiResponseMessage,
+  EApiResponseMessageType,
+} from '@common/responses';
 
 import { CachedDecoratorFixture } from './cached.decorator.fixture';
 

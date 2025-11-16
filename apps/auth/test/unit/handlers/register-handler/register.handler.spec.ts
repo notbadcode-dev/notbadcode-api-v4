@@ -4,7 +4,6 @@ import { type Repository } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
-import { safeObjectContaining } from '@common/test/utils/safeObjectContaining.helper';
 import { ErrorOnFactory } from '@common/types';
 
 import { RegisterCommand } from '@apps/auth/src/application/commands';
@@ -152,12 +151,12 @@ describe('RegisterHandler', () => {
       messageList: [],
     });
 
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser())));
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload()));
 
-    const sessionKey = RegisterHandlerFixture.sessionKey();
+    const sessionKey = RegisterHandlerFixture.getValidJti();
     commonSessionControlService.getUserSessionKey.mockReturnValue(sessionKey);
 
-    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession');
+    const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession').mockReturnValueOnce(Promise.resolve(sessionKey));
     const saveSpy = jest.spyOn(userRepository, 'save');
 
     // Act
@@ -169,9 +168,11 @@ describe('RegisterHandler', () => {
     expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, RegisterHandlerFixture.validTokens());
     expect(setSessionSpy).toHaveBeenCalledWith(
       sessionKey,
-      safeObjectContaining({
+      expect.objectContaining({
         userId: RegisterHandlerFixture.createdUser().id,
         sessionId: RegisterHandlerFixture.getValidJti(),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        loginAt: expect.any(String),
       }),
     );
     expect(result).toEqual({

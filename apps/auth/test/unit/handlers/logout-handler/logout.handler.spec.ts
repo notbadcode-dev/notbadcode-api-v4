@@ -76,7 +76,7 @@ describe('LogoutHandler', () => {
 
   it('returns failure when token is empty', async () => {
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.emptyToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.emptyTokens().accessToken));
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
@@ -145,11 +145,11 @@ describe('LogoutHandler', () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce({
       sub: 2,
-      jti: LogoutHandlerFixture.invalidJti(),
-      email: LogoutHandlerFixture.validEmail(),
+      jti: LogoutHandlerFixture.getInvalidJti(),
+      email: LogoutHandlerFixture.testEmail(),
       tokenType: 'access',
     });
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
 
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
@@ -164,7 +164,7 @@ describe('LogoutHandler', () => {
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validDecoded());
     userRepository.findOne.mockResolvedValue(null);
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidCredentialsResponse().messageList);
     expect(result.success).toBe(false);
@@ -173,11 +173,11 @@ describe('LogoutHandler', () => {
   it('returns failure when session is not active (not in Redis)', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getSession.mockResolvedValue(null);
 
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -190,13 +190,13 @@ describe('LogoutHandler', () => {
     // Arrange
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload() as any);
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(true);
 
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -216,13 +216,13 @@ describe('LogoutHandler', () => {
   it('removes session and returns success with false if session did not exist after check', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(false);
 
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -238,13 +238,13 @@ describe('LogoutHandler', () => {
   it('returns success if deleteSession returns null (graceful fallback)', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(null);
 
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, false);
@@ -263,10 +263,10 @@ describe('LogoutHandler', () => {
       email: 'test@test.com',
       tokenType: 'refresh',
     });
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
 
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
@@ -280,10 +280,10 @@ describe('LogoutHandler', () => {
       jti: LogoutHandlerFixture.getValidUUID(),
       email: 'test@test.com',
     });
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.userFound());
+    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
 
     // Act
-    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
@@ -293,14 +293,14 @@ describe('LogoutHandler', () => {
   it('calls addLastLogoutAt and saves user on successful logout', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
-    const user = LogoutHandlerFixture.userFound();
+    const user = LogoutHandlerFixture.existingUser();
     userRepository.findOne.mockResolvedValue(user);
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(true);
 
     // Act
-    await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
+    await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method

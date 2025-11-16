@@ -1,19 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { type JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 import { EJwtType } from '@common/auth';
 
+import { type JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
+
+import { BaseHandlerFixture } from '../../handlers/base.handler.fixture';
+
 export class AuthServiceFixture {
-  static validJwtPayload: JwtPayload = {
-    userId: 123,
-    email: 'test@email.com',
-    jti: '123e4567-e89b-12d3-a456-426614174000',
-    toPlainObject: () => ({
-      sub: 123,
-      email: 'test@email.com',
-      jti: '123e4567-e89b-12d3-a456-426614174000',
-      tokenType: EJwtType.ACCESS,
-    }),
-  };
+  static validJwtPayload: JwtPayload = BaseHandlerFixture.mockJwtPayload();
 
   static failJwtPayload: JwtPayload = {
     userId: 456,

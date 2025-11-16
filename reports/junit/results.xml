@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="8" failures="1" errors="0" time="94.895">
-  <testsuite name="apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts" errors="0" failures="1" skipped="7" timestamp="2025-11-16T01:10:11" time="94.57" tests="8">
+<testsuites name="jest tests" tests="8" failures="1" errors="0" time="64.518">
+  <testsuite name="apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts" errors="0" failures="1" skipped="7" timestamp="2025-11-16T02:57:40" time="64.23" tests="8">
     <testcase classname="RegisterHandler - can be constructed" name="can be constructed" time="0">
       <skipped/>
     </testcase>
@@ -10,17 +10,17 @@
     <testcase classname="RegisterHandler - returns failure when creating payload fails" name="returns failure when creating payload fails" time="0">
       <skipped/>
     </testcase>
-    <testcase classname="RegisterHandler - registers user, saves session and returns success" name="registers user, saves session and returns success" time="0">
-      <skipped/>
+    <testcase classname="RegisterHandler - registers user, saves session and returns success" name="registers user, saves session and returns success" time="63.202">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+Expected: &quot;00000000-0000-0000-0000-000000000000&quot;
+Received: &quot;00000000-0000-0000-0000-000000000000&quot;, {&quot;loginAt&quot;: &quot;2025-11-16T02:57:57.333Z&quot;, &quot;sessionId&quot;: &quot;123e4567-e89b-12d3-a456-426614174000&quot;, &quot;userId&quot;: 3}
+
+Number of calls: 1
+    at Object.&lt;anonymous&gt; (/Users/bgr/Proyectos/NestJS/notbadcode-api-v4/apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts:169:27)</failure>
     </testcase>
-    <testcase classname="RegisterHandler - should NOT save session if jti is not a valid UUID" name="should NOT save session if jti is not a valid UUID" time="92.688">
-      <failure>Error: expect(jest.fn()).not.toHaveBeenCalled()
-
-Expected number of calls: 0
-Received number of calls: 1
-
-1: undefined, {&quot;loginAt&quot;: &quot;2025-11-16T01:11:28.529Z&quot;, &quot;sessionId&quot;: &quot;00000000-0000-0000-0000-000000000000&quot;, &quot;userId&quot;: 3}
-    at Object.&lt;anonymous&gt; (/Users/bgr/Proyectos/NestJS/notbadcode-api-v4/apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts:199:31)</failure>
+    <testcase classname="RegisterHandler - should NOT save session if jti is not a valid UUID" name="should NOT save session if jti is not a valid UUID" time="0">
+      <skipped/>
     </testcase>
     <testcase classname="RegisterHandler - should return success but not update lastLoginAt if accessToken or refreshToken is empty" name="should return success but not update lastLoginAt if accessToken or refreshToken is empty" time="0">
       <skipped/>

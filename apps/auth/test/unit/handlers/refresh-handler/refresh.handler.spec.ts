@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { type UUID } from 'crypto';
+
 import { type Logger } from '@nestjs/common';
 import { mockDeep } from 'jest-mock-extended';
 
@@ -13,7 +15,6 @@ import { type AuthService } from '@apps/auth/src/application/services';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 
-import { RegisterHandlerFixture } from '../register-handler/register.handler.fixture';
 import { RefreshHandlerFixture } from './refresh.handler.fixture';
 
 jest.mock('@common/responses', () => {
@@ -105,10 +106,10 @@ describe('RefreshHandler', () => {
     });
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
-    expect(jwtService.verify).toHaveBeenCalledWith(RefreshHandlerFixture.accessToken());
+    expect(jwtService.verify).toHaveBeenCalledWith(RefreshHandlerFixture.validTokens().accessToken);
     expect(apiResponseFailure).toHaveBeenCalled();
     expect(result.success).toBe(false);
   });
@@ -131,7 +132,7 @@ describe('RefreshHandler', () => {
     jwtService.verify.mockReturnValueOnce({ sub: undefined, email: undefined });
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseFailure).toHaveBeenCalled();
@@ -142,12 +143,12 @@ describe('RefreshHandler', () => {
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RefreshHandlerFixture.invalidSessionIdResponse());
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: 'not-a-uuid',
       tokenType: EJwtType.REFRESH,
     });
 
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidSessionIdResponse().messageList);
     expect(result.success).toBe(false);
@@ -157,14 +158,14 @@ describe('RefreshHandler', () => {
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RefreshHandlerFixture.sessionNotActiveResponse());
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: RefreshHandlerFixture.getValidUUID(),
       tokenType: EJwtType.REFRESH,
     });
-    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getSessionKey());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValueOnce(null);
 
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.sessionNotActiveResponse().messageList);
     expect(result.success).toBe(false);
@@ -173,14 +174,14 @@ describe('RefreshHandler', () => {
   it('returns success with tokens when everything is valid', async () => {
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: RefreshHandlerFixture.getValidUUID(),
       tokenType: EJwtType.REFRESH,
     });
-    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getSessionKey());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValueOnce({
       userId: 1,
-      sessionId: RefreshHandlerFixture.getValidUUID(),
+      sessionId: RefreshHandlerFixture.getValidUUID() as UUID,
     });
     authService.generateTokens.mockResolvedValueOnce(RefreshHandlerFixture.validTokens());
 
@@ -190,9 +191,9 @@ describe('RefreshHandler', () => {
       messageList: [],
     });
 
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser())));
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RefreshHandlerFixture.mockJwtPayload());
 
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     spy.mockRestore();
     expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.validTokens());
@@ -209,7 +210,7 @@ describe('RefreshHandler', () => {
     jwtService.verify.mockReturnValueOnce(null);
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidTokenResponse().messageList);
@@ -227,7 +228,7 @@ describe('RefreshHandler', () => {
     });
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -241,13 +242,13 @@ describe('RefreshHandler', () => {
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RefreshHandlerFixture.invalidTokenResponse());
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: RefreshHandlerFixture.getValidUUID(),
       tokenType: 'access', // ¡No es refresh!
     });
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidTokenResponse().messageList);
@@ -259,13 +260,13 @@ describe('RefreshHandler', () => {
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RefreshHandlerFixture.invalidTokenResponse());
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: RefreshHandlerFixture.getValidUUID(),
       // Sin tokenType
     });
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidTokenResponse().messageList);
@@ -276,15 +277,15 @@ describe('RefreshHandler', () => {
     // Arrange
     const validPayload = {
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: RefreshHandlerFixture.getValidUUID(),
       tokenType: EJwtType.REFRESH,
     };
     jwtService.verify.mockReturnValueOnce(validPayload);
-    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getSessionKey());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValueOnce({
       userId: 1,
-      sessionId: RefreshHandlerFixture.getValidUUID(),
+      sessionId: RefreshHandlerFixture.getValidUUID() as UUID,
     });
     commonSessionControlService.setSession.mockResolvedValueOnce(Promise.resolve(null));
     authService.generateTokens.mockResolvedValueOnce(RefreshHandlerFixture.validTokens());
@@ -293,10 +294,10 @@ describe('RefreshHandler', () => {
       data: RefreshHandlerFixture.validTokens(),
       messageList: [],
     });
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser())));
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RefreshHandlerFixture.mockJwtPayload()));
 
     // Act
-    await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -314,19 +315,19 @@ describe('RefreshHandler', () => {
 
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
-      email: RefreshHandlerFixture.getValidEmail(),
+      email: RefreshHandlerFixture.testEmail(),
       jti: RefreshHandlerFixture.getValidUUID(),
       tokenType: EJwtType.REFRESH,
     });
 
-    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getSessionKey());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(RefreshHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValueOnce({
       userId: 1,
-      sessionId: RefreshHandlerFixture.getValidUUID(),
+      sessionId: RefreshHandlerFixture.getValidUUID() as UUID,
     });
 
     // Act
-    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
+    const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
     expect(result.messageList?.map((msg) => msg.message)).toContainEqual(expectedResponse.errorMessage);

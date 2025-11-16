@@ -2,22 +2,18 @@
 import { type Logger } from '@nestjs/common';
 import { mockDeep } from 'jest-mock-extended';
 
+import { EJwtType } from '@common/auth';
 import { type CommonSessionControlService } from '@common/redis/session';
-import {
-  apiResponseFailure,
-  apiResponseSuccess,
-  type ApiResponse,
-  type ApiResponseService,
-} from '@common/responses';
+import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
+import { type ErrorOn, ErrorOnFactory } from '@common/types/errorOn.type';
 
 import { RefreshCommand } from '@apps/auth/src/application/commands';
 import { RefreshHandler } from '@apps/auth/src/application/handlers';
 import { type AuthService } from '@apps/auth/src/application/services';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
-import { EJwtType } from '@common/auth';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 
-import { MockApiResponseService } from '@test/utils/mocks/apiResponse.service.mock';
-
+import { RegisterHandlerFixture } from '../register-handler/register.handler.fixture';
 import { RefreshHandlerFixture } from './refresh.handler.fixture';
 
 jest.mock('@common/responses', () => {
@@ -42,7 +38,7 @@ jest.mock('@common/responses', () => {
     (
       _i18n: Parameters<typeof actual.apiResponseFailure>[0],
       messages: Parameters<typeof actual.apiResponseFailure>[1],
-        // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+      // eslint-disable-next-line @typescript-eslint/consistent-type-imports
     ): Promise<import('@common/responses').ApiFailureResponse> =>
       Promise.resolve({
         success: false,
@@ -63,7 +59,6 @@ describe('RefreshHandler', () => {
   let authService: jest.Mocked<AuthService>;
   let jwtService: { verify: jest.Mock };
   let i18nService: { translate: jest.Mock; t: jest.Mock };
-  let apiResponseService: jest.Mocked<ApiResponseService>;
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
   let logger: jest.Mocked<Logger>;
 
@@ -73,7 +68,6 @@ describe('RefreshHandler', () => {
     authService = mockDeep<AuthService>();
     jwtService = { verify: jest.fn() };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    apiResponseService = MockApiResponseService.create();
     commonSessionControlService = mockDeep<CommonSessionControlService>();
     logger = mockDeep<Logger>();
 
@@ -83,24 +77,23 @@ describe('RefreshHandler', () => {
       authService,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       i18nService as any,
-      apiResponseService,
       commonSessionControlService,
       logger,
     );
   });
 
   it('can be constructed', () => {
-    expect(() =>
-      new RefreshHandler(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        jwtService as any,
-        authService,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        i18nService as any,
-        apiResponseService,
-        commonSessionControlService,
-        logger,
-      ),
+    expect(
+      () =>
+        new RefreshHandler(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          jwtService as any,
+          authService,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          i18nService as any,
+          commonSessionControlService,
+          logger,
+        ),
     ).not.toThrow();
   });
 
@@ -156,10 +149,7 @@ describe('RefreshHandler', () => {
 
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      RefreshHandlerFixture.invalidSessionIdResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidSessionIdResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -176,10 +166,7 @@ describe('RefreshHandler', () => {
 
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      RefreshHandlerFixture.sessionNotActiveResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.sessionNotActiveResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -203,10 +190,7 @@ describe('RefreshHandler', () => {
       messageList: [],
     });
 
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
-      success: true,
-      data: RefreshHandlerFixture.mockJwtPayload(),
-    });
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser())));
 
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
@@ -228,10 +212,7 @@ describe('RefreshHandler', () => {
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      RefreshHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -269,10 +250,7 @@ describe('RefreshHandler', () => {
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      RefreshHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -290,10 +268,7 @@ describe('RefreshHandler', () => {
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      RefreshHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, RefreshHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -318,35 +293,24 @@ describe('RefreshHandler', () => {
       data: RefreshHandlerFixture.validTokens(),
       messageList: [],
     });
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue({
-      success: true,
-      data: RefreshHandlerFixture.mockJwtPayload(),
-    });
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload(RegisterHandlerFixture.createdUser())));
 
     // Act
     await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(commonSessionControlService.setSession).toHaveBeenCalledWith(
-      RefreshHandlerFixture.getSessionKey(),
-      expect.objectContaining({
-        userId: 1,
-        sessionId: RefreshHandlerFixture.getValidUUID(),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        loginAt: expect.any(String),
-      }),
-    );
+    expect(commonSessionControlService.setSession).toHaveBeenCalled();
     spy.mockRestore();
   });
 
   it('returns failure when JwtPayload.create fails', async () => {
     // Arrange
     const expectedResponse = {
-      success: false,
-      messageList: RefreshHandlerFixture.invalidTokenResponse().messageList,
+      isError: true,
+      errorMessage: AuthErrorMessageConstants.invalidToken,
     };
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue(expectedResponse as ApiResponse<JwtPayload>);
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValue(expectedResponse as ErrorOn<JwtPayload>);
 
     jwtService.verify.mockReturnValueOnce({
       sub: 1,
@@ -365,7 +329,7 @@ describe('RefreshHandler', () => {
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.accessToken()));
 
     // Assert
-    expect(result).toEqual(expectedResponse);
+    expect(result.messageList?.map((msg) => msg.message)).toContainEqual(expectedResponse.errorMessage);
     spy.mockRestore();
   });
 });

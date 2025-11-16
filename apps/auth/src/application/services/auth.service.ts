@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
+import { EJwtType } from '@common/auth';
 import { ENV_KEYS } from '@common/config';
 
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
-import { EJwtType } from '@common/auth';
 
 @Injectable()
 export class AuthService {

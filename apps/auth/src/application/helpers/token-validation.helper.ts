@@ -1,74 +1,46 @@
+import { type EJwtType, type JwtPayloadPlain } from '@common/auth';
 import { PatternConstants } from '@common/constants';
-import { type I18nService } from '@common/i18n';
-import { type ApiFailureResponse, EApiResponseMessageType, apiResponseFailure } from '@common/responses';
+import { ErrorOnFactory, type ErrorOn } from '@common/types';
 
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
-import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 
 export class TokenValidationHelper {
-  static async invalidToken(i18nService: I18nService): Promise<ApiFailureResponse> {
-    return apiResponseFailure(i18nService, [
-      { type: EApiResponseMessageType.Error, message: AuthErrorMessageConstants.invalidToken },
-    ]);
-  }
-
-  static async invalidSessionId(i18nService: I18nService): Promise<ApiFailureResponse> {
-    return apiResponseFailure(i18nService, [
-      { type: EApiResponseMessageType.Error, message: AuthErrorMessageConstants.invalidSessionId },
-    ]);
-  }
-
-  static async sessionNotActive(i18nService: I18nService): Promise<ApiFailureResponse> {
-    return apiResponseFailure(i18nService, [
-      { type: EApiResponseMessageType.Error, message: AuthErrorMessageConstants.sessionNotActive },
-    ]);
-  }
-
-  static async invalidCredentials(i18nService: I18nService): Promise<ApiFailureResponse> {
-    return apiResponseFailure(i18nService, [
-      { type: EApiResponseMessageType.Error, message: AuthErrorMessageConstants.invalidCredentials },
-    ]);
-  }
-
-  static async validateTokenPresence(
-    token: string,
-    i18nService: I18nService,
-  ): Promise<ApiFailureResponse | null> {
+  static async validateTokenPresence(token: string): Promise<ErrorOn<boolean>> {
     if (!token?.trim()) {
-      return this.invalidToken(i18nService);
+      return ErrorOnFactory.error(AuthErrorMessageConstants.invalidToken);
     }
-    return null;
+
+    return ErrorOnFactory.success(true);
   }
 
-  static async validatePayload(
-    payload: JwtPayloadPlain<number>,
-    i18nService: I18nService,
-  ): Promise<ApiFailureResponse | null> {
+  static async validatePayload(payload: JwtPayloadPlain<number>): Promise<ErrorOn<boolean>> {
     if (!payload) {
-      return this.invalidToken(i18nService);
+      return ErrorOnFactory.error(AuthErrorMessageConstants.invalidToken);
     }
+
     const { sub, jti, email } = payload;
     if (typeof sub !== 'number' || !jti || !email) {
-      return this.invalidToken(i18nService);
+      return ErrorOnFactory.error(AuthErrorMessageConstants.invalidToken);
     }
-    return null;
+
+    return ErrorOnFactory.success(true);
   }
 
-  static async validateTokenType(
-    payload: JwtPayloadPlain<number>,
-    expected: EJwtType,
-    i18nService: I18nService,
-  ): Promise<ApiFailureResponse | null> {
+  static async validateTokenType(payload: JwtPayloadPlain<number>, expected: EJwtType): Promise<ErrorOn<boolean>> {
     if (!payload.tokenType || payload.tokenType !== expected) {
-      return this.invalidToken(i18nService);
+      return ErrorOnFactory.error(AuthErrorMessageConstants.invalidToken);
     }
-    return null;
+
+    return ErrorOnFactory.success(true);
   }
 
-  static async validateUUID(jti: string, i18nService: I18nService): Promise<ApiFailureResponse | null> {
-    if (!PatternConstants.validationUUID.test(jti)) {
-      return this.invalidSessionId(i18nService);
+  static async validateUUID(jti: string): Promise<ErrorOn<boolean>> {
+    const isValid = PatternConstants.validationUUID.test(jti);
+
+    if (isValid) {
+      return ErrorOnFactory.success(isValid);
     }
-    return null;
+
+    return ErrorOnFactory.error(AuthErrorMessageConstants.invalidSessionId);
   }
 }

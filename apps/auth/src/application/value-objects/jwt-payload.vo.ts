@@ -1,10 +1,10 @@
 import { randomUUID, type UUID } from 'node:crypto';
 
+import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 import { PatternConstants } from '@common/constants';
-import { type ApiResponse, type ApiResponseService } from '@common/responses';
+import { ErrorOnFactory, type ErrorOn } from '@common/types/errorOn.type';
 
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
-import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 
 export class JwtPayload {
   private constructor(
@@ -13,16 +13,18 @@ export class JwtPayload {
     public readonly jti: UUID,
   ) {}
 
-  static create(userId: number, email: string, apiResponse: ApiResponseService): ApiResponse<JwtPayload> {
+  static create(userId: number, email: string): ErrorOn<JwtPayload> {
     if (!Number.isInteger(userId) || userId <= 0) {
-      return apiResponse.error([AuthErrorMessageConstants.invalidUserId]);
+      return ErrorOnFactory.error(AuthErrorMessageConstants.invalidUserId);
     }
 
     if (!email || !PatternConstants.validationEmail.test(email)) {
-      return apiResponse.error([AuthErrorMessageConstants.invalidEmail]);
+      return ErrorOnFactory.error(AuthErrorMessageConstants.invalidEmail);
     }
 
-    return apiResponse.success(new JwtPayload(userId, email, randomUUID()));
+    const newPayload = new JwtPayload(userId, email, randomUUID());
+
+    return ErrorOnFactory.success(newPayload);
   }
 
   toPlainObject(): JwtPayloadPlain<number> {

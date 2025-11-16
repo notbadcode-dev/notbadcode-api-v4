@@ -5,35 +5,35 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { EJwtType, JwtPayloadPlain } from '@common/auth';
+import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
-import { ApiResponse, apiResponseSuccess } from '@common/responses';
+import { ApiResponse } from '@common/responses';
 
 import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
-import { JwtConstants } from '@apps/auth/src/constants';
+import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
 
 @CommandHandler(LogoutCommand)
-export class LogoutHandler implements ICommandHandler<LogoutCommand> {
+export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolean>> implements ICommandHandler<LogoutCommand, ApiResponse<boolean>> {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-    private readonly i18nService: I18nService,
+    i18nService: I18nService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly logger: Logger,
-  ) {}
+  ) {
+    super(i18nService);
+  }
 
   async execute(command: LogoutCommand): Promise<ApiResponse<boolean>> {
     const { accessToken } = command;
 
-    const tokenPresenceError = await TokenValidationHelper.validateTokenPresence(
-      accessToken,
-      this.i18nService,
-    );
-    if (tokenPresenceError) {
-      return tokenPresenceError;
+    const tokenPresenceResult = await TokenValidationHelper.validateTokenPresence(accessToken);
+    if (tokenPresenceResult.isError) {
+      return await this.createResponseFailure(tokenPresenceResult.errorMessage);
     }
 
     let payload: JwtPayloadPlain<number> | null;
@@ -41,32 +41,28 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
       payload = this.jwtService.verify<JwtPayloadPlain<number>>(accessToken);
     } catch (error: unknown) {
       this.logErrorJwtVerify(error);
-      return await TokenValidationHelper.invalidToken(this.i18nService);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidToken);
     }
 
-    const payloadError = await TokenValidationHelper.validatePayload(payload, this.i18nService);
-    if (payloadError) {
-      return payloadError;
+    const payloadResult = await TokenValidationHelper.validatePayload(payload);
+    if (payloadResult.isError) {
+      return await this.createResponseFailure(payloadResult.errorMessage);
     }
 
     const { sub, jti, email } = payload;
-    const tokenTypeError = await TokenValidationHelper.validateTokenType(
-      payload,
-      EJwtType.ACCESS,
-      this.i18nService,
-    );
-    if (tokenTypeError) {
-      return tokenTypeError;
+    const tokenTypeResult = await TokenValidationHelper.validateTokenType(payload, EJwtType.ACCESS);
+    if (tokenTypeResult.isError) {
+      return await this.createResponseFailure(tokenTypeResult.errorMessage);
     }
 
-    const uuidError = await TokenValidationHelper.validateUUID(jti, this.i18nService);
-    if (uuidError) {
-      return uuidError;
+    const uuidResult = await TokenValidationHelper.validateUUID(jti);
+    if (uuidResult.isError) {
+      return await this.createResponseFailure(uuidResult.errorMessage);
     }
 
     const user = await this.userRepository.findOne({ where: { id: sub, email } });
     if (!user) {
-      return await TokenValidationHelper.invalidCredentials(this.i18nService);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
     }
 
     const userSession: UserSession = {
@@ -77,14 +73,14 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     const key = this.commonSessionControlService.getUserSessionKey(userSession);
     const activeSession = await this.commonSessionControlService.getSession(key);
     if (!activeSession) {
-      return await TokenValidationHelper.sessionNotActive(this.i18nService);
+      return await this.createResponseFailure(AuthErrorMessageConstants.sessionNotActive);
     }
 
     const resultDelete = (await this.commonSessionControlService.deleteSession(key)) ?? false;
 
     await this.addLastLogoutAt(accessToken, user);
 
-    return apiResponseSuccess(this.i18nService, resultDelete);
+    return await this.createSuccessResponse(resultDelete);
   }
 
   private async addLastLogoutAt(accessToken: string, user: User): Promise<void> {
@@ -99,8 +95,8 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
   private logErrorJwtVerify(error: unknown): void {
     if (error instanceof Error) {
       this.logger.error(JwtConstants.LogJwtVerificationFailed, error.stack);
-    } else {
-      this.logger.error(JwtConstants.LogJwtVerificationFailedNonError, String(error));
     }
+
+    this.logger.error(JwtConstants.LogJwtVerificationFailedNonError, String(error));
   }
 }

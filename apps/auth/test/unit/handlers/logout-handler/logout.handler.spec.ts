@@ -61,15 +61,16 @@ describe('LogoutHandler', () => {
   });
 
   it('can be constructed', () => {
-    expect(() =>
-      new LogoutHandler(
-        userRepository,
-        jwtService,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        i18nService as any,
-        commonSessionControlService,
-        logger,
-      ),
+    expect(
+      () =>
+        new LogoutHandler(
+          userRepository,
+          jwtService,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          i18nService as any,
+          commonSessionControlService,
+          logger,
+        ),
     ).not.toThrow();
   });
 
@@ -77,10 +78,7 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.emptyToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -89,10 +87,7 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.spacesToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -104,10 +99,7 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
@@ -122,15 +114,9 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(logger.error).toHaveBeenCalledWith(
-      expect.stringContaining('non-Error'),
-      expect.stringContaining('some string error'),
-    );
+    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('non-Error'), expect.stringContaining('some string error'));
     expect(result.success).toBe(false);
   });
 
@@ -141,10 +127,7 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -154,10 +137,7 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -175,12 +155,10 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
 
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidSessionIdResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidSessionIdResponse().messageList);
     expect(result.success).toBe(false);
   });
+
   it('returns failure when user is not found', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validDecoded());
@@ -188,10 +166,7 @@ describe('LogoutHandler', () => {
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidCredentialsResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidCredentialsResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -206,13 +181,8 @@ describe('LogoutHandler', () => {
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalledWith(
-      LogoutHandlerFixture.userSession(),
-    );
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.sessionNotActiveResponse().messageList,
-    );
+    expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalledWith(LogoutHandlerFixture.userSession());
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.sessionNotActiveResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -230,17 +200,11 @@ describe('LogoutHandler', () => {
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalledWith(
-      LogoutHandlerFixture.userSession(),
-    );
+    expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalledWith(LogoutHandlerFixture.userSession());
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(commonSessionControlService.getSession).toHaveBeenCalledWith(
-      LogoutHandlerFixture.getUserSessionKey(),
-    );
+    expect(commonSessionControlService.getSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(
-      LogoutHandlerFixture.getUserSessionKey(),
-    );
+    expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
     expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, true);
     expect(result).toEqual({
       success: true,
@@ -262,9 +226,7 @@ describe('LogoutHandler', () => {
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(
-      LogoutHandlerFixture.getUserSessionKey(),
-    );
+    expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
     expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, false);
     expect(result).toEqual({
       success: true,
@@ -307,10 +269,7 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
 
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -327,10 +286,7 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validToken()));
 
     // Assert
-    expect(apiResponseFailure).toHaveBeenCalledWith(
-      i18nService,
-      LogoutHandlerFixture.invalidTokenResponse().messageList,
-    );
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
   });
 
@@ -356,5 +312,4 @@ describe('LogoutHandler', () => {
       }),
     );
   });
-
 });

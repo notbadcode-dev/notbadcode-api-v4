@@ -4,16 +4,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
-import {
-  ApiResponse,
-  apiResponseFailure,
-  ApiResponseService,
-  apiResponseSuccess,
-  EApiResponseMessageType,
-} from '@common/responses';
+import { ApiResponse } from '@common/responses';
 
 import { RegisterCommand } from '@apps/auth/src/application/commands/register.command';
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
@@ -25,24 +20,23 @@ import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
 
 @CommandHandler(RegisterCommand)
-export class RegisterHandler implements ICommandHandler<RegisterCommand> {
+export class RegisterHandler extends BaseHandler<RegisterCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<RegisterCommand, ApiResponse<LoginResponseDto>> {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
-    private readonly i18nService: I18nService,
-    private readonly apiResponseService: ApiResponseService,
+    i18nService: I18nService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly hashService: HashService,
-  ) {}
+  ) {
+    super(i18nService);
+  }
 
   async execute(command: RegisterCommand): Promise<ApiResponse<LoginResponseDto>> {
     const { email, password } = command;
 
     const existing = await this.userRepository.findOne({ where: { email } });
     if (existing) {
-      return await apiResponseFailure(this.i18nService, [
-        { type: EApiResponseMessageType.Error, message: AuthErrorMessageConstants.emailAlreadyExists },
-      ]);
+      return await this.createResponseFailure(AuthErrorMessageConstants.emailAlreadyExists);
     }
 
     const passwordHash = await this.hashService.hash(password);
@@ -50,21 +44,22 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
     const user = this.userRepository.create({ email, passwordHash });
     const savedUser = await this.userRepository.save(user);
 
-    const payloadResult = JwtPayload.create(savedUser.id, savedUser.email, this.apiResponseService);
-    if (!payloadResult.success) {
-      return payloadResult;
+    const payloadResult = JwtPayload.create(savedUser.id, savedUser.email);
+    if (payloadResult.isError) {
+      return await this.createResponseFailure(payloadResult.errorMessage);
     }
 
-    const tokens = await this.authService.generateTokens(payloadResult.data);
+    const payload = payloadResult.value;
+    const tokens = await this.authService.generateTokens(payload);
 
-    await this.setCacheSession(savedUser, payloadResult.data.jti);
+    await this.setCacheSession(savedUser, payload.jti);
 
-    return await apiResponseSuccess(this.i18nService, tokens);
+    return await this.createSuccessResponse(tokens);
   }
 
   private async setCacheSession(user: User, jti: string): Promise<string | null> {
-    const uuidError = await TokenValidationHelper.validateUUID(jti, this.i18nService);
-    if (uuidError) {
+    const uuidResult = await TokenValidationHelper.validateUUID(jti);
+    if (uuidResult.isError) {
       return null;
     }
 

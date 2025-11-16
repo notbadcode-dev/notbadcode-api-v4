@@ -4,10 +4,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
 import { UserSession } from '@common/redis/session/userSession.model';
-import { ApiResponse, ApiResponseService, apiResponseSuccess } from '@common/responses';
+import { ApiResponse } from '@common/responses';
 
 import { LoginCommand } from '@apps/auth/src/application/commands';
 import { LoginResponseDto } from '@apps/auth/src/application/dtos';
@@ -17,16 +18,19 @@ import { HashService } from '@apps/auth/src/application/services/hash.service';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { User } from '@apps/auth/src/domain/entities';
 
+import { AuthErrorMessageConstants } from '../../constants';
+
 @CommandHandler(LoginCommand)
-export class LoginHandler implements ICommandHandler<LoginCommand> {
+export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<LoginCommand, ApiResponse<LoginResponseDto>> {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
-    private readonly i18nService: I18nService,
-    private readonly apiResponseService: ApiResponseService,
+    i18nService: I18nService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly hashService: HashService,
-  ) {}
+  ) {
+    super(i18nService);
+  }
 
   async execute(command: LoginCommand): Promise<ApiResponse<LoginResponseDto>> {
     const { email, password } = command;
@@ -34,32 +38,33 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      return await TokenValidationHelper.invalidCredentials(this.i18nService);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
     }
 
     const passwordMatch = await this.hashService.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      return await TokenValidationHelper.invalidCredentials(this.i18nService);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
     }
 
-    const payloadResult = JwtPayload.create(user.id, user.email, this.apiResponseService);
-    if (!payloadResult.success) {
-      return payloadResult;
+    const payloadResult = JwtPayload.create(user.id, user.email);
+    if (payloadResult.isError) {
+      return this.createResponseFailure(payloadResult.errorMessage);
     }
 
-    const tokens = await this.authService.generateTokens(payloadResult.data);
+    const payload = payloadResult.value;
+    const tokens = await this.authService.generateTokens(payload);
 
     await this.addLastLoginAt(tokens, user);
 
-    await this.setCacheSession(user, payloadResult.data.jti);
+    await this.setCacheSession(user, payload.jti);
 
-    return await apiResponseSuccess(this.i18nService, tokens);
+    return await this.createSuccessResponse(tokens);
   }
 
   private async setCacheSession(user: User, jti: string): Promise<string | null> {
-    const uuidError = await TokenValidationHelper.validateUUID(jti, this.i18nService);
-    if (uuidError) {
+    const uuidResult = await TokenValidationHelper.validateUUID(jti);
+    if (uuidResult.isError) {
       return null;
     }
 

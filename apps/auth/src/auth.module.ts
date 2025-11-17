@@ -23,7 +23,7 @@ import { User } from '@apps/auth/src/domain/entities/user.entity';
 import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database/authDatabase.module';
 import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.service';
 
-import { HashService } from './application/services';
+import { HashService, UserService } from './application/services';
 import { AuthHealthController } from './auth-healtz.controller';
 
 @Module({
@@ -41,17 +41,6 @@ import { AuthHealthController } from './auth-healtz.controller';
     CqrsModule,
   ],
   controllers: [AuthController, AuthHealthController],
-  providers: [
-    AuthService,
-    HashService,
-    LoginHandler,
-    LogoutHandler,
-    RefreshHandler,
-    RegisterHandler,
-    JwtConfigService,
-    ApiResponseService,
-    JwtAuthGuard,
-    Logger,
-  ],
+  providers: [AuthService, HashService, LoginHandler, LogoutHandler, RefreshHandler, RegisterHandler, JwtConfigService, ApiResponseService, JwtAuthGuard, Logger, UserService],
 })
 export class AuthModule {}

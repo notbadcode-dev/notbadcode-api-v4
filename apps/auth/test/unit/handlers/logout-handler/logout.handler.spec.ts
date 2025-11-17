@@ -9,6 +9,7 @@ import { apiResponseFailure, apiResponseSuccess, type ApiResponseMessage } from 
 
 import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
+import { type User } from '@apps/auth/src/domain/entities';
 
 import { LogoutHandlerFixture } from './logout.handler.fixture';
 
@@ -38,7 +39,7 @@ describe('LogoutHandler', () => {
   let jwtService: jest.Mocked<JwtService>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
-  let userRepository: jest.Mocked<Repository<any>>;
+  let userRepository: jest.Mocked<Repository<User>>;
   let logger: jest.Mocked<Logger>;
   let handler: LogoutHandler;
 
@@ -47,7 +48,8 @@ describe('LogoutHandler', () => {
     jwtService = mockDeep<JwtService>();
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
-    userRepository = mockDeep<Repository<any>>();
+    userRepository = mockDeep<Repository<User>>();
+    userRepository.save = jest.fn();
     logger = mockDeep<Logger>();
 
     handler = new LogoutHandler(
@@ -311,5 +313,28 @@ describe('LogoutHandler', () => {
         lastLogoutAt: expect.any(Date),
       }),
     );
+  });
+
+  it('does NOT update lastLogoutAt if user.id is falsy or accessToken is empty', async () => {
+    // Arrange
+    const user = { ...LogoutHandlerFixture.existingUser(), id: 0 } as User;
+
+    userRepository.findOne.mockResolvedValue(user);
+    jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
+    commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
+    commonSessionControlService.deleteSession.mockResolvedValue(true);
+
+    // Act
+    await handler.execute(new LogoutCommand('valid.jwt.token'));
+
+    // Assert
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(userRepository.save).not.toHaveBeenCalled();
+
+    // También puedes probar con accessToken vacío
+    await handler.execute(new LogoutCommand(''));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(userRepository.save).not.toHaveBeenCalled();
   });
 });

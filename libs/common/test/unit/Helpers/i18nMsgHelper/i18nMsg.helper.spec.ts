@@ -1,3 +1,4 @@
+import { SymbolConstants } from '@common/constants/symbol.constants';
 import { i18nMsg } from '@common/helpers';
 
 import { I18nMsgHelperFixture } from './i18nMsg.helper.fixture';
@@ -11,7 +12,19 @@ describe('i18nMsg', () => {
     const result = i18nMsg(key);
 
     // Assert
-    expect(result).toBe(I18nMsgHelperFixture.testKey);
+    expect(result).toBe(key);
+  });
+
+  it('returns the key if params is null', () => {
+    // Arrange
+    const key = I18nMsgHelperFixture.testKey;
+    const params = null as any;
+
+    // Act
+    const result = i18nMsg(key, params);
+
+    // Assert
+    expect(result).toBe(key);
   });
 
   it('returns the key if params is an empty object', () => {
@@ -23,10 +36,10 @@ describe('i18nMsg', () => {
     const result = i18nMsg(key, params);
 
     // Assert
-    expect(result).toBe(I18nMsgHelperFixture.testKey);
+    expect(result).toBe(key);
   });
 
-  it('returns the key and serialized params if params has values', () => {
+  it('returns the key with serialized params when params has values', () => {
     // Arrange
     const key = I18nMsgHelperFixture.testKey;
     const params = I18nMsgHelperFixture.validParams;
@@ -35,6 +48,6 @@ describe('i18nMsg', () => {
     const result = i18nMsg(key, params);
 
     // Assert
-    expect(result).toBe(I18nMsgHelperFixture.expectedWithParams);
+    expect(result).toBe(`${key}${SymbolConstants.Pipe}${JSON.stringify(params)}`);
   });
 });

@@ -6,14 +6,18 @@ export class I18nService {
   constructor(private readonly i18n: NestI18nService) {}
 
   async translate(key: string, options?: TranslateOptions): Promise<string> {
-    return this.i18n.t(key, options);
-  }
+    if (!key) {
+      return '';
+    }
 
-  async translateWithArguments(
-    key: string,
-    args: Record<string, string | number>,
-    options?: Omit<TranslateOptions, 'args'>,
-  ): Promise<string> {
-    return this.i18n.t(key, { ...(options ?? {}), args });
+    try {
+      if (!options) {
+        return await this.i18n.t(key);
+      }
+
+      return await this.i18n.t(key, options);
+    } catch {
+      return '';
+    }
   }
 }

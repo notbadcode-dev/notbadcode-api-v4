@@ -46,17 +46,17 @@ export class BaseHandlerFixture {
   }
 
   static existingUser(): User {
-    const u = new User();
+    const user = new User();
 
-    u.id = 1;
-    u.email = this.testEmail();
-    u.passwordHash = 'hash';
-    u.createdAt = new Date();
-    u.updatedAt = new Date();
-    u.lastLoginAt = null;
-    u.lastLogoutAt = null;
+    user.id = 1;
+    user.email = 'test@test.com';
+    user.passwordHash = 'hash';
+    user.createdAt = new Date();
+    user.updatedAt = new Date();
+    user.lastLoginAt = null;
+    user.lastLogoutAt = null;
 
-    return u;
+    return user;
   }
 
   static createdUser(): User {

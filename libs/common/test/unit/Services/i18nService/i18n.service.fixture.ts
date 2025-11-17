@@ -9,13 +9,18 @@ export class I18nServiceFixture {
   static readonly simpleKey = 'common.hello';
   static readonly keyWithArguments = 'common.hello.name';
   static readonly keyOnlyArguments = 'common.onlyArgs';
+  static readonly keyWithEmptyOptions = 'common.emptyOptions';
 
   static readonly keySimple = I18nServiceFixture.simpleKey;
   static readonly keyWithArgs = I18nServiceFixture.keyWithArguments;
   static readonly keyOnlyArgs = I18nServiceFixture.keyOnlyArguments;
+  static readonly keyEmptyOptions = I18nServiceFixture.keyWithEmptyOptions;
 
   static readonly simpleOptions: TranslateOptions = { lang: 'en' };
-  static readonly withArgumentsOptions: TranslateOptions = { lang: 'en', defaultValue: 'Hello' };
+  static readonly withArgumentsOptions: TranslateOptions = {
+    lang: 'en',
+    defaultValue: 'Hello',
+  };
   static readonly withArgsOptions = I18nServiceFixture.withArgumentsOptions;
 
   static readonly args = { name: 'Charles', age: 37 } as const;
@@ -32,10 +37,13 @@ export class I18nServiceFixture {
   static readonly translatedWithArgs = I18nServiceFixture.translatedWithArguments;
   static readonly translatedOnlyArguments = 'with only arguments';
   static readonly translatedOnlyArgs = I18nServiceFixture.translatedOnlyArguments;
+  static readonly translatedWithEmptyOptions = 'with empty options';
 
   static makeNestI18nMock(): NestI18nMock {
     return {
-      t: jest.fn<Promise<string>, [string, TranslateOptions?]>(),
+      t: jest.fn((key: string, options?: TranslateOptions) => {
+        return Promise.resolve(`MOCK:${key}:${JSON.stringify(options ?? {})}`);
+      }),
     };
   }
 }

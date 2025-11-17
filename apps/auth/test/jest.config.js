@@ -33,5 +33,14 @@ module.exports = {
     '/dtos?/|\\.dtos?\\.[jt]s$',
     '/index\\.[jt]s$',
     '\\.config\\.[jt]s$',
+    '/entities?/|\\.entity\\.[jt]s$',
+
+    // Specific files
+    'i18n.service.ts',
+    'i18n.service.spec.ts',
+    'commonSessionControl.service.ts',
+    'commonSessionControl.service.spec.ts',
+    'apiResponse.ts',
+    'apiResponse.service.ts',
   ],
 };

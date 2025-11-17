@@ -1,8 +1,15 @@
 import { SymbolConstants } from '@common/constants';
 
 export function i18nMsg(key: string, params?: Record<string, string | number>): string {
-  if (!params || Object.keys(params).length === 0) {
-    return key;
+  let result = key;
+
+  if (params != null) {
+    const hasValues = Object.keys(params).length > 0;
+
+    if (hasValues) {
+      result = `${key}${SymbolConstants.Pipe}${JSON.stringify(params)}`;
+    }
   }
-  return `${key}${SymbolConstants.Pipe}${JSON.stringify(params)}`;
+
+  return result;
 }

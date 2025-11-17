@@ -5,7 +5,7 @@ import { i18nMsg } from '@common/helpers';
 
 import { AuthConstants, AuthErrorMessageConstants } from '@apps/auth/src/constants';
 
-export class RegisterRequestDto {
+export class RegisterRequest {
   @ApiProperty()
   @IsEmail({}, { message: AuthErrorMessageConstants.invalidEmail })
   email!: string;

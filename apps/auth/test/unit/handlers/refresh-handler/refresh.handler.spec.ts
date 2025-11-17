@@ -62,6 +62,7 @@ describe('RefreshHandler', () => {
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
   let logger: jest.Mocked<Logger>;
+  let userService: { getUserSessionWithDate: jest.Mock; getUserSessions: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -71,15 +72,20 @@ describe('RefreshHandler', () => {
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
     logger = mockDeep<Logger>();
+    userService = {
+      getUserSessionWithDate: jest.fn(),
+      getUserSessions: jest.fn(),
+    };
 
     handler = new RefreshHandler(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       jwtService as any,
       authService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      i18nService as any,
       commonSessionControlService,
       logger,
+      userService,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      i18nService as any,
     );
   });
 
@@ -90,10 +96,11 @@ describe('RefreshHandler', () => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           jwtService as any,
           authService,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          i18nService as any,
           commonSessionControlService,
           logger,
+          userService,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          i18nService as any,
         ),
     ).not.toThrow();
   });

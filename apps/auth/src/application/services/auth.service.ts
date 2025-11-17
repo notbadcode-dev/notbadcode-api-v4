@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { EJwtType } from '@common/auth';
 import { ENV_KEYS } from '@common/config';
 
-import { LoginResponseDto } from '@apps/auth/src/application/dtos';
+import { LoginResponse } from '@apps/auth/src/application/responses';
 import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async generateTokens(payload: JwtPayload): Promise<LoginResponseDto> {
+  async generateTokens(payload: JwtPayload): Promise<LoginResponse> {
     const accessToken = await this.jwtService.signAsync(
       { ...payload.toPlainObject(), tokenType: EJwtType.ACCESS },
       {
@@ -30,6 +30,6 @@ export class AuthService {
       },
     );
 
-    return new LoginResponseDto(accessToken, refreshToken);
+    return new LoginResponse(accessToken, refreshToken);
   }
 }

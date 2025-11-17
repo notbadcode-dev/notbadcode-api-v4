@@ -67,6 +67,7 @@ describe('RegisterHandler', () => {
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
   let hashService: jest.Mocked<HashService>;
+  let userService: { getUserSessionWithDate: jest.Mock; getUserSessions: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -76,14 +77,19 @@ describe('RegisterHandler', () => {
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
     hashService = mockDeep<HashService>();
+    userService = {
+      getUserSessionWithDate: jest.fn(),
+      getUserSessions: jest.fn(),
+    };
 
     handler = new RegisterHandler(
       userRepository,
       authService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      i18nService as any,
       commonSessionControlService,
       hashService,
+      userService,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      i18nService as any,
     );
   });
 
@@ -93,10 +99,11 @@ describe('RegisterHandler', () => {
         new RegisterHandler(
           userRepository,
           authService,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          i18nService as any,
           commonSessionControlService,
           hashService,
+          userService,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          i18nService as any,
         ),
     ).not.toThrow();
   });
@@ -156,6 +163,11 @@ describe('RegisterHandler', () => {
     const sessionKey = RegisterHandlerFixture.getValidJti();
     commonSessionControlService.getUserSessionKey.mockReturnValue(sessionKey);
 
+    userService.getUserSessionWithDate.mockReturnValue({
+      userId: RegisterHandlerFixture.createdUser().id,
+      sessionId: RegisterHandlerFixture.getValidJti(),
+      loginAt: new Date().toISOString(),
+    });
     const setSessionSpy = jest.spyOn(commonSessionControlService, 'setSession').mockReturnValueOnce(Promise.resolve(sessionKey));
     const saveSpy = jest.spyOn(userRepository, 'save');
 

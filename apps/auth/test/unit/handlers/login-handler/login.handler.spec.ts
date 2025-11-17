@@ -65,6 +65,7 @@ describe('LoginHandler', () => {
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
   let hashService: jest.Mocked<HashService>;
+  let userService: { getUserSessionWithDate: jest.Mock; getUserSessions: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -74,14 +75,19 @@ describe('LoginHandler', () => {
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
     hashService = mockDeep<HashService>();
+    userService = {
+      getUserSessionWithDate: jest.fn(),
+      getUserSessions: jest.fn(),
+    };
 
     handler = new LoginHandler(
       userRepository,
       authService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      i18nService as any,
       commonSessionControlService,
       hashService,
+      userService,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      i18nService as any,
     );
   });
 
@@ -90,10 +96,11 @@ describe('LoginHandler', () => {
       new LoginHandler(
         userRepository,
         authService,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        i18nService as any,
         commonSessionControlService,
         hashService,
+        userService,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        i18nService as any,
       );
     }).not.toThrow();
   });
@@ -129,6 +136,8 @@ describe('LoginHandler', () => {
   });
 
   it('returns success with tokens when credentials are valid', async () => {
+    userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
+    userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
@@ -155,6 +164,8 @@ describe('LoginHandler', () => {
   });
 
   it('should NOT update lastLoginAt if accessToken or refreshToken is empty', async () => {
+    userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
+    userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     const emptyTokens = LoginHandlerFixture.emptyTokens();
@@ -172,6 +183,8 @@ describe('LoginHandler', () => {
   });
 
   it('should NOT update lastLoginAt if refreshToken is empty', async () => {
+    userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
+    userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     const partialTokens = { accessToken: 'token', refreshToken: '' };
@@ -188,6 +201,8 @@ describe('LoginHandler', () => {
   });
 
   it('should NOT save session if jti is not a valid UUID', async () => {
+    userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
+    userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
@@ -202,6 +217,8 @@ describe('LoginHandler', () => {
   });
 
   it('should NOT update lastLoginAt if user.id is falsy (e.g. 0)', async () => {
+    userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
+    userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     const invalidUser = { ...LoginHandlerFixture.existingUser(), id: 0 };
     userRepository.findOne.mockResolvedValueOnce(invalidUser as User);
     hashService.compare.mockResolvedValueOnce(true);

@@ -12,31 +12,30 @@ import { UserSession } from '@common/redis/session/userSession.model';
 import { ApiResponse } from '@common/responses';
 
 import { LoginCommand } from '@apps/auth/src/application/commands';
-import { LoginResponseDto } from '@apps/auth/src/application/dtos';
 import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
+import { LoginResponse } from '@apps/auth/src/application/responses';
 import { AuthService } from '@apps/auth/src/application/services/auth.service';
 import { HashService } from '@apps/auth/src/application/services/hash.service';
+import { UserService } from '@apps/auth/src/application/services/user.service';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
 import { User } from '@apps/auth/src/domain/entities';
 
-import { AuthErrorMessageConstants } from '../../constants';
-
 @CommandHandler(LoginCommand)
-export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<LoginCommand, ApiResponse<LoginResponseDto>> {
+export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginResponse>> implements ICommandHandler<LoginCommand, ApiResponse<LoginResponse>> {
   constructor(
     /* istanbul ignore next */
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
-    i18nService: I18nService,
-
     private readonly commonSessionControlService: CommonSessionControlService,
-
     private readonly hashService: HashService,
+    private readonly userService: UserService,
+    i18nService: I18nService,
   ) {
     super(i18nService);
   }
 
-  async execute(command: LoginCommand): Promise<ApiResponse<LoginResponseDto>> {
+  async execute(command: LoginCommand): Promise<ApiResponse<LoginResponse>> {
     const { email, password } = command;
 
     const user = await this.userRepository.findOne({ where: { email } });
@@ -72,16 +71,12 @@ export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginRes
       return null;
     }
 
-    const userSession: UserSession = {
-      userId: user.id,
-      sessionId: jti as UUID,
-      loginAt: new Date().toISOString(),
-    };
+    const userSession = this.userService.getUserSessionWithDate(user.id, jti as UUID);
     const userSessionKey = this.commonSessionControlService.getUserSessionKey(userSession);
     return await this.commonSessionControlService.setSession<UserSession>(userSessionKey, userSession);
   }
 
-  private async addLastLoginAt(tokens: LoginResponseDto, user: User): Promise<void> {
+  private async addLastLoginAt(tokens: LoginResponse, user: User): Promise<void> {
     if (!user?.id || !tokens.accessToken?.length || !tokens.refreshToken.length) {
       return;
     }

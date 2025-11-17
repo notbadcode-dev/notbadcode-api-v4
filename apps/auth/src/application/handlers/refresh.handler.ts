@@ -10,26 +10,27 @@ import { UserSession } from '@common/redis/session/userSession.model';
 import { ApiResponse } from '@common/responses';
 
 import { RefreshCommand } from '@apps/auth/src/application/commands';
-import { LoginResponseDto } from '@apps/auth/src/application/dtos';
-import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
-import { AuthService } from '@apps/auth/src/application/services/auth.service';
+import { TokenValidationHelper } from '@apps/auth/src/application/helpers';
+import { LoginResponse } from '@apps/auth/src/application/responses';
+import { AuthService, UserService } from '@apps/auth/src/application/services';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constants';
 
 @CommandHandler(RefreshCommand)
-export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<RefreshCommand, ApiResponse<LoginResponseDto>> {
+export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<LoginResponse>> implements ICommandHandler<RefreshCommand, ApiResponse<LoginResponse>> {
   /* istanbul ignore next */
   constructor(
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,
-    i18nService: I18nService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly logger: Logger,
+    private readonly userService: UserService,
+    i18nService: I18nService,
   ) {
     super(i18nService);
   }
 
-  async execute(command: RefreshCommand): Promise<ApiResponse<LoginResponseDto>> {
+  async execute(command: RefreshCommand): Promise<ApiResponse<LoginResponse>> {
     const { refreshToken: accessToken } = command;
 
     const tokenPresenceResult = await TokenValidationHelper.validateTokenPresence(accessToken);
@@ -61,10 +62,7 @@ export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<Logi
 
     const { sub, jti, email } = payload;
 
-    const userSession: UserSession = {
-      userId: sub,
-      sessionId: jti,
-    };
+    const userSession = this.userService.getUserSessions(sub, jti);
     const sessionKey = this.commonSessionControlService.getUserSessionKey(userSession);
     const activeSession = await this.commonSessionControlService.getSession(sessionKey);
     if (!activeSession) {

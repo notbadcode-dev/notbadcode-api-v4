@@ -8,11 +8,11 @@ import { EJwtType, JwtPayloadPlain } from '@common/auth';
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
-import { UserSession } from '@common/redis/session/userSession.model';
 import { ApiResponse } from '@common/responses';
 
 import { LogoutCommand } from '@apps/auth/src/application/commands';
-import { TokenValidationHelper } from '@apps/auth/src/application/helpers/token-validation.helper';
+import { TokenValidationHelper } from '@apps/auth/src/application/helpers';
+import { UserService } from '@apps/auth/src/application/services';
 import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
 
@@ -22,9 +22,10 @@ export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolea
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-    i18nService: I18nService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly logger: Logger,
+    private readonly userService: UserService,
+    i18nService: I18nService,
   ) {
     super(i18nService);
   }
@@ -66,10 +67,7 @@ export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolea
       return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
     }
 
-    const userSession: UserSession = {
-      userId: sub,
-      sessionId: jti,
-    };
+    const userSession = this.userService.getUserSessions(user.id, jti);
 
     const key = this.commonSessionControlService.getUserSessionKey(userSession);
     const activeSession = await this.commonSessionControlService.getSession(key);

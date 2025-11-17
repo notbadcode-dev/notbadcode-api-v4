@@ -10,13 +10,8 @@ import {
   RefreshCommand,
   RegisterCommand,
 } from '@apps/auth/src/application/commands';
-import {
-  LoginRequestDto,
-  LoginResponseDto,
-  LogoutRequestDto,
-  RefreshRequestDto,
-  RegisterRequestDto,
-} from '@apps/auth/src/application/dtos';
+import { LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest } from '@apps/auth/src/application/requests';
+import { LoginResponse } from '@apps/auth/src/application/responses';
 
 @Controller('auth')
 export class AuthController {
@@ -24,25 +19,25 @@ export class AuthController {
 
   @Post('register')
   @ApiOkResponse()
-  async register(@Body() dto: RegisterRequestDto): Promise<ApiResponse<LoginResponseDto>> {
+  async register(@Body() dto: RegisterRequest): Promise<ApiResponse<LoginResponse>> {
     return this.commandBus.execute(new RegisterCommand(dto.email, dto.password));
   }
 
   @Post('login')
   @ApiOkResponse()
-  async login(@Body() dto: LoginRequestDto): Promise<ApiResponse<LoginResponseDto>> {
+  async login(@Body() dto: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     return this.commandBus.execute(new LoginCommand(dto.email, dto.password));
   }
 
   @Post('logout')
   @ApiOkResponse()
-  async logout(@Body() dto: LogoutRequestDto): Promise<ApiResponse<null>> {
+  async logout(@Body() dto: LogoutRequest): Promise<ApiResponse<null>> {
     return this.commandBus.execute(new LogoutCommand(dto.accessToken));
   }
 
   @Post('refresh')
   @ApiOkResponse()
-  async refresh(@Body() dto: RefreshRequestDto): Promise<ApiResponse<LoginResponseDto>> {
+  async refresh(@Body() dto: RefreshRequest): Promise<ApiResponse<LoginResponse>> {
     return this.commandBus.execute(new RefreshCommand(dto.refreshToken));
   }
 }

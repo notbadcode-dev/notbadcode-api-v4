@@ -15,8 +15,7 @@ export class LogoutHandlerFixture extends BaseHandlerFixture {
 
   static validJwtPayload(): JwtPayloadPlain<number> {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      sub: 2,
+      sub: this.existingUser().id,
       jti: this.getValidJti() as UUID,
       email: this.testEmail(),
       tokenType: EJwtType.ACCESS,
@@ -33,8 +32,7 @@ export class LogoutHandlerFixture extends BaseHandlerFixture {
 
   static userSession(): UserSession {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      userId: 2,
+      userId: this.existingUser().id,
       sessionId: this.getValidJti() as UUID,
     };
   }

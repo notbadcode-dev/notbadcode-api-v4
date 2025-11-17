@@ -1,9 +1,10 @@
 import { type UUID } from 'crypto';
 
 import { EJwtType } from '@common/auth';
+import { type UserSession } from '@common/redis/session/userSession.model';
 import { type ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
-import { LoginResponseDto } from '@apps/auth/src/application/dtos';
+import { LoginResponse } from '@apps/auth/src/application/responses';
 import { type JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
@@ -21,16 +22,16 @@ export class BaseHandlerFixture {
     return this.getValidJti();
   }
 
-  static validTokens(): LoginResponseDto {
-    return new LoginResponseDto('a', 'r');
+  static validTokens(): LoginResponse {
+    return new LoginResponse('a', 'r');
   }
 
   static invalidToken(): string {
     return 'invalid.jwt.token';
   }
 
-  static emptyTokens(): LoginResponseDto {
-    return new LoginResponseDto('', '');
+  static emptyTokens(): LoginResponse {
+    return new LoginResponse('', '');
   }
 
   static getValidJti(): string {
@@ -65,6 +66,23 @@ export class BaseHandlerFixture {
     u.id = 3;
 
     return u;
+  }
+
+  static getUserSession(): UserSession {
+    return {
+      userId: this.existingUser().id,
+      sessionId: this.getValidJti(),
+      loginAt: new Date().toISOString(),
+    } as UserSession;
+  }
+
+  static getUserSessionWithDate(): UserSession {
+    const userSession = this.getUserSession();
+
+    return {
+      ...userSession,
+      loginAt: new Date().toISOString(),
+    } as UserSession;
   }
 
   static mockJwtPayload(): JwtPayload {

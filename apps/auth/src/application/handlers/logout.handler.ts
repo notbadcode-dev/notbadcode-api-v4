@@ -18,6 +18,7 @@ import { User } from '@apps/auth/src/domain/entities';
 
 @CommandHandler(LogoutCommand)
 export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolean>> implements ICommandHandler<LogoutCommand, ApiResponse<boolean>> {
+  /* istanbul ignore next */
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="8" failures="1" errors="0" time="64.518">
-  <testsuite name="apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts" errors="0" failures="1" skipped="7" timestamp="2025-11-16T02:57:40" time="64.23" tests="8">
+<testsuites name="jest tests" tests="12" failures="0" errors="0" time="1.168">
+  <testsuite name="apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts" errors="0" failures="0" skipped="11" timestamp="2025-11-17T00:34:21" time="0.993" tests="12">
     <testcase classname="RegisterHandler - can be constructed" name="can be constructed" time="0">
       <skipped/>
     </testcase>
@@ -10,14 +10,8 @@
     <testcase classname="RegisterHandler - returns failure when creating payload fails" name="returns failure when creating payload fails" time="0">
       <skipped/>
     </testcase>
-    <testcase classname="RegisterHandler - registers user, saves session and returns success" name="registers user, saves session and returns success" time="63.202">
-      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: &quot;00000000-0000-0000-0000-000000000000&quot;
-Received: &quot;00000000-0000-0000-0000-000000000000&quot;, {&quot;loginAt&quot;: &quot;2025-11-16T02:57:57.333Z&quot;, &quot;sessionId&quot;: &quot;123e4567-e89b-12d3-a456-426614174000&quot;, &quot;userId&quot;: 3}
-
-Number of calls: 1
-    at Object.&lt;anonymous&gt; (/Users/bgr/Proyectos/NestJS/notbadcode-api-v4/apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts:169:27)</failure>
+    <testcase classname="RegisterHandler - registers user, saves session and returns success" name="registers user, saves session and returns success" time="0">
+      <skipped/>
     </testcase>
     <testcase classname="RegisterHandler - should NOT save session if jti is not a valid UUID" name="should NOT save session if jti is not a valid UUID" time="0">
       <skipped/>
@@ -26,6 +20,17 @@ Number of calls: 1
       <skipped/>
     </testcase>
     <testcase classname="RegisterHandler - should NOT update lastLoginAt if user.id is falsy (e.g. 0)" name="should NOT update lastLoginAt if user.id is falsy (e.g. 0)" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="RegisterHandler - forces BaseHandler failure branch by mocking createResponseFailure to throw" name="forces BaseHandler failure branch by mocking createResponseFailure to throw" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="RegisterHandler - forces BaseHandler success branch by mocking createSuccessResponse to throw" name="forces BaseHandler success branch by mocking createSuccessResponse to throw" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="RegisterHandler - forces internal JwtPayload.create branches by mocking multiple return types" name="forces internal JwtPayload.create branches by mocking multiple return types" time="0.003">
+    </testcase>
+    <testcase classname="RegisterHandler - forces both branches of TokenValidationHelper.validateUUID" name="forces both branches of TokenValidationHelper.validateUUID" time="0">
       <skipped/>
     </testcase>
     <testcase classname="RegisterHandler - should return null if jti is empty" name="should return null if jti is empty" time="0">

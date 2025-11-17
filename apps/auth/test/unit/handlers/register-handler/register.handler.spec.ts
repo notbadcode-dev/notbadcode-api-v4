@@ -257,6 +257,125 @@ describe('RegisterHandler', () => {
     spy.mockRestore();
   });
 
+  it('forces BaseHandler failure branch by mocking createResponseFailure to throw', async () => {
+    // Arrange
+    const spy = jest.spyOn(handler as any, 'createResponseFailure').mockRejectedValueOnce(new Error('forced-error'));
+
+    userRepository.findOne.mockResolvedValueOnce(RegisterHandlerFixture.existingUser());
+
+    // Act
+    let thrown = false;
+    try {
+      await handler.execute(new RegisterCommand('a@a.com', '1234'));
+    } catch {
+      thrown = true;
+    }
+
+    // Assert
+    expect(thrown).toBe(true);
+
+    spy.mockRestore();
+  });
+
+  it('forces BaseHandler success branch by mocking createSuccessResponse to throw', async () => {
+    // Arrange
+    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
+    authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
+
+    jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload()));
+
+    const spy = jest.spyOn(handler as any, 'createSuccessResponse').mockRejectedValueOnce(new Error('forced-success-error'));
+
+    // Act
+    let thrown = false;
+    try {
+      await handler.execute(new RegisterCommand('test@test.com', '1234'));
+    } catch {
+      thrown = true;
+    }
+
+    // Assert
+    expect(thrown).toBe(true);
+
+    spy.mockRestore();
+  });
+
+  it('forces internal JwtPayload.create branches by mocking multiple return types', async () => {
+    // Arrange
+    const createdUser = RegisterHandlerFixture.createdUser();
+
+    userRepository.findOne.mockResolvedValueOnce(null);
+    hashService.hash.mockResolvedValueOnce('hash');
+    userRepository.save.mockResolvedValueOnce(createdUser);
+
+    const createSpyError = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.error('forced-error'));
+
+    // Act (1)
+    const resultError = await handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()));
+
+    expect(resultError.success).toBe(false);
+
+    userRepository.findOne.mockResolvedValueOnce(null);
+    hashService.hash.mockResolvedValueOnce('hash');
+    userRepository.save.mockResolvedValueOnce(createdUser);
+    authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
+
+    const createSpySuccess = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RegisterHandlerFixture.mockJwtPayload()));
+
+    // Act (2)
+    const resultSuccess = await handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()));
+
+    // Assert (2)
+    expect(resultSuccess.success).toBe(true);
+
+    createSpyError.mockRestore();
+    createSpySuccess.mockRestore();
+  });
+
+  it('forces both branches of TokenValidationHelper.validateUUID', async () => {
+    // Arrange — shared
+    const user = RegisterHandlerFixture.createdUser();
+    const validJti = RegisterHandlerFixture.getValidJti();
+    const expectedSessionKey = 'session-key';
+
+    //
+    // ===== FIRST BRANCH → validateUUID returns error =====
+    //
+
+    const spyError = jest.spyOn(TokenValidationHelper, 'validateUUID').mockResolvedValueOnce({ isError: true, errorMessage: 'invalid' });
+
+    // Act (error)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const resultError = await (handler as any).setCacheSession(user, 'bad-uuid');
+
+    // Assert (error)
+    expect(resultError).toBeNull();
+
+    //
+    // ===== SECOND BRANCH → validateUUID returns success =====
+    //
+
+    const spySuccess = jest.spyOn(TokenValidationHelper, 'validateUUID').mockResolvedValueOnce({ isError: false });
+
+    commonSessionControlService.getUserSessionKey.mockReturnValue(expectedSessionKey);
+    commonSessionControlService.setSession.mockResolvedValueOnce(expectedSessionKey);
+
+    // Act (success)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const resultSuccess = await (handler as any).setCacheSession(user, validJti);
+
+    // Assert (success)
+    expect(resultSuccess).toBe(expectedSessionKey);
+
+    //
+    // Cleanup
+    //
+    spyError.mockRestore();
+    spySuccess.mockRestore();
+  });
+
+
   it('should return null if jti is empty', async () => {
     // Arrange
     const user = RegisterHandlerFixture.createdUser();

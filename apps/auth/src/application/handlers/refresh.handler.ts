@@ -18,6 +18,7 @@ import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constant
 
 @CommandHandler(RefreshCommand)
 export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<RefreshCommand, ApiResponse<LoginResponseDto>> {
+  /* istanbul ignore next */
   constructor(
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,

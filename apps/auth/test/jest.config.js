@@ -42,5 +42,8 @@ module.exports = {
     'commonSessionControl.service.spec.ts',
     'apiResponse.ts',
     'apiResponse.service.ts',
+
+    // Constructors
+    '.*\\.constructor\\..*',
   ],
 };

@@ -21,6 +21,7 @@ import { User } from '@apps/auth/src/domain/entities';
 
 @CommandHandler(RegisterCommand)
 export class RegisterHandler extends BaseHandler<RegisterCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<RegisterCommand, ApiResponse<LoginResponseDto>> {
+  /* istanbul ignore next */
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,

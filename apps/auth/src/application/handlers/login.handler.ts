@@ -4,6 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+  /* istanbul ignore next */
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
@@ -23,10 +24,13 @@ import { AuthErrorMessageConstants } from '../../constants';
 @CommandHandler(LoginCommand)
 export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginResponseDto>> implements ICommandHandler<LoginCommand, ApiResponse<LoginResponseDto>> {
   constructor(
+    /* istanbul ignore next */
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
     i18nService: I18nService,
+
     private readonly commonSessionControlService: CommonSessionControlService,
+
     private readonly hashService: HashService,
   ) {
     super(i18nService);

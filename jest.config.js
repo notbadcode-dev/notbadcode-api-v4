@@ -19,5 +19,5 @@ module.exports = {
       },
     ],
   ],
-  projects: ['<rootDir>/apps/auth/test/jest.config.js', '<rootDir>/libs/common/test/jest.config.js'],
+  projects: ['<rootDir>/apps/auth/test/jest.config.js', '<rootDir>/apps/links/test/jest.config.js', '<rootDir>/libs/common/test/jest.config.js'],
 };

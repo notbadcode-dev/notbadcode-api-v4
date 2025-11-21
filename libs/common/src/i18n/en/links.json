@@ -1,0 +1,6 @@
+{
+  "error-message": {
+    "invalidLinkId": "Invalid link ID.",
+    "linkNotFound": "Link not found."
+  }
+}

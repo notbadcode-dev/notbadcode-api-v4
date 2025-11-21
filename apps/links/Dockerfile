@@ -22,5 +22,5 @@ RUN apk add --no-cache zsh
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
-EXPOSE 60300
+EXPOSE 60201
 CMD ["node", "dist/apps/links/src/main.js"]

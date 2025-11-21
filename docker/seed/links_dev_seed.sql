@@ -1,0 +1,311 @@
+-- Crear la base de datos si no existe
+CREATE DATABASE IF NOT EXISTS `links_db` DEFAULT CHARACTER
+SET
+    utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+
+USE `links_db`;
+
+-- Crear tabla 'links' con buenas prácticas
+CREATE TABLE
+    IF NOT EXISTS `links` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `userId` INT UNSIGNED NOT NULL,
+        `url` VARCHAR(2000) NOT NULL,
+        `normalizedUrl` VARCHAR(2000) NULL,
+        `title` VARCHAR(250) NULL,
+        `description` VARCHAR(500) NULL,
+        `faviconUrl` VARCHAR(1000) NULL,
+        `imagePreviewUrl` VARCHAR(1000) NULL,
+        `isFavorite` TINYINT(1) NOT NULL DEFAULT 0,
+        `tagList` JSON NULL,
+        `isActive` TINYINT(1) NOT NULL DEFAULT 1,
+        `lastStatusCode` INT NOT NULL DEFAULT 0,
+        `lastCheckedAt` DATETIME(6) NULL,
+        `lastVisitedAt` DATETIME(6) NULL,
+        `createdAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        `updatedAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+        `deletedAt` DATETIME (6) DEFAULT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `UX_links_user_normalizedUrl` (`userId`, `normalizedUrl`),
+        KEY `IX_links_userId` (`userId`),
+        KEY `IX_links_isFavorite` (`isFavorite`),
+        KEY `IX_links_isActive` (`isActive`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+
+USE `links_db`;
+
+-- Insertar links de prueba solo si no existen (idempotente)
+INSERT IGNORE INTO `links` (
+    `userId`,
+    `url`,
+    `normalizedUrl`,
+    `title`,
+    `description`,
+    `faviconUrl`,
+    `imagePreviewUrl`,
+    `isFavorite`,
+    `tagList`,
+    `isActive`,
+    `createdAt`
+)
+VALUES
+    (
+        1,
+        'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
+        'https://developer.mozilla.org/en-us/docs/web/javascript',
+        'MDN JavaScript docs',
+        'Documentación completa de JavaScript.',
+        NULL,
+        NULL,
+        1,
+        '["javascript","docs"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://news.ycombinator.com/',
+        'https://news.ycombinator.com',
+        'Hacker News',
+        'Noticias de tecnología y startups.',
+        NULL,
+        NULL,
+        0,
+        '["tech","news"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://github.com/trending',
+        'https://github.com/trending',
+        'GitHub Trending',
+        'Repositorios más populares del día.',
+        NULL,
+        NULL,
+        0,
+        '["github","dev"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://example.com/?utm_source=twitter',
+        'https://example.com',
+        'Example',
+        'Sitio de ejemplo.',
+        NULL,
+        NULL,
+        0,
+        '["test"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'https://www.youtube.com/watch?v=dQw4w9wgxcq',
+        'YouTube video',
+        'Vídeo de ejemplo.',
+        NULL,
+        NULL,
+        0,
+        '["video"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://stackoverflow.com/questions/tagged/nestjs',
+        'https://stackoverflow.com/questions/tagged/nestjs',
+        'NestJS preguntas',
+        'Preguntas recientes de NestJS.',
+        NULL,
+        NULL,
+        0,
+        '["nestjs","dev"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://nestjs.com/',
+        'https://nestjs.com',
+        'NestJS',
+        'Framework progresivo para Node.',
+        NULL,
+        NULL,
+        1,
+        '["nestjs","framework"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://react.dev/',
+        'https://react.dev',
+        'React',
+        'Nueva documentación oficial de React.',
+        NULL,
+        NULL,
+        0,
+        '["react","frontend"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://angular.dev/',
+        'https://angular.dev',
+        'Angular',
+        'Documentación oficial Angular.',
+        NULL,
+        NULL,
+        0,
+        '["angular","frontend"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.prisma.io/docs',
+        'https://www.prisma.io/docs',
+        'Prisma docs',
+        'Documentación oficial Prisma ORM.',
+        NULL,
+        NULL,
+        0,
+        '["orm","prisma"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.mysqltutorial.org/',
+        'https://www.mysqltutorial.org',
+        'MySQL Tutorial',
+        'Tutorial completo MySQL.',
+        NULL,
+        NULL,
+        0,
+        '["mysql","db"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.typescriptlang.org/docs/',
+        'https://www.typescriptlang.org/docs',
+        'TypeScript Docs',
+        'Documentación TS.',
+        NULL,
+        NULL,
+        0,
+        '["typescript","dev"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://medium.com/tag/programming',
+        'https://medium.com/tag/programming',
+        'Medium Programming',
+        'Artículos sobre programación.',
+        NULL,
+        NULL,
+        0,
+        '["programming","articles"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://calibre-ebook.com/',
+        'https://calibre-ebook.com',
+        'Calibre',
+        'Gestión de libros electrónicos.',
+        NULL,
+        NULL,
+        0,
+        '["ebooks","tools"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.terraform.io/docs',
+        'https://www.terraform.io/docs',
+        'Terraform Docs',
+        'Documentación oficial Terraform.',
+        NULL,
+        NULL,
+        0,
+        '["devops","infra"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://hub.docker.com/',
+        'https://hub.docker.com',
+        'Docker Hub',
+        'Contenedores y repositorios Docker.',
+        NULL,
+        NULL,
+        0,
+        '["docker","devops"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.postman.com/',
+        'https://www.postman.com',
+        'Postman',
+        'API Development Platform.',
+        NULL,
+        NULL,
+        0,
+        '["api","tools"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://www.fontshare.com/',
+        'https://www.fontshare.com',
+        'Fontshare',
+        'Fuentes gratuitas para diseño.',
+        NULL,
+        NULL,
+        0,
+        '["design","fonts"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://openai.com/',
+        'https://openai.com',
+        'OpenAI',
+        'Inteligencia artificial y modelos.',
+        NULL,
+        NULL,
+        1,
+        '["ai","tech"]',
+        1,
+        NOW(6)
+    ),
+    (
+        1,
+        'https://vercel.com/docs',
+        'https://vercel.com/docs',
+        'Vercel Docs',
+        'Documentación de despliegue serverless.',
+        NULL,
+        NULL,
+        0,
+        '["vercel","hosting"]',
+        1,
+        NOW(6)
+    );

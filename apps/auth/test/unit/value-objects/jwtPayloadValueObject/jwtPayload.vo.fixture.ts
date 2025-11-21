@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type UUID } from 'crypto';
 
-import {
-  EApiResponseMessageType,
-  type ApiFailureResponse,
-  type ApiResponse,
-  type ApiResponseService,
-  type ApiSuccessResponse,
-} from '@common/responses';
-
-import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
-import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
 import { EJwtType, type JwtPayloadPlain } from '@common/auth';
+import { EApiResponseMessageType, type ApiFailureResponse, type ApiResponseService, type ApiSuccessResponse } from '@common/responses';
+
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants/auth-error-message.constants';
 
 export class JwtPayloadFixture {
   static validUserId(): number {
@@ -67,13 +60,6 @@ export class JwtPayloadFixture {
         code,
       }),
     };
-  }
-
-  static validPayloadInstance(
-    userId: number = this.validUserId(),
-    email: string = this.validEmail(),
-  ): ApiResponse<JwtPayload> {
-    return JwtPayload.create(userId, email, this.apiResponse());
   }
 
   static errors(): { invalidUserId: string; invalidEmail: string } {

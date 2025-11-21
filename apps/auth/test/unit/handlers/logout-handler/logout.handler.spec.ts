@@ -5,35 +5,13 @@ import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
-import { apiResponseFailure, apiResponseSuccess, type ApiResponseMessage } from '@common/responses';
+import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
 
 import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
 import { type User } from '@apps/auth/src/domain/entities';
 
 import { LogoutHandlerFixture } from './logout.handler.fixture';
-
-jest.mock('@common/responses', () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actual = jest.requireActual<typeof import('@common/responses')>('@common/responses');
-  return {
-    ...actual,
-    apiResponseSuccess: jest.fn((_i18n, data) =>
-      Promise.resolve({
-        success: true,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data,
-        messageList: [],
-      }),
-    ),
-    apiResponseFailure: jest.fn((_i18n, messages) =>
-      Promise.resolve({
-        success: false,
-        messageList: messages as ApiResponseMessage[],
-      }),
-    ),
-  };
-});
 
 describe('LogoutHandler', () => {
   let jwtService: jest.Mocked<JwtService>;

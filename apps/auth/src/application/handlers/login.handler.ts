@@ -18,7 +18,7 @@ import { AuthService } from '@apps/auth/src/application/services/auth.service';
 import { HashService } from '@apps/auth/src/application/services/hash.service';
 import { UserService } from '@apps/auth/src/application/services/user.service';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
-import { AuthErrorMessageConstants } from '@apps/auth/src/constants/authErrorMessage.constants';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants/auth-error-message.constants';
 import { User } from '@apps/auth/src/domain/entities';
 
 @CommandHandler(LoginCommand)

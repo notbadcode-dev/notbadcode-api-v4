@@ -5,6 +5,7 @@ module.exports = {
   testEnvironment: 'node',
   rootDir: '../../..',
   testMatch: ['<rootDir>/apps/links/test/unit/**/*.spec.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/utils/mocks/jest.mock.responses.ts'],
   transform: {
     '^.+\\.ts$': [
       'ts-jest',

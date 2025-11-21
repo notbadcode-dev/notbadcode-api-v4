@@ -11,11 +11,11 @@ CREATE TABLE
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
         `email` VARCHAR(255) NOT NULL,
         `passwordHash` VARCHAR(255) NOT NULL,
+        `lastLoginAt` DATETIME (6) DEFAULT NULL,
+        `lastLogoutAt` DATETIME (6) DEFAULT NULL,
         `createdAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         `updatedAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         `deletedAt` DATETIME (6) DEFAULT NULL,
-        `lastLoginAt` DATETIME (6) DEFAULT NULL,
-        `lastLogoutAt` DATETIME (6) DEFAULT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `UX_users_email` (`email`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;

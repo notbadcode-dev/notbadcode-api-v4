@@ -1,39 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="12" failures="0" errors="0" time="1.168">
-  <testsuite name="apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts" errors="0" failures="0" skipped="11" timestamp="2025-11-17T00:34:21" time="0.993" tests="12">
-    <testcase classname="RegisterHandler - can be constructed" name="can be constructed" time="0">
+<testsuites name="jest tests" tests="3" failures="1" errors="0" time="41.185">
+  <testsuite name="apps/links/test/unit/handlers/get-link-by-id-handler/get-link-by-id.handler.spec.ts" errors="0" failures="1" skipped="2" timestamp="2025-11-21T22:53:24" time="40.844" tests="3">
+    <testcase classname="GetLinkByIdHandler - returns failure when id is invalid" name="returns failure when id is invalid" time="39.534">
+      <failure>Error: expect(received).toBeNull()
+
+Received: undefined
+    at Object.&lt;anonymous&gt; (/Users/bgr/Proyectos/NestJS/notbadcode-api-v4/apps/links/test/unit/handlers/get-link-by-id-handler/get-link-by-id.handler.spec.ts:36:25)</failure>
+    </testcase>
+    <testcase classname="GetLinkByIdHandler - returns success when link is found" name="returns success when link is found" time="0">
       <skipped/>
     </testcase>
-    <testcase classname="RegisterHandler - returns failure when the email already exists" name="returns failure when the email already exists" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - returns failure when creating payload fails" name="returns failure when creating payload fails" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - registers user, saves session and returns success" name="registers user, saves session and returns success" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - should NOT save session if jti is not a valid UUID" name="should NOT save session if jti is not a valid UUID" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - should return success but not update lastLoginAt if accessToken or refreshToken is empty" name="should return success but not update lastLoginAt if accessToken or refreshToken is empty" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - should NOT update lastLoginAt if user.id is falsy (e.g. 0)" name="should NOT update lastLoginAt if user.id is falsy (e.g. 0)" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - forces BaseHandler failure branch by mocking createResponseFailure to throw" name="forces BaseHandler failure branch by mocking createResponseFailure to throw" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - forces BaseHandler success branch by mocking createSuccessResponse to throw" name="forces BaseHandler success branch by mocking createSuccessResponse to throw" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - forces internal JwtPayload.create branches by mocking multiple return types" name="forces internal JwtPayload.create branches by mocking multiple return types" time="0.003">
-    </testcase>
-    <testcase classname="RegisterHandler - forces both branches of TokenValidationHelper.validateUUID" name="forces both branches of TokenValidationHelper.validateUUID" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RegisterHandler - should return null if jti is empty" name="should return null if jti is empty" time="0">
+    <testcase classname="GetLinkByIdHandler - returns failure when link is not found" name="returns failure when link is not found" time="0">
       <skipped/>
     </testcase>
   </testsuite>

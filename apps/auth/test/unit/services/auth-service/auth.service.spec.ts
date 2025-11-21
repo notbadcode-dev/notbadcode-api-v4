@@ -20,6 +20,7 @@ describe('AuthService', () => {
   });
 
   it('can be constructed', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     expect(() => new AuthService(jwtService, configService as any)).not.toThrow();
   });
 

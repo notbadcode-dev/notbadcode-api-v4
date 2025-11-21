@@ -29,7 +29,6 @@
     "docker:up:prod": "docker compose --profile prod up -d --build",
     "format": "prettier --write \"{apps,libs}/**/*.{ts,tsx,js,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"{apps,libs}/**/*.{ts,tsx,js,json,md,yml,yaml}\"",
-    "health": "curl -fsS http://localhost:60200/healthz || (echo 'API KO' && exit 1)",
     "lint": "eslint \"{apps,libs}/**/*.ts\" --cache --cache-location .eslintcache",
     "lint:fix": "eslint \"{apps,libs}/**/*.ts\" --fix --cache --cache-location .eslintcache",
     "node": "nvm use 22.14",

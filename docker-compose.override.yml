@@ -10,7 +10,9 @@ services:
     image: mariadb:11
     container_name: mariadb-seed
     command: >
-      sh -c "sleep 5 && mariadb --host=mariadb-dev --port=3306 -u${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < /seed/auth_dev_seed.sql"
+      sh -c "sleep 5 && \
+        mariadb --host=mariadb-dev --port=3306 -u${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < /seed/auth_dev_seed.sql && \
+        mariadb --host=mariadb-dev --port=3306 -u${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < /seed/links_dev_seed.sql"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -54,7 +56,6 @@ services:
         condition: service_healthy
       redis-session:
         condition: service_healthy
-
   links:
     profiles: ["debug"]
     command: sh -lc "npm ci && npm run start:links:debug"
@@ -80,3 +81,5 @@ services:
         condition: service_healthy
       redis-session:
         condition: service_healthy
+      auth:
+        condition: service_started

@@ -36,6 +36,12 @@
   "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.preferences.quoteStyle": "single",
 
+  // ---- SQL (desactivar formato automático) ----
+  "[sql]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
+  },
+
   // ---- Calidad de vida ----
   "files.eol": "\n",
   "search.exclude": { "**/dist": true, "**/node_modules": true, "**/coverage": false },

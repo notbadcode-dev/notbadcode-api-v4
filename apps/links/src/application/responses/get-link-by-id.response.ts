@@ -57,7 +57,9 @@ export class GetLinkByIdResponse {
   @Expose()
   lastVisitedAt?: Date | null;
 
-  constructor(partial: Partial<GetLinkByIdResponse>) {
-    Object.assign(this, partial);
+  constructor(partial?: Partial<GetLinkByIdResponse>) {
+    if (partial) {
+      Object.assign(this, partial);
+    }
   }
 }

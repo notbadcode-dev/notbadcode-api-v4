@@ -1,17 +1,343 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="3" failures="1" errors="0" time="41.185">
-  <testsuite name="apps/links/test/unit/handlers/get-link-by-id-handler/get-link-by-id.handler.spec.ts" errors="0" failures="1" skipped="2" timestamp="2025-11-21T22:53:24" time="40.844" tests="3">
-    <testcase classname="GetLinkByIdHandler - returns failure when id is invalid" name="returns failure when id is invalid" time="39.534">
-      <failure>Error: expect(received).toBeNull()
-
-Received: undefined
-    at Object.&lt;anonymous&gt; (/Users/bgr/Proyectos/NestJS/notbadcode-api-v4/apps/links/test/unit/handlers/get-link-by-id-handler/get-link-by-id.handler.spec.ts:36:25)</failure>
+<testsuites name="jest tests" tests="146" failures="0" errors="0" time="2.949">
+  <testsuite name="apps/auth/test/unit/services/hash-service/hash.service.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="0.995" tests="3">
+    <testcase classname="HashService › hash - should hash the password with the configured salt rounds" name="should hash the password with the configured salt rounds" time="0.006">
     </testcase>
-    <testcase classname="GetLinkByIdHandler - returns success when link is found" name="returns success when link is found" time="0">
-      <skipped/>
+    <testcase classname="HashService › compare - should return true if the passwords match" name="should return true if the passwords match" time="0">
     </testcase>
-    <testcase classname="GetLinkByIdHandler - returns failure when link is not found" name="returns failure when link is not found" time="0">
-      <skipped/>
+    <testcase classname="HashService › compare - should return false if the passwords do not match" name="should return false if the passwords do not match" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/services/user-service/user.service.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="1.034" tests="2">
+    <testcase classname="UserService › getUserSessions - should build the user session payload with the provided data" name="should build the user session payload with the provided data" time="0.005">
+    </testcase>
+    <testcase classname="UserService › getUserSessionWithDate - should include the login date in ISO format" name="should include the login date in ISO format" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/services/auth-service/auth.service.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="1.404" tests="3">
+    <testcase classname="AuthService - can be constructed" name="can be constructed" time="0.003">
+    </testcase>
+    <testcase classname="AuthService - should generate access and refresh tokens using JwtService" name="should generate access and refresh tokens using JwtService" time="0.003">
+    </testcase>
+    <testcase classname="AuthService - should propagate errors from JwtService" name="should propagate errors from JwtService" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Services/commonSessionControlService/commonSessionControl.service.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="1.493" tests="11">
+    <testcase classname="CommonSessionControlService - should be defined" name="should be defined" time="0.009">
+    </testcase>
+    <testcase classname="CommonSessionControlService - can be constructed manually" name="can be constructed manually" time="0.001">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should generate a session key" name="should generate a session key" time="0.001">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should set a session" name="should set a session" time="0.002">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should return null and log error if setSession throws" name="should return null and log error if setSession throws" time="0.003">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should get a session" name="should get a session" time="0.001">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should return null when session does not exist" name="should return null when session does not exist" time="0.001">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should return null and log if JSON parse fails" name="should return null and log if JSON parse fails" time="0.005">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should delete a session when it exists" name="should delete a session when it exists" time="0.001">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should return false when session does not exist" name="should return false when session does not exist" time="0">
+    </testcase>
+    <testcase classname="CommonSessionControlService - should return null and log when deleteSession throws" name="should return null and log when deleteSession throws" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Helpers/paginateHelper/paginate.helper.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:33" time="0.51" tests="4">
+    <testcase classname="PaginateHelper › buildPaginatedResponse - should compute page, take, and skip values when skip is not provided" name="should compute page, take, and skip values when skip is not provided" time="0">
+    </testcase>
+    <testcase classname="PaginateHelper › buildPaginatedResponse - should respect explicit skip value in the request" name="should respect explicit skip value in the request" time="0">
+    </testcase>
+    <testcase classname="PaginateHelper › calculateRepositoryPagination - should return pagination options honoring provided sort fields" name="should return pagination options honoring provided sort fields" time="0">
+    </testcase>
+    <testcase classname="PaginateHelper › calculateRepositoryPagination - should fall back to defaults when sortBy is missing and invalid values are provided" name="should fall back to defaults when sortBy is missing and invalid values are provided" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Services/i18nService/i18n.service.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.584" tests="6">
+    <testcase classname="I18nService - can be constructed" name="can be constructed" time="0">
+    </testcase>
+    <testcase classname="I18nService - returns empty string when key is empty" name="returns empty string when key is empty" time="0.001">
+    </testcase>
+    <testcase classname="I18nService - calls i18n.t(key) when options is null" name="calls i18n.t(key) when options is null" time="0">
+    </testcase>
+    <testcase classname="I18nService - calls i18n.t(key) when options is undefined" name="calls i18n.t(key) when options is undefined" time="0">
+    </testcase>
+    <testcase classname="I18nService - calls i18n.t(key, options) when options is provided" name="calls i18n.t(key, options) when options is provided" time="0">
+    </testcase>
+    <testcase classname="I18nService - returns empty string when i18n.t throws" name="returns empty string when i18n.t throws" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Responses/paginatedResponse/paginatedResponse.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.23" tests="2">
+    <testcase classname="PaginatedResponse - should hold the provided pagination fields" name="should hold the provided pagination fields" time="0.002">
+    </testcase>
+    <testcase classname="PaginatedResponse - should build a paginated response class for a model" name="should build a paginated response class for a model" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Decorators/cached/cacheAccesor.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.136" tests="6">
+    <testcase classname="CacheAccessor (unit) - sets cache on module init if not already initialized" name="sets cache on module init if not already initialized" time="0">
+    </testcase>
+    <testcase classname="CacheAccessor (unit) - does not overwrite cache if already initialized" name="does not overwrite cache if already initialized" time="0">
+    </testcase>
+    <testcase classname="CacheAccessor (unit) - static getter cache returns null if not initialized" name="static getter cache returns null if not initialized" time="0">
+    </testcase>
+    <testcase classname="CacheAccessor (unit) - isInitialized should return true if cache is set" name="isInitialized should return true if cache is set" time="0">
+    </testcase>
+    <testcase classname="CacheAccessor (unit) - isInitialized should return false if cache is null" name="isInitialized should return false if cache is null" time="0">
+    </testcase>
+    <testcase classname="CacheAccessor (unit) - setCache should update the cache reference" name="setCache should update the cache reference" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/links/test/unit/handlers/get-link-by-id-handler/get-link-by-id.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="1.695" tests="3">
+    <testcase classname="GetLinkByIdHandler - returns failure when id is invalid" name="returns failure when id is invalid" time="0.005">
+    </testcase>
+    <testcase classname="GetLinkByIdHandler - returns failure when link is not found" name="returns failure when link is not found" time="0.001">
+    </testcase>
+    <testcase classname="GetLinkByIdHandler - returns success when link is found" name="returns success when link is found" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Database/entities/auditable.entity.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.329" tests="1">
+    <testcase classname="AuditableEntity - allows setting audit fields" name="allows setting audit fields" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Decorators/cached/cached.decorator.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.181" tests="14">
+    <testcase classname="cached.decorator util functions - redacts keys containing password in stableReplacer" name="redacts keys containing password in stableReplacer" time="0">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns unchanged value for non-object in stableReplacer" name="returns unchanged value for non-object in stableReplacer" time="0.001">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns cache key without args when args.length === 0" name="returns cache key without args when args.length === 0" time="0">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns cache key with args when args present" name="returns cache key with args when args present" time="0">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns class name if available in getClassName" name="returns class name if available in getClassName" time="0">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns unknownClassName if no constructor in getClassName" name="returns unknownClassName if no constructor in getClassName" time="0.001">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns error response with i18nService in returnCacheError" name="returns error response with i18nService in returnCacheError" time="0">
+    </testcase>
+    <testcase classname="cached.decorator util functions - returns null if no i18nService in returnCacheError" name="returns null if no i18nService in returnCacheError" time="0.001">
+    </testcase>
+    <testcase classname="Cached Decorator - returns an i18n error if cache is missing and I18nService is provided" name="returns an i18n error if cache is missing and I18nService is provided" time="0">
+    </testcase>
+    <testcase classname="Cached Decorator - returns null if cache is missing and I18nService is not provided" name="returns null if cache is missing and I18nService is not provided" time="0">
+    </testcase>
+    <testcase classname="Cached Decorator - uses the cache if it is initialized" name="uses the cache if it is initialized" time="0">
+    </testcase>
+    <testcase classname="Cached Decorator - computes and stores value in cache if it does not exist" name="computes and stores value in cache if it does not exist" time="0.001">
+    </testcase>
+    <testcase classname="Cached Decorator - handles propertyKey as symbol in Cached" name="handles propertyKey as symbol in Cached" time="0">
+    </testcase>
+    <testcase classname="Cached Decorator - returns descriptor if original method is undefined" name="returns descriptor if original method is undefined" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/links/test/unit/responses/get-link-by-id-response/get-link-by-id.response.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.253" tests="2">
+    <testcase classname="GetLinkByIdResponse - should assign provided partial values to the instance" name="should assign provided partial values to the instance" time="0.001">
+    </testcase>
+    <testcase classname="GetLinkByIdResponse - should create an empty instance when no partial is provided" name="should create an empty instance when no partial is provided" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Responses/apiResponse/apiResponse.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.287" tests="4">
+    <testcase classname="apiResponse › apiResponseSuccess - should build a success response with data and default message" name="should build a success response with data and default message" time="0.001">
+    </testcase>
+    <testcase classname="apiResponse › apiResponseSuccess - should translate custom messages if provided" name="should translate custom messages if provided" time="0">
+    </testcase>
+    <testcase classname="apiResponse › apiResponseFailure - should build a failure response with default message and code" name="should build a failure response with default message and code" time="0.001">
+    </testcase>
+    <testcase classname="apiResponse › apiResponseFailure - should translate custom failure messages if provided" name="should translate custom failure messages if provided" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Database/entities/deletable.entity.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.346" tests="1">
+    <testcase classname="DeletableEntity - allows setting deletedAt" name="allows setting deletedAt" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Services/apiResponseService/apiResponse.service.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.136" tests="6">
+    <testcase classname="ApiResponseService › success - should return a success response with data and messages" name="should return a success response with data and messages" time="0.001">
+    </testcase>
+    <testcase classname="ApiResponseService › success - should default messages and code if not provided" name="should default messages and code if not provided" time="0">
+    </testcase>
+    <testcase classname="ApiResponseService › error - should return an error response with messages and code" name="should return an error response with messages and code" time="0">
+    </testcase>
+    <testcase classname="ApiResponseService › error - should return an error response with empty messages and no code" name="should return an error response with empty messages and no code" time="0">
+    </testcase>
+    <testcase classname="ApiResponseService › warning - should return a warning response with messages and code" name="should return a warning response with messages and code" time="0">
+    </testcase>
+    <testcase classname="ApiResponseService › warning - should return a warning response with empty messages and no code" name="should return a warning response with empty messages and no code" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Database/configurations/column-types.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:35" time="0.067" tests="11">
+    <testcase classname="column-types configuration helpers › ColumnVarchar - should build a varchar column with default nullable false" name="should build a varchar column with default nullable false" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnVarchar - should allow nullable override" name="should allow nullable override" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnVarcharWithTransform - should include the provided transformer" name="should include the provided transformer" time="0.001">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnBoolean - should default to tinyint with boolean transformer" name="should default to tinyint with boolean transformer" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnBoolean - should allow custom default value" name="should allow custom default value" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnJsonArray - should serialize arrays and guard against non-array inputs" name="should serialize arrays and guard against non-array inputs" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnJsonArray - should allow overriding nullable flag" name="should allow overriding nullable flag" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnDateTime - should set nullable false for non nullable columns" name="should set nullable false for non nullable columns" time="0.001">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnDateTime - should set nullable true for nullable columns" name="should set nullable true for nullable columns" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnEnum - should build a non-nullable enum column and keep default" name="should build a non-nullable enum column and keep default" time="0">
+    </testcase>
+    <testcase classname="column-types configuration helpers › ColumnEnum - should build a nullable enum column with provided enum array" name="should build a nullable enum column with provided enum array" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Helpers/i18nMsgHelper/i18nMsg.helper.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:35" time="0.043" tests="4">
+    <testcase classname="i18nMsg - returns the key if params is undefined" name="returns the key if params is undefined" time="0.001">
+    </testcase>
+    <testcase classname="i18nMsg - returns the key if params is null" name="returns the key if params is null" time="0">
+    </testcase>
+    <testcase classname="i18nMsg - returns the key if params is an empty object" name="returns the key if params is an empty object" time="0">
+    </testcase>
+    <testcase classname="i18nMsg - returns the key with serialized params when params has values" name="returns the key with serialized params when params has values" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Handlers/base-paginates.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.213" tests="2">
+    <testcase classname="BasePaginatedHandler › executePaginated - should map entities and return a success response when data is found" name="should map entities and return a success response when data is found" time="0.002">
+    </testcase>
+    <testcase classname="BasePaginatedHandler › executePaginated - should return failure response when repository returns no records" name="should return failure response when repository returns no records" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="libs/common/test/unit/Guards/jwtAuthGuard/jwt-auth.guard.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:35" time="0.224" tests="5">
+    <testcase classname="JwtAuthGuard (unit) - can be constructed" name="can be constructed" time="0">
+    </testcase>
+    <testcase classname="JwtAuthGuard (unit) - allows request with valid access token" name="allows request with valid access token" time="0.009">
+    </testcase>
+    <testcase classname="JwtAuthGuard (unit) - attaches payload to request" name="attaches payload to request" time="0.004">
+    </testcase>
+    <testcase classname="JwtAuthGuard (unit) - throws UnauthorizedException when token missing" name="throws UnauthorizedException when token missing" time="0.001">
+    </testcase>
+    <testcase classname="JwtAuthGuard (unit) - throws UnauthorizedException for refresh token" name="throws UnauthorizedException for refresh token" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/handlers/login-handler/login.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="2.238" tests="9">
+    <testcase classname="LoginHandler - can be constructed" name="can be constructed" time="0.007">
+    </testcase>
+    <testcase classname="LoginHandler - returns failure when the user does not exist" name="returns failure when the user does not exist" time="0.001">
+    </testcase>
+    <testcase classname="LoginHandler - returns failure when the password does not match" name="returns failure when the password does not match" time="0.001">
+    </testcase>
+    <testcase classname="LoginHandler - returns failure if JwtPayload.create fails" name="returns failure if JwtPayload.create fails" time="0.001">
+    </testcase>
+    <testcase classname="LoginHandler - returns success with tokens when credentials are valid" name="returns success with tokens when credentials are valid" time="0.006">
+    </testcase>
+    <testcase classname="LoginHandler - should NOT update lastLoginAt if accessToken or refreshToken is empty" name="should NOT update lastLoginAt if accessToken or refreshToken is empty" time="0.012">
+    </testcase>
+    <testcase classname="LoginHandler - should NOT update lastLoginAt if refreshToken is empty" name="should NOT update lastLoginAt if refreshToken is empty" time="0.001">
+    </testcase>
+    <testcase classname="LoginHandler - should NOT save session if jti is not a valid UUID" name="should NOT save session if jti is not a valid UUID" time="0.007">
+    </testcase>
+    <testcase classname="LoginHandler - should NOT update lastLoginAt if user.id is falsy (e.g. 0)" name="should NOT update lastLoginAt if user.id is falsy (e.g. 0)" time="0.064">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/handlers/register-handler/register.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="2.218" tests="12">
+    <testcase classname="RegisterHandler - can be constructed" name="can be constructed" time="0.003">
+    </testcase>
+    <testcase classname="RegisterHandler - returns failure when the email already exists" name="returns failure when the email already exists" time="0.002">
+    </testcase>
+    <testcase classname="RegisterHandler - returns failure when creating payload fails" name="returns failure when creating payload fails" time="0">
+    </testcase>
+    <testcase classname="RegisterHandler - registers user, saves session and returns success" name="registers user, saves session and returns success" time="0.002">
+    </testcase>
+    <testcase classname="RegisterHandler - should NOT save session if jti is not a valid UUID" name="should NOT save session if jti is not a valid UUID" time="0">
+    </testcase>
+    <testcase classname="RegisterHandler - should return success but not update lastLoginAt if accessToken or refreshToken is empty" name="should return success but not update lastLoginAt if accessToken or refreshToken is empty" time="0.015">
+    </testcase>
+    <testcase classname="RegisterHandler - should NOT update lastLoginAt if user.id is falsy (e.g. 0)" name="should NOT update lastLoginAt if user.id is falsy (e.g. 0)" time="0.023">
+    </testcase>
+    <testcase classname="RegisterHandler - forces BaseHandler failure branch by mocking createResponseFailure to throw" name="forces BaseHandler failure branch by mocking createResponseFailure to throw" time="0.032">
+    </testcase>
+    <testcase classname="RegisterHandler - forces BaseHandler success branch by mocking createSuccessResponse to throw" name="forces BaseHandler success branch by mocking createSuccessResponse to throw" time="0">
+    </testcase>
+    <testcase classname="RegisterHandler - forces internal JwtPayload.create branches by mocking multiple return types" name="forces internal JwtPayload.create branches by mocking multiple return types" time="0.001">
+    </testcase>
+    <testcase classname="RegisterHandler - forces both branches of TokenValidationHelper.validateUUID" name="forces both branches of TokenValidationHelper.validateUUID" time="0">
+    </testcase>
+    <testcase classname="RegisterHandler - should return null if jti is empty" name="should return null if jti is empty" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/value-objects/jwtPayloadValueObject/jwtPayload.vo.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:34" time="0.467" tests="5">
+    <testcase classname="JwtPayload › create - should return error if userId is not a positive integer" name="should return error if userId is not a positive integer" time="0">
+    </testcase>
+    <testcase classname="JwtPayload › create - should return error if email is empty" name="should return error if email is empty" time="0">
+    </testcase>
+    <testcase classname="JwtPayload › create - should return error if email does not match pattern" name="should return error if email does not match pattern" time="0">
+    </testcase>
+    <testcase classname="JwtPayload › create - should return success with JwtPayload if parameters are valid" name="should return success with JwtPayload if parameters are valid" time="0.001">
+    </testcase>
+    <testcase classname="JwtPayload › toPlainObject - should return the plain object representation" name="should return the plain object representation" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/handlers/refresh-handler/refresh.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="2.311" tests="13">
+    <testcase classname="RefreshHandler - can be constructed" name="can be constructed" time="0.005">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when token is invalid" name="returns failure when token is invalid" time="0.126">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when token is empty" name="returns failure when token is empty" time="0.002">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when payload is missing fields" name="returns failure when payload is missing fields" time="0.003">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when jti is invalid" name="returns failure when jti is invalid" time="0.003">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when session is not active" name="returns failure when session is not active" time="0.002">
+    </testcase>
+    <testcase classname="RefreshHandler - returns success with tokens when everything is valid" name="returns success with tokens when everything is valid" time="0.001">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when jwtService.verify returns null (payload falsy)" name="returns failure when jwtService.verify returns null (payload falsy)" time="0.001">
+    </testcase>
+    <testcase classname="RefreshHandler - logs and returns failure if jwtService.verify throws a non-Error" name="logs and returns failure if jwtService.verify throws a non-Error" time="0">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when tokenType is not &quot;refresh&quot;" name="returns failure when tokenType is not &quot;refresh&quot;" time="0">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when tokenType is missing" name="returns failure when tokenType is missing" time="0.001">
+    </testcase>
+    <testcase classname="RefreshHandler - calls setSession with refreshed session on success" name="calls setSession with refreshed session on success" time="0">
+    </testcase>
+    <testcase classname="RefreshHandler - returns failure when JwtPayload.create fails" name="returns failure when JwtPayload.create fails" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="apps/auth/test/unit/handlers/logout-handler/logout.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-14T23:48:32" time="2.181" tests="17">
+    <testcase classname="LogoutHandler - can be constructed" name="can be constructed" time="0.003">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when token is empty" name="returns failure when token is empty" time="0.002">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when token is only spaces" name="returns failure when token is only spaces" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when jwtService.verify throws (invalid token)" name="returns failure when jwtService.verify throws (invalid token)" time="0.027">
+    </testcase>
+    <testcase classname="LogoutHandler - logs and returns failure if jwtService.verify throws a non-Error" name="logs and returns failure if jwtService.verify throws a non-Error" time="0.001">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when payload is null" name="returns failure when payload is null" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when payload has no sub or jti" name="returns failure when payload has no sub or jti" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when jti is not a valid UUID" name="returns failure when jti is not a valid UUID" time="0.001">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when user is not found" name="returns failure when user is not found" time="0.001">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when session is not active (not in Redis)" name="returns failure when session is not active (not in Redis)" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - removes session and returns success for valid token and active session" name="removes session and returns success for valid token and active session" time="0.002">
+    </testcase>
+    <testcase classname="LogoutHandler - removes session and returns success with false if session did not exist after check" name="removes session and returns success with false if session did not exist after check" time="0.001">
+    </testcase>
+    <testcase classname="LogoutHandler - returns success if deleteSession returns null (graceful fallback)" name="returns success if deleteSession returns null (graceful fallback)" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when tokenType is not &quot;access&quot;" name="returns failure when tokenType is not &quot;access&quot;" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - returns failure when tokenType is missing" name="returns failure when tokenType is missing" time="0">
+    </testcase>
+    <testcase classname="LogoutHandler - calls addLastLogoutAt and saves user on successful logout" name="calls addLastLogoutAt and saves user on successful logout" time="0.001">
+    </testcase>
+    <testcase classname="LogoutHandler - does NOT update lastLogoutAt if user.id is falsy or accessToken is empty" name="does NOT update lastLogoutAt if user.id is falsy or accessToken is empty" time="0">
     </testcase>
   </testsuite>
 </testsuites>

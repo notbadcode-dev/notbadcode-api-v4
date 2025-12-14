@@ -1,1 +1,2 @@
-export * from './i18nMsg.helper';
+export * from './i18n-msg.helper';
+export * from './paginate.helper';

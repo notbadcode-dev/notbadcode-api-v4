@@ -9,6 +9,7 @@ import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
 
 import { GetLinkByIdHandler } from '@apps/links/src/application/handlers/get-link-by-id.handler';
+import { GetLinksPaginatedHandler } from '@apps/links/src/application/handlers/get-links-paginated.handler';
 import { Link } from '@apps/links/src/domain/entities/link.entity';
 import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database/linksDatabase.module';
 import { LinksHealthController } from '@apps/links/src/links-healtz.controller';
@@ -26,6 +27,6 @@ import { LinksController } from '@apps/links/src/links.controller';
     CqrsModule,
   ],
   controllers: [LinksController, LinksHealthController],
-  providers: [GetLinkByIdHandler],
+  providers: [GetLinkByIdHandler, GetLinksPaginatedHandler],
 })
 export class LinksModule {}

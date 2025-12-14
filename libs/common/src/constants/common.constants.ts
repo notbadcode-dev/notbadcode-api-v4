@@ -5,4 +5,6 @@ export const CommonConstants = {
   redactedTag: '<redacted>',
 
   i18nFolderName: 'i18n',
+
+  entityTag: 'entity',
 };

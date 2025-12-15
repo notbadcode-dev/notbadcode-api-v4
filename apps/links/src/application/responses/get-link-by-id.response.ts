@@ -3,6 +3,10 @@ import { Exclude, Expose } from 'class-transformer';
 
 import { LinkLastStatusCode } from '../../domain/enums/link-last-status-code.enum';
 
+type NullableString = string | null;
+type LinkStatusCode = LinkLastStatusCode;
+type GetLinkByIdResponsePartial = Partial<GetLinkByIdResponse>;
+
 @Exclude()
 export class GetLinkByIdResponse {
   @ApiProperty()
@@ -19,19 +23,19 @@ export class GetLinkByIdResponse {
 
   @ApiProperty({ required: false })
   @Expose()
-  title?: string | null;
+  title?: NullableString;
 
   @ApiProperty({ required: false })
   @Expose()
-  description?: string | null;
+  description?: NullableString;
 
   @ApiProperty({ required: false })
   @Expose()
-  faviconUrl?: string | null;
+  faviconUrl?: NullableString;
 
   @ApiProperty({ required: false })
   @Expose()
-  imagePreviewUrl?: string | null;
+  imagePreviewUrl?: NullableString;
 
   @ApiProperty()
   @Expose()
@@ -47,7 +51,7 @@ export class GetLinkByIdResponse {
 
   @ApiProperty({ enum: LinkLastStatusCode })
   @Expose()
-  lastStatusCode!: LinkLastStatusCode;
+  lastStatusCode!: LinkStatusCode;
 
   @ApiProperty({ type: String, required: false })
   @Expose()
@@ -57,7 +61,7 @@ export class GetLinkByIdResponse {
   @Expose()
   lastVisitedAt?: Date | null;
 
-  constructor(partial?: Partial<GetLinkByIdResponse>) {
+  constructor(partial?: GetLinkByIdResponsePartial) {
     if (partial) {
       Object.assign(this, partial);
     }

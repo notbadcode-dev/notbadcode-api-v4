@@ -41,6 +41,13 @@ describe('column-types configuration helpers', () => {
         transformer,
       });
     });
+
+    it('should use nullable default when not provided', () => {
+      const transformer = ColumnTypesFixture.customTransformer();
+      const options = ColumnVarcharWithTransform(ColumnTypesFixture.shorterLength(), undefined, transformer);
+
+      expect(options.nullable).toBe(false);
+    });
   });
 
   describe('ColumnBoolean', () => {
@@ -92,6 +99,12 @@ describe('column-types configuration helpers', () => {
         precision: 3,
         nullable: false,
       });
+    });
+
+    it('should use default precision when not provided', () => {
+      const options = ColumnDateTimeNonNullable();
+
+      expect(options.precision).toBe(0);
     });
 
     it('should set nullable true for nullable columns', () => {

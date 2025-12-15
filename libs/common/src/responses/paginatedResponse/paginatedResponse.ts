@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+type PaginatedFilters = Record<string, unknown>;
+
 export class PaginatedResponse<T> {
   @ApiProperty({ isArray: true })
   items!: T[];
@@ -23,7 +25,7 @@ export class PaginatedResponse<T> {
   sortOrder?: string;
 
   @ApiProperty({ required: false })
-  filters?: Record<string, unknown>;
+  filters?: PaginatedFilters;
 
   @ApiProperty({ required: false })
   previousPage?: number;
@@ -46,7 +48,7 @@ export const createPaginatedResponse = <TModel extends abstract new (...args: an
   skip?: number;
   sortBy?: string;
   sortOrder?: string;
-  filters?: Record<string, unknown>;
+  filters?: PaginatedFilters;
   previousPage?: number;
   currentPage?: number;
   nextPage?: number;
@@ -74,7 +76,7 @@ export const createPaginatedResponse = <TModel extends abstract new (...args: an
     sortOrder?: string;
 
     @ApiProperty({ required: false })
-    filters?: Record<string, unknown>;
+    filters?: PaginatedFilters;
 
     @ApiProperty({ required: false })
     previousPage?: number;

@@ -37,6 +37,32 @@ describe('GetLinkByIdHandler', () => {
     expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidLinkId);
   });
 
+  it('returns failure when id is zero (falsy)', async () => {
+    // Arrange
+    const command = new GetLinkByIdCommand(0);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(linkRepository.findOne).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidLinkId);
+  });
+
+  it('returns failure when command id is undefined', async () => {
+    // Arrange
+    const command = { id: undefined } as GetLinkByIdCommand;
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(linkRepository.findOne).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidLinkId);
+  });
+
   it('returns failure when link is not found', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(null);

@@ -1,4 +1,3 @@
-export * from './loggerLevel.enum';
+export * from './logger-level.enum';
 export * from './paginated-order.enum';
-export * from './supportedLanguage.enum';
-
+export * from './supported-language.enum';

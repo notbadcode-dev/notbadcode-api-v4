@@ -2,7 +2,7 @@ import { UUID } from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
 
-import { UserSession } from '@common/redis/session/userSession.model';
+import { UserSession } from '@common/redis/session/user-session.model';
 
 @Injectable()
 export class UserService {

@@ -2,7 +2,7 @@ import { JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 
 
-import { JwtPayloadFixture } from './jwtPayload.vo.fixture';
+import { JwtPayloadFixture } from './jwt-payload.vo.fixture';
 
 describe('JwtPayload', () => {
   describe('create', () => {

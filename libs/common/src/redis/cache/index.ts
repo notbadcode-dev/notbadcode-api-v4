@@ -1,1 +1,1 @@
-export * from './commonCache.module';
+export * from './common-cache.module';

@@ -2,7 +2,7 @@ import { randomUUID, type UUID } from 'node:crypto';
 
 import { EJwtType, type JwtPayloadPlain } from '@common/auth';
 import { PatternConstants } from '@common/constants';
-import { ErrorOnFactory, type ErrorOn } from '@common/types/errorOn.type';
+import { ErrorOnFactory, type ErrorOn } from '@common/types/error-on.type';
 
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 

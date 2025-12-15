@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
-import { UserSession } from '@common/redis/session/userSession.model';
+import { UserSession } from '@common/redis/session/user-session.model';
 import { ApiResponse } from '@common/responses';
 
 import { RegisterCommand } from '@apps/auth/src/application/commands';

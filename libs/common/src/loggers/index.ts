@@ -1,2 +1,2 @@
-export * from './commonLogger.config';
-export * from './commonLogger.module';
+export * from './common-logger.config';
+export * from './common-logger.module';

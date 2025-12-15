@@ -1,3 +1,3 @@
-export * from './commonConfig.module';
+export * from './common-config.module';
 export * from './documentation/index';
 export * from './environment/index';

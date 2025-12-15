@@ -1,6 +1,6 @@
 // userSession.fixture.ts
 
-import { type UserSession } from '@common/redis/session/userSession.model';
+import { type UserSession } from '@common/redis/session/user-session.model';
 
 export class UserSessionFixture {
   static create(): UserSession {

@@ -6,7 +6,7 @@ import { EJwtType, JwtPayloadPlain } from '@common/auth';
 import { BaseHandler } from '@common/handler/base.handler';
 import { I18nService } from '@common/i18n';
 import { CommonSessionControlService } from '@common/redis/session';
-import { UserSession } from '@common/redis/session/userSession.model';
+import { UserSession } from '@common/redis/session/user-session.model';
 import { ApiResponse } from '@common/responses';
 
 import { RefreshCommand } from '@apps/auth/src/application/commands';

@@ -1,4 +1,4 @@
-import { type EApiResponseMessageType } from './apiResponseMessageType';
+import { type EApiResponseMessageType } from './api-response-message-type';
 
 export interface ApiResponseMessage {
   type: EApiResponseMessageType;

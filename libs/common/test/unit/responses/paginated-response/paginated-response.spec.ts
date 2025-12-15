@@ -1,6 +1,6 @@
 import { PaginatedResponse, createPaginatedResponse } from '@common/responses';
 
-import { PaginatedResponseFixture, SampleModel } from './paginatedResponse.fixture';
+import { PaginatedResponseFixture, SampleModel } from './paginated-response.fixture';
 
 describe('PaginatedResponse', () => {
   it('should hold the provided pagination fields', () => {

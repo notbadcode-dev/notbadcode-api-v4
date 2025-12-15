@@ -1,6 +1,6 @@
 import { type UUID } from 'node:crypto';
 
-import { type UserSession } from '@common/redis/session/userSession.model';
+import { type UserSession } from '@common/redis/session/user-session.model';
 
 export class UserServiceFixture {
   static userId(): number {

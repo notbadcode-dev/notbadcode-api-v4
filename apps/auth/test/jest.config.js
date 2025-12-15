@@ -39,10 +39,10 @@ module.exports = {
     // Specific files
     'i18n.service.ts',
     'i18n.service.spec.ts',
-    'commonSessionControl.service.ts',
-    'commonSessionControl.service.spec.ts',
-    'apiResponse.ts',
-    'apiResponse.service.ts',
+    'common-session-control.service.ts',
+    'common-session-control.service.spec.ts',
+    'api-response.ts',
+    'api-response.service.ts',
 
     // Constructors
     '.*\\.constructor\\..*',

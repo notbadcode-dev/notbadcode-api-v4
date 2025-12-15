@@ -52,7 +52,7 @@ describe('GetLinkByIdHandler', () => {
 
   it('returns failure when command id is undefined', async () => {
     // Arrange
-    const command = { id: undefined } as GetLinkByIdCommand;
+    const command = { id: undefined } as unknown as GetLinkByIdCommand;
 
     // Act
     const result = await handler.execute(command);

@@ -1,4 +1,4 @@
-import { CacheAccessor } from '@common/redis/cache/cacheAccessor';
+import { CacheAccessor } from '@common/redis/cache/cache-accessor';
 
 import type { Cache } from 'cache-manager';
 

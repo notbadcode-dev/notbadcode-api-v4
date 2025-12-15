@@ -1,7 +1,7 @@
 import { SymbolConstants } from '@common/constants/symbol.constants';
 import { i18nMsg } from '@common/helpers';
 
-import { I18nMsgHelperFixture } from './i18nMsg.helper.fixture';
+import { I18nMsgHelperFixture } from './i18n-msg.helper.fixture';
 
 describe('i18nMsg', () => {
   it('returns the key if params is undefined', () => {

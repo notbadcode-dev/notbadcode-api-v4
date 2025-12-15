@@ -7,7 +7,7 @@ import { mockDeep } from 'jest-mock-extended';
 import { EJwtType } from '@common/auth';
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
-import { type ErrorOn, ErrorOnFactory } from '@common/types/errorOn.type';
+import { type ErrorOn, ErrorOnFactory } from '@common/types/error-on.type';
 
 import { RefreshCommand } from '@apps/auth/src/application/commands';
 import { RefreshHandler } from '@apps/auth/src/application/handlers';

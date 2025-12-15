@@ -1,9 +1,9 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { RedisSessionControlConstants } from '@common/constants/redisSessionControl.constants';
+import { RedisSessionControlConstants } from '@common/constants/redis-session-control.constants';
 
-import { UserSession } from './userSession.model';
+import { UserSession } from './user-session.model';
 
 import type { Cache } from 'cache-manager';
 
@@ -14,11 +14,7 @@ export class CommonSessionControlService {
     private readonly logger: Logger,
   ) {}
 
-  async setSession<T>(
-    key: string,
-    value: T,
-    ttl = RedisSessionControlConstants.oneDayTtl,
-  ): Promise<string | null> {
+  async setSession<T>(key: string, value: T, ttl = RedisSessionControlConstants.oneDayTtl): Promise<string | null> {
     try {
       return await this.cache.set(key, JSON.stringify(value), ttl);
     } catch (error) {

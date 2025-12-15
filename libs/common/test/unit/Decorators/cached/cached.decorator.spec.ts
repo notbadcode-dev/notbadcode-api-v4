@@ -12,8 +12,8 @@ jest.mock('@common/responses', () => {
 });
 
 import { CommonConstants, CommonErrorMessageConstants } from '@common/constants';
-import { RedisCacheConstants } from '@common/constants/redisCache.constants';
-import { CacheAccessor } from '@common/redis/cache/cacheAccessor';
+import { RedisCacheConstants } from '@common/constants/redis-cache.constants';
+import { CacheAccessor } from '@common/redis/cache/cache-accessor';
 import {
   Cached,
   getClassName,

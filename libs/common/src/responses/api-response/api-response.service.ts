@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ApiFailureResponse, ApiSuccessResponse } from './apiResponse';
-import { EApiResponseMessageType } from './apiResponseMessageType';
+import { ApiFailureResponse, ApiSuccessResponse } from './api-response';
+import { EApiResponseMessageType } from './api-response-message-type';
 
 @Injectable()
 export class ApiResponseService {

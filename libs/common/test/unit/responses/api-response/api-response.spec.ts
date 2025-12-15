@@ -5,7 +5,7 @@ import {
   EApiResponseMessageType,
 } from '@common/responses';
 
-import { ApiResponseFixture } from './apiResponse.fixture';
+import { ApiResponseFixture } from './api-response.fixture';
 
 describe('apiResponse', () => {
   let i18nService: { translate: jest.Mock };

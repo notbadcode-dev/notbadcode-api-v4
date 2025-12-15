@@ -1,1 +1,1 @@
-export * from './validationErrorResponse.filter';
+export * from './validation-error-response.filter';

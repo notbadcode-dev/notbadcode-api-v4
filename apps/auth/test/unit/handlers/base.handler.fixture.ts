@@ -1,7 +1,7 @@
 import { type UUID } from 'crypto';
 
 import { EJwtType } from '@common/auth';
-import { type UserSession } from '@common/redis/session/userSession.model';
+import { type UserSession } from '@common/redis/session/user-session.model';
 import { type ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
 import { LoginResponse } from '@apps/auth/src/application/responses';

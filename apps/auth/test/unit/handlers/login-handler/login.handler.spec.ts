@@ -3,7 +3,7 @@ import { mockDeep } from 'jest-mock-extended';
 import { type Repository } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
-import { ErrorOnFactory } from '@common/types/errorOn.type';
+import { ErrorOnFactory } from '@common/types/error-on.type';
 
 import { LoginCommand } from '@apps/auth/src/application/commands';
 import { LoginHandler } from '@apps/auth/src/application/handlers';

@@ -1,1 +1,1 @@
-export * from './errorOn.type';
+export * from './error-on.type';

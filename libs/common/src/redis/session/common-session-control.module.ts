@@ -2,8 +2,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { CommonSessionControlService } from './commonSessionControl.service';
-import { sessionControlConfigFactory } from './sessionControl.config';
+import { CommonSessionControlService } from './common-session-control.service';
+import { sessionControlConfigFactory } from './session-control.config';
 
 @Module({
   imports: [

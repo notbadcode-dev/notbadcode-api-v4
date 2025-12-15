@@ -1,9 +1,9 @@
-export * from './apiResponse/apiResponse';
-export * from './apiResponse/apiResponse.constants';
-export * from './apiResponse/apiResponse.service';
-export * from './apiResponse/apiResponseMessage';
-export * from './apiResponse/apiResponseMessageType';
+export * from './api-response/api-response';
+export * from './api-response/api-response.constants';
+export * from './api-response/api-response.service';
+export * from './api-response/api-response-message';
+export * from './api-response/api-response-message-type';
 
-export * from './paginatedResponse/paginatedResponse';
+export * from './paginated-response/paginated-response';
 
-export * from './healtzResponse/healtz-response.interface';
+export * from './healtz-response/healtz-response.interface';

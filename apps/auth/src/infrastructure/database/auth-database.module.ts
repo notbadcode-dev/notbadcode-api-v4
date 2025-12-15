@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { getAuthDbConfig } from '@apps/auth/src/infrastructure/database/authDatabase.config';
+import { getAuthDbConfig } from '@apps/auth/src/infrastructure/database/auth-database.config';
 
 @Module({
   imports: [

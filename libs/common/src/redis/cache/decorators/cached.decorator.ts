@@ -1,9 +1,9 @@
 import { CommonConstants, CommonErrorMessageConstants } from '@common/constants';
-import { RedisCacheConstants } from '@common/constants/redisCache.constants';
+import { RedisCacheConstants } from '@common/constants/redis-cache.constants';
 import { type I18nService } from '@common/i18n';
 import { apiResponseFailure, EApiResponseMessageType } from '@common/responses';
 
-import { CacheAccessor } from '../cacheAccessor';
+import { CacheAccessor } from '../cache-accessor';
 
 type AsyncMethod<This, A extends unknown[], R> = (this: This, ...args: A) => Promise<R>;
 type AsyncMethodDecorator = <This, A extends unknown[], R>(

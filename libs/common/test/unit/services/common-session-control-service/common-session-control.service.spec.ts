@@ -2,13 +2,13 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { RedisSessionControlConstants } from '@common/constants/redisSessionControl.constants';
+import { RedisSessionControlConstants } from '@common/constants/redis-session-control.constants';
 import { CommonSessionControlService } from '@common/redis/session';
 
 import { cacheManagerMock } from '@test/utils/mocks/cache.mock';
 import { loggerMock } from '@test/utils/mocks/winston.mock';
 
-import { UserSessionFixture } from './userSession.fixture';
+import { UserSessionFixture } from './user-session.fixture';
 
 describe('CommonSessionControlService', () => {
   let service: CommonSessionControlService;

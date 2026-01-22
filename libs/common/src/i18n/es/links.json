@@ -1,6 +1,12 @@
 {
   "error-message": {
     "invalidLinkId": "ID de enlace no válido.",
-    "linkNotFound": "Link no encontrado."
+    "linkNotFound": "Link no encontrado.",
+    "descriptionRequired": "La descripción es obligatoria para actualizar el link.",
+    "invalidPayload": "El cuerpo de la actualización no es válido.",
+    "invalidUrl": "Debes proporcionar una URL válida.",
+    "invalidTitle": "El título es obligatorio y debe respetar la longitud permitida.",
+    "invalidFavoriteFlag": "El campo de favorito debe ser verdadero o falso.",
+    "invalidTagList": "La lista de etiquetas debe contener valores de texto válidos."
   }
 }

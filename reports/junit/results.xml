@@ -1,47 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="20" failures="0" errors="0" time="0.812">
-  <testsuite name="libs/common/test/unit/decorators/cached/cache-accessor.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-15T00:55:33" time="0.372" tests="6">
-    <testcase classname="CacheAccessor (unit) - sets cache on module init if not already initialized" name="sets cache on module init if not already initialized" time="0.002">
+<testsuites name="jest tests" tests="8" failures="0" errors="0" time="1.325">
+  <testsuite name="apps/links/test/unit/handlers/update-link-handler/update-link.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-15T14:21:41" time="1.131" tests="8">
+    <testcase classname="UpdateLinkHandler - returns failure when id is invalid" name="returns failure when id is invalid" time="0.002">
     </testcase>
-    <testcase classname="CacheAccessor (unit) - does not overwrite cache if already initialized" name="does not overwrite cache if already initialized" time="0">
+    <testcase classname="UpdateLinkHandler - returns failure when description is empty" name="returns failure when description is empty" time="0">
     </testcase>
-    <testcase classname="CacheAccessor (unit) - static getter cache returns null if not initialized" name="static getter cache returns null if not initialized" time="0">
+    <testcase classname="UpdateLinkHandler - returns failure when url is invalid" name="returns failure when url is invalid" time="0.001">
     </testcase>
-    <testcase classname="CacheAccessor (unit) - isInitialized should return true if cache is set" name="isInitialized should return true if cache is set" time="0">
+    <testcase classname="UpdateLinkHandler - returns failure when title is invalid" name="returns failure when title is invalid" time="0">
     </testcase>
-    <testcase classname="CacheAccessor (unit) - isInitialized should return false if cache is null" name="isInitialized should return false if cache is null" time="0">
+    <testcase classname="UpdateLinkHandler - returns failure when favorite flag is invalid" name="returns failure when favorite flag is invalid" time="0.001">
     </testcase>
-    <testcase classname="CacheAccessor (unit) - setCache should update the cache reference" name="setCache should update the cache reference" time="0.001">
+    <testcase classname="UpdateLinkHandler - returns failure when tag list is invalid" name="returns failure when tag list is invalid" time="0">
     </testcase>
-  </testsuite>
-  <testsuite name="libs/common/test/unit/decorators/cached/cached.decorator.spec.ts" errors="0" failures="0" skipped="0" timestamp="2025-12-15T00:55:34" time="0.263" tests="14">
-    <testcase classname="cached.decorator util functions - redacts keys containing password in stableReplacer" name="redacts keys containing password in stableReplacer" time="0.002">
+    <testcase classname="UpdateLinkHandler - returns failure when link is not found" name="returns failure when link is not found" time="0">
     </testcase>
-    <testcase classname="cached.decorator util functions - returns unchanged value for non-object in stableReplacer" name="returns unchanged value for non-object in stableReplacer" time="0">
-    </testcase>
-    <testcase classname="cached.decorator util functions - returns cache key without args when args.length === 0" name="returns cache key without args when args.length === 0" time="0.001">
-    </testcase>
-    <testcase classname="cached.decorator util functions - returns cache key with args when args present" name="returns cache key with args when args present" time="0">
-    </testcase>
-    <testcase classname="cached.decorator util functions - returns class name if available in getClassName" name="returns class name if available in getClassName" time="0">
-    </testcase>
-    <testcase classname="cached.decorator util functions - returns unknownClassName if no constructor in getClassName" name="returns unknownClassName if no constructor in getClassName" time="0">
-    </testcase>
-    <testcase classname="cached.decorator util functions - returns error response with i18nService in returnCacheError" name="returns error response with i18nService in returnCacheError" time="0.001">
-    </testcase>
-    <testcase classname="cached.decorator util functions - returns null if no i18nService in returnCacheError" name="returns null if no i18nService in returnCacheError" time="0">
-    </testcase>
-    <testcase classname="Cached Decorator - returns an i18n error if cache is missing and I18nService is provided" name="returns an i18n error if cache is missing and I18nService is provided" time="0.001">
-    </testcase>
-    <testcase classname="Cached Decorator - returns null if cache is missing and I18nService is not provided" name="returns null if cache is missing and I18nService is not provided" time="0">
-    </testcase>
-    <testcase classname="Cached Decorator - uses the cache if it is initialized" name="uses the cache if it is initialized" time="0">
-    </testcase>
-    <testcase classname="Cached Decorator - computes and stores value in cache if it does not exist" name="computes and stores value in cache if it does not exist" time="0.001">
-    </testcase>
-    <testcase classname="Cached Decorator - handles propertyKey as symbol in Cached" name="handles propertyKey as symbol in Cached" time="0">
-    </testcase>
-    <testcase classname="Cached Decorator - returns descriptor if original method is undefined" name="returns descriptor if original method is undefined" time="0">
+    <testcase classname="UpdateLinkHandler - updates the link fields when link exists" name="updates the link fields when link exists" time="0.002">
     </testcase>
   </testsuite>
 </testsuites>

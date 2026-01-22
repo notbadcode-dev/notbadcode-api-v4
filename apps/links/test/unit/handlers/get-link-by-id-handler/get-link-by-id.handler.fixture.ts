@@ -1,4 +1,5 @@
-import { Link } from '../../../../src/domain/entities/link.entity';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { Link } from '@apps/links/src/domain/entities/link.entity';
 
 export class LinkByIdHandlerFixture {
   static readonly validLink: Link = Object.assign(new Link(), {

@@ -1,6 +1,12 @@
 {
   "error-message": {
     "invalidLinkId": "Invalid link ID.",
-    "linkNotFound": "Link not found."
+    "linkNotFound": "Link not found.",
+    "descriptionRequired": "Description is required to update the link.",
+    "invalidPayload": "Invalid update payload.",
+    "invalidUrl": "A valid URL is required.",
+    "invalidTitle": "Title is required and must meet the length constraints.",
+    "invalidFavoriteFlag": "Favorite flag must be true or false.",
+    "invalidTagList": "Tag list must contain valid string values."
   }
 }

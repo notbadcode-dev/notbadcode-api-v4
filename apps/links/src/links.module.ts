@@ -11,11 +11,14 @@ import { CommonSessionControlModule } from '@common/redis/session';
 import { GetLinkByIdHandler } from '@apps/links/src/application/handlers/get-link-by-id.handler';
 import { GetLinksPaginatedHandler } from '@apps/links/src/application/handlers/get-links-paginated.handler';
 import { UpdateLinkHandler } from '@apps/links/src/application/handlers/update-link.handler';
-import { LinkService } from '@apps/links/src/application/services/link.service';
 import { Link } from '@apps/links/src/domain/entities/link.entity';
 import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database/links-database.module';
 import { LinksHealthController } from '@apps/links/src/links-healtz.controller';
 import { LinksController } from '@apps/links/src/links.controller';
+
+import { MarkLinksAsFavoriteHandler } from './application/handlers/mark-links-as-favorite.handler';
+import { UnmarkLinksAsFavoriteHandler } from './application/handlers/unmark-links-as-favorite.handler';
+import { LinkService } from './application/services/link.service';
 
 @Module({
   imports: [
@@ -29,6 +32,6 @@ import { LinksController } from '@apps/links/src/links.controller';
     CqrsModule,
   ],
   controllers: [LinksController, LinksHealthController],
-  providers: [GetLinkByIdHandler, GetLinksPaginatedHandler, UpdateLinkHandler, LinkService],
+  providers: [GetLinkByIdHandler, GetLinksPaginatedHandler, UpdateLinkHandler, MarkLinksAsFavoriteHandler, UnmarkLinksAsFavoriteHandler, LinkService],
 })
 export class LinksModule {}

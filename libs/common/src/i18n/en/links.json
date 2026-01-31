@@ -7,6 +7,7 @@
     "invalidUrl": "A valid URL is required.",
     "invalidTitle": "Title is required and must meet the length constraints.",
     "invalidFavoriteFlag": "Favorite flag must be true or false.",
-    "invalidTagList": "Tag list must contain valid string values."
+    "invalidTagList": "Tag list must contain valid string values.",
+    "arrayNotEmpty": "You must provide at least one link ID."
   }
 }

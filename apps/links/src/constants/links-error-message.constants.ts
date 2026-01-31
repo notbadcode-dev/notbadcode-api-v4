@@ -9,4 +9,5 @@ export const LinksErrorMessageConstants = {
   invalidTitle: `${LinksErrorMessageTag}.invalidTitle`,
   invalidFavoriteFlag: `${LinksErrorMessageTag}.invalidFavoriteFlag`,
   invalidTagList: `${LinksErrorMessageTag}.invalidTagList`,
+  arrayNotEmpty: `${LinksErrorMessageTag}.arrayNotEmpty`,
 };

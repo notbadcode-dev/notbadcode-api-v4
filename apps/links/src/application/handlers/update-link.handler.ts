@@ -1,7 +1,6 @@
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
-import { Repository } from 'typeorm';
 
 import { LengthSizes } from '@common/constants';
 import { BaseHandler } from '@common/handler';
@@ -13,7 +12,7 @@ import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-l
 import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
 import { LinkService } from '@apps/links/src/application/services/link.service';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 import { LinkByIdSpecification } from '@apps/links/src/domain/specifications/link-by-id.specification';
 
 import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
@@ -24,8 +23,8 @@ export class UpdateLinkHandler
   implements ICommandHandler<UpdateLinkCommand, ApiResponse<GetLinkByIdResponse>>
 {
   constructor(
-    @InjectRepository(Link)
-    private readonly linkRepository: Repository<Link>,
+    @Inject('ILinkRepository')
+    private readonly linkRepository: ILinkRepository,
     private readonly linkService: LinkService,
     i18nService: I18nService,
   ) {

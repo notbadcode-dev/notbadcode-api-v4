@@ -2,7 +2,6 @@
 import { type Logger } from '@nestjs/common';
 import { type JwtService } from '@nestjs/jwt';
 import { mockDeep } from 'jest-mock-extended';
-import { type Repository } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
@@ -10,6 +9,7 @@ import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
 import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
 import { type User } from '@apps/auth/src/domain/entities';
+import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
 
 import { LogoutHandlerFixture } from './logout.handler.fixture';
 
@@ -17,7 +17,7 @@ describe('LogoutHandler', () => {
   let jwtService: jest.Mocked<JwtService>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
-  let userRepository: jest.Mocked<Repository<User>>;
+  let userRepository: jest.Mocked<IUserRepository>;
   let logger: jest.Mocked<Logger>;
   let handler: LogoutHandler;
   let userService: { getUserSessionWithDate: jest.Mock; getUserSessions: jest.Mock };
@@ -27,8 +27,12 @@ describe('LogoutHandler', () => {
     jwtService = mockDeep<JwtService>();
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
-    userRepository = mockDeep<Repository<User>>();
-    userRepository.save = jest.fn();
+    userRepository = {
+      findByEmail: jest.fn(),
+      findByIdAndEmail: jest.fn(),
+      save: jest.fn(),
+      create: jest.fn(),
+    };
     logger = mockDeep<Logger>();
     userService = {
       getUserSessionWithDate: jest.fn(),
@@ -137,7 +141,7 @@ describe('LogoutHandler', () => {
       tokenType: 'access',
     });
     // Forzar el id esperado por el fixture
-    userRepository.findOne.mockResolvedValue({ ...LogoutHandlerFixture.existingUser(), id: LogoutHandlerFixture.existingUser().id });
+    userRepository.findByIdAndEmail.mockResolvedValue({ ...LogoutHandlerFixture.existingUser(), id: LogoutHandlerFixture.existingUser().id });
 
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
@@ -150,7 +154,7 @@ describe('LogoutHandler', () => {
   it('returns failure when user is not found', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validDecoded());
-    userRepository.findOne.mockResolvedValue(null);
+    userRepository.findByIdAndEmail.mockResolvedValue(null);
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
     // Assert
@@ -162,8 +166,8 @@ describe('LogoutHandler', () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
     // Mock completo para cumplir con la interfaz y el id esperado
-    const userMock = Object.assign(mockDeep<User>(), LogoutHandlerFixture.existingUser(), { id: 2 });
-    userRepository.findOne.mockResolvedValue(userMock);
+    const userMock = { ...LogoutHandlerFixture.existingUser(), id: 2 } as User;
+    userRepository.findByIdAndEmail.mockResolvedValue(userMock);
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(null);
     userService.getUserSessionWithDate.mockReturnValue(LogoutHandlerFixture.userSession());
@@ -182,7 +186,7 @@ describe('LogoutHandler', () => {
     // Arrange
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload() as any);
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
+    userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockImplementation((session) => {
       if (session) {
         return LogoutHandlerFixture.getUserSessionKey();
@@ -219,7 +223,7 @@ describe('LogoutHandler', () => {
   it('removes session and returns success with false if session did not exist after check', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
+    userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(false);
@@ -241,7 +245,7 @@ describe('LogoutHandler', () => {
   it('returns success if deleteSession returns null (graceful fallback)', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
+    userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(null);
@@ -266,7 +270,7 @@ describe('LogoutHandler', () => {
       email: 'test@test.com',
       tokenType: 'refresh',
     });
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
+    userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
 
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
@@ -283,7 +287,7 @@ describe('LogoutHandler', () => {
       jti: LogoutHandlerFixture.getValidUUID(),
       email: 'test@test.com',
     });
-    userRepository.findOne.mockResolvedValue(LogoutHandlerFixture.existingUser());
+    userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
 
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
@@ -297,7 +301,7 @@ describe('LogoutHandler', () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
     const user = LogoutHandlerFixture.existingUser();
-    userRepository.findOne.mockResolvedValue(user);
+    userRepository.findByIdAndEmail.mockResolvedValue(user);
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());
     commonSessionControlService.deleteSession.mockResolvedValue(true);
@@ -320,7 +324,7 @@ describe('LogoutHandler', () => {
     // Arrange
     const user = { ...LogoutHandlerFixture.existingUser(), id: 0 } as User;
 
-    userRepository.findOne.mockResolvedValue(user);
+    userRepository.findByIdAndEmail.mockResolvedValue(user);
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
     commonSessionControlService.getUserSessionKey.mockReturnValue(LogoutHandlerFixture.getUserSessionKey());
     commonSessionControlService.getSession.mockResolvedValue(LogoutHandlerFixture.sessionActive());

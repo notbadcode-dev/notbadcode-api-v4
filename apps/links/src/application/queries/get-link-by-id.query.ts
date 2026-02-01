@@ -1,3 +1,3 @@
-export class GetLinkByIdCommand {
+export class GetLinkByIdQuery {
   constructor(public readonly id: number) {}
 }

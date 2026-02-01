@@ -1,24 +1,27 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { mockDeep } from 'jest-mock-extended';
-import { type Repository } from 'typeorm';
-
 import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-link.command';
 import { UpdateLinkHandler } from '@apps/links/src/application/handlers/update-link.handler';
 import { type UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
 import { type LinkService } from '@apps/links/src/application/services/link.service';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 
 import { UpdateLinkHandlerFixture } from './update-link.handler.fixture';
 
 describe('UpdateLinkHandler', () => {
   let handler: UpdateLinkHandler;
-  let linkRepository: jest.Mocked<Repository<Link>>;
+  let linkRepository: jest.Mocked<ILinkRepository>;
   let linkService: jest.Mocked<LinkService>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
 
   beforeEach(() => {
-    linkRepository = mockDeep<Repository<Link>>();
+    linkRepository = {
+      findOne: jest.fn(),
+      findAndCount: jest.fn(),
+      find: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+    };
     linkService = { updateLink: jest.fn() } as unknown as jest.Mocked<LinkService>;
     i18nService = { translate: jest.fn(), t: jest.fn() };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

@@ -10,10 +10,28 @@ import { Request, Response } from 'express';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { Observable, tap } from 'rxjs';
 
-import { LoggerConstants } from '@common/constants';
+import { CommonConstants, LoggerConstants } from '@common/constants';
 
 type JsonPrimitive = string | number | boolean | null;
 type JsonValue = JsonPrimitive | JsonValue[] | { [k: string]: JsonValue };
+
+const SENSITIVE_PATTERN = /password|token/i;
+
+function sanitizeBody(body: JsonValue): JsonValue {
+  if (body === null || typeof body !== 'object') {
+    return body;
+  }
+
+  if (Array.isArray(body)) {
+    return body.map(sanitizeBody);
+  }
+
+  const sanitized: Record<string, JsonValue> = {};
+  for (const [key, value] of Object.entries(body)) {
+    sanitized[key] = SENSITIVE_PATTERN.test(key) ? CommonConstants.redactedTag : sanitizeBody(value);
+  }
+  return sanitized;
+}
 
 interface RequestLogPayload {
   method: string;
@@ -53,7 +71,7 @@ export class LoggingInterceptor implements NestInterceptor {
       url: req.originalUrl ?? req.url,
       params: (req.params ?? {}) as Record<string, JsonValue>,
       query: (req.query ?? {}) as Record<string, JsonValue>,
-      body: (req.body ?? null) as JsonValue,
+      body: sanitizeBody((req.body ?? null) as JsonValue),
     };
 
     this.logger.log(

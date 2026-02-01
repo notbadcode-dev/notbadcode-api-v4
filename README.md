@@ -1,144 +1,406 @@
+<p align="center">
+  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="NestJS Logo" />
+</p>
 
-# NotBadCode API v4 — Monorepo
+<h1 align="center">NotBadCode API v4</h1>
 
-Monorepo de microservicios para la plataforma **NotBadCode API v4**, desarrollado con [NestJS](https://nestjs.com/), siguiendo arquitectura modular y escalable. Incluye microservicios independientes, librerías compartidas, infraestructura Docker, scripts y utilidades de desarrollo.
+<p align="center">
+  <strong>Monorepo de microservicios con arquitectura hexagonal y CQRS</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/node-%3E%3D22.14.0-brightgreen?logo=node.js" alt="Node Version" />
+  <img src="https://img.shields.io/badge/npm-%3E%3D10.9.2-red?logo=npm" alt="npm Version" />
+  <img src="https://img.shields.io/badge/NestJS-11-ea2845?logo=nestjs" alt="NestJS" />
+  <img src="https://img.shields.io/badge/TypeScript-5.3-3178c6?logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/license-UNLICENSED-lightgrey" alt="License" />
+</p>
 
 ---
 
-## Índice
+## Descripción
 
-- [NotBadCode API v4 — Monorepo](#notbadcode-api-v4--monorepo)
-  - [Índice](#índice)
-  - [Estructura del repositorio](#estructura-del-repositorio)
-  - [Primeros pasos](#primeros-pasos)
-  - [Variables de entorno](#variables-de-entorno)
-  - [Comandos útiles](#comandos-útiles)
-  - [Estandarización y buenas prácticas](#estandarización-y-buenas-prácticas)
-  - [Documentación específica](#documentación-específica)
-  - [Notas](#notas)
+**NotBadCode API v4** es un monorepo de microservicios desarrollado con [NestJS](https://nestjs.com/), diseñado siguiendo principios de **Clean Architecture**, **CQRS** y **Domain-Driven Design (DDD)**. Cada microservicio es independiente, escalable y cuenta con su propia base de datos lógica.
 
 ---
 
-## Estructura del repositorio
+## Tabla de Contenidos
 
-```text
-.
-├── Dockerfile.base
-├── README.md
-├── apps/
-│   └── auth/
-│       ├── Dockerfile
-│       ├── README.md
-│       └── src/
-├── certs/
-├── db/
-├── docker/
-├── docker-compose.yml
-├── docker-compose.override.yml
-├── jest.config.js
-├── libs/
-│   └── common/
+- [Descripción](#descripción)
+- [Arquitectura](#arquitectura)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Comandos Disponibles](#comandos-disponibles)
+- [Docker](#docker)
+- [Microservicios](#microservicios)
+- [Librerías Compartidas](#librerías-compartidas)
+- [Testing](#testing)
+- [Contribución](#contribución)
+- [Documentación](#documentación)
+
+---
+
+## Arquitectura
+
+El proyecto implementa una arquitectura robusta basada en múltiples patrones:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              PRESENTATION                               │
+│                    Controllers + Swagger Documentation                  │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              APPLICATION                                │
+│              Commands │ Queries │ Handlers │ Services │ DTOs            │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                DOMAIN                                   │
+│            Entities │ Value Objects │ Ports │ Specifications            │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            INFRASTRUCTURE                               │
+│         TypeORM Repositories │ Database Config │ External Services      │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Patrones Implementados
+
+| Patrón | Descripción |
+|--------|-------------|
+| **CQRS** | Separación de Commands (escritura) y Queries (lectura) |
+| **Hexagonal** | Puertos y Adaptadores para inversión de dependencias |
+| **Repository** | Abstracción del acceso a datos mediante interfaces |
+| **Value Objects** | Objetos inmutables con validación en factory methods |
+| **Result Pattern** | Manejo de errores sin excepciones (`ErrorOn<T>`) |
+
+---
+
+## Estructura del Proyecto
+
+```
+notbadcode-api-v4/
+│
+├── apps/                          # Microservicios
+│   ├── auth/                      # Servicio de autenticación
+│   │   ├── src/
+│   │   │   ├── application/       # Casos de uso, commands, handlers
+│   │   │   ├── domain/            # Entidades, puertos, reglas de negocio
+│   │   │   └── infrastructure/    # Repositorios, configuración BD
+│   │   ├── test/                  # Tests unitarios
+│   │   └── Dockerfile
+│   │
+│   └── links/                     # Servicio de gestión de enlaces
 │       ├── src/
+│       │   ├── application/       # Commands, queries, handlers
+│       │   ├── domain/            # Entidades, especificaciones, puertos
+│       │   └── infrastructure/    # Repositorios, base de datos
 │       ├── test/
-│       └── README.md
-├── logs/
-├── test/
-├── tsconfig.base.json
-└── package.json
+│       └── Dockerfile
+│
+├── libs/                          # Librerías compartidas
+│   └── common/                    # Código reutilizable entre microservicios
+│       ├── src/
+│       │   ├── auth/              # Tipos y guards de autenticación
+│       │   ├── config/            # Configuración centralizada
+│       │   ├── database/          # Entidades base, configuración TypeORM
+│       │   ├── filters/           # Filtros de excepciones
+│       │   ├── guards/            # Guards de seguridad
+│       │   ├── handlers/          # Handlers base abstractos
+│       │   ├── helpers/           # Funciones de utilidad
+│       │   ├── i18n/              # Internacionalización
+│       │   ├── interceptors/      # Interceptores (logging, etc.)
+│       │   ├── loggers/           # Configuración de Winston
+│       │   ├── redis/             # Cache y control de sesiones
+│       │   ├── responses/         # DTOs de respuesta estandarizados
+│       │   └── value-objects/     # Value objects compartidos
+│       └── test/
+│
+├── certs/                         # Certificados SSL para desarrollo
+├── docker/                        # Configuraciones adicionales de Docker
+├── logs/                          # Logs de la aplicación (gitignored)
+├── test/                          # Tests de integración globales
+│
+├── docker-compose.yml             # Orquestación de servicios
+├── docker-compose.override.yml    # Overrides para desarrollo
+├── nest-cli.json                  # Configuración del CLI de NestJS
+├── package.json                   # Dependencias y scripts
+└── tsconfig.base.json             # Configuración base de TypeScript
 ```
 
 ---
 
-## Primeros pasos
+## Requisitos
 
-1. **Clona el repositorio**  
-   ```bash
-   git clone https://github.com/notbadcode-dev/notbadcode-api-v4
-   cd notbadcode-api-v4
-   ```
+Antes de comenzar, asegúrate de tener instalado:
 
-2. **Instala dependencias**  
-   ```bash
-   npm install
-   ```
-
-3. **Copia y configura los archivos de entorno**  
-   - Renombra `.env.example` a `.env` en cada microservicio o raíz, y ajusta variables.
-
-4. **Lanza la infraestructura Docker**  
-   ```bash
-   npm run docker:up
-   ```
-
-5. **Arranca un microservicio en desarrollo**  
-   ```bash
-   npm run start:auth:dev
-   ```
+| Herramienta | Versión Mínima | Notas |
+|-------------|----------------|-------|
+| **Node.js** | `>= 22.14.0` | Recomendado usar [nvm](https://github.com/nvm-sh/nvm) |
+| **npm** | `>= 10.9.2` | Incluido con Node.js |
+| **Docker** | `>= 24.0` | Para contenedores |
+| **Docker Compose** | `>= 2.20` | Orquestación |
 
 ---
 
-## Variables de entorno
+## Instalación
 
-- Los ejemplos de configuración se encuentran en cada microservicio y en la carpeta raíz.
-- Ajusta las variables relacionadas con Redis, MariaDB, JWT, puertos, i18n, etc. según tu entorno.
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/notbadcode-dev/notbadcode-api-v4.git
+cd notbadcode-api-v4
 
----
+# 2. Instalar dependencias
+npm install
 
-## Comandos útiles
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus valores
 
-- **Build global:**  
-  ```bash
-  npm run build
-  ```
-
-- **Build individual (ej: auth):**  
-  ```bash
-  npm run build:auth
-  ```
-
-- **Tests globales:**  
-  ```bash
-  npm test
-  ```
-
-- **Coverage:**  
-  ```bash
-  npm run test:cov
-  ```
-
-- **Formateo:**  
-  ```bash
-  npm run format
-  ```
-
-- **Levantar todo con Docker Compose:**  
-  ```bash
-  npm run docker:up
-  ```
+# 4. Generar certificados SSL (desarrollo)
+npm run certs:generate
+```
 
 ---
 
-## Estandarización y buenas prácticas
+## Configuración
 
-- Todo código compartido debe ir en `libs/common`.
-- Sigue las convenciones de nombres y carpetas descritas en este README y en los de cada microservicio/lib.
-- No subas nunca `.env` ni archivos sensibles.
-- Es obligatorio pasar lint y tests antes de hacer push.
-- Revisa el README específico de cada microservicio o librería para instrucciones particulares.
+### Variables de Entorno Principales
+
+Crea un archivo `.env` en la raíz basándote en `.env.example`:
+
+```dotenv
+# ══════════════════════════════════════════════════════════════
+# BASE DE DATOS
+# ══════════════════════════════════════════════════════════════
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_secure_password
+DB_NAME=notbadcode
+DB_ROOT_PASSWORD=your_root_password
+
+# ══════════════════════════════════════════════════════════════
+# REDIS
+# ══════════════════════════════════════════════════════════════
+REDIS_CACHE_URL=redis://:password@localhost:63791/0
+REDIS_CACHE_PASSWORD=cache_password
+REDIS_SESSION_URL=redis://:password@localhost:63792/0
+REDIS_SESSION_PASSWORD=session_password
+
+# ══════════════════════════════════════════════════════════════
+# SSL
+# ══════════════════════════════════════════════════════════════
+SSL_KEY_PATH=./certs/dev-key.pem
+SSL_CERT_PATH=./certs/dev-cert.pem
+```
+
+> Cada microservicio puede tener su propio `.env` en `apps/<service>/.env`
 
 ---
 
-## Documentación específica
+## Comandos Disponibles
 
-- [Documentación del microservicio Auth](apps/auth/README.md)
-- [Documentación de la librería Common](libs/common/README.md)
+### Desarrollo
+
+```bash
+# Iniciar microservicios en modo desarrollo
+npm run start:auth:dev          # Auth con hot-reload
+npm run start:links:dev         # Links con hot-reload
+
+# Modo debug (con breakpoints)
+npm run start:auth:debug        # Puerto 9229
+npm run start:links:debug       # Puerto 9230
+```
+
+### Build
+
+```bash
+npm run build                   # Build de todos los proyectos
+npm run build:auth              # Build solo de auth
+npm run build:links             # Build solo de links
+npm run build:clean             # Limpia dist/ y rebuilds
+```
+
+### Testing
+
+```bash
+npm test                        # Todos los tests
+npm run test:auth               # Tests de auth
+npm run test:links              # Tests de links
+npm run test:common             # Tests de common
+
+npm run test:cov                # Coverage global
+npm run test:cov:auth           # Coverage de auth
+
+npm run test:watch              # Watch mode
+```
+
+### Calidad de Código
+
+```bash
+npm run lint                    # Ejecutar ESLint
+npm run lint:fix                # Corregir errores automáticamente
+npm run format                  # Formatear con Prettier
+npm run format:check            # Verificar formato
+```
 
 ---
 
-## Notas
+## Docker
 
-- Esta estructura está preparada para escalar, incorporar nuevos microservicios y compartir lógica de forma segura.
-- Si necesitas añadir nuevas apps, libs, comandos o ajustar la configuración global, actualiza también este README.
-- Para dudas, contacta con el responsable técnico o abre un issue en el repositorio.
+### Infraestructura
+
+El proyecto incluye una infraestructura completa con Docker:
+
+| Servicio | Puerto | Descripción |
+|----------|--------|-------------|
+| **MariaDB** | `3306` | Base de datos principal |
+| **Redis Cache** | `63791` | Caché LRU (512MB) |
+| **Redis Session** | `63792` | Sesiones persistentes (256MB) |
+| **Auth** | `60200` | Microservicio de autenticación |
+| **Links** | `60201` | Microservicio de enlaces |
+
+### Comandos Docker
+
+```bash
+# ─────────────────────────────────────────────
+# Perfiles disponibles: prod, debug
+# ─────────────────────────────────────────────
+
+# Levantar infraestructura completa (producción)
+npm run docker:up:prod
+
+# Levantar en modo debug
+npm run docker:up:debug
+
+# Comandos individuales
+npm run docker:up:auth          # Solo auth
+npm run docker:up:links         # Solo links
+
+# Gestión
+npm run docker:ps               # Ver estado
+npm run docker:logs             # Ver logs (tail -f)
+npm run docker:down             # Detener todo
+npm run docker:prune            # Limpiar recursos
+```
 
 ---
+
+## Microservicios
+
+### Auth Service
+
+Gestiona autenticación y autorización de usuarios.
+
+| Característica | Tecnología |
+|----------------|------------|
+| Autenticación | JWT + Passport |
+| Sesiones | Redis (persistente) |
+| Passwords | bcrypt |
+| Base de datos | MariaDB |
+
+**Endpoints principales:**
+- `POST /auth/register` - Registro de usuarios
+- `POST /auth/login` - Inicio de sesión
+- `POST /auth/logout` - Cierre de sesión
+- `POST /auth/refresh` - Renovar tokens
+
+📖 [Documentación completa](./apps/auth/README.md)
+
+---
+
+### Links Service
+
+Gestiona enlaces y colecciones de usuarios.
+
+| Característica | Tecnología |
+|----------------|------------|
+| CQRS completo | Commands + Queries |
+| Especificaciones | Domain Specifications |
+| Cache | Redis LRU |
+
+📖 [Documentación completa](./apps/links/README.md)
+
+---
+
+## Librerías Compartidas
+
+### Common Library
+
+Código reutilizable entre microservicios:
+
+- **Entidades base**: `AuditableEntity`, `DeletableEntity`
+- **Handlers abstractos**: `BaseHandler`, `BasePaginatesHandler`
+- **Respuestas estandarizadas**: `ApiResponse`, `ApiSuccessResponse`, `ApiFailureResponse`
+- **Configuración**: Módulos de config, Redis, logging
+- **Internacionalización**: Soporte multi-idioma con i18n
+- **Guards y Filtros**: Autenticación JWT, validación
+
+📖 [Documentación completa](./libs/common/README.md)
+
+---
+
+## Testing
+
+El proyecto sigue una estrategia de testing por capas:
+
+```bash
+test/
+├── unit/                  # Tests unitarios (handlers, services)
+└── utils/                 # Helpers y mocks para tests
+```
+
+### Convenciones
+
+- Archivos de test: `*.spec.ts`
+- Mocks con `jest-mock-extended`
+- Coverage mínimo recomendado: 80%
+
+---
+
+## Contribución
+
+### Flujo de Trabajo
+
+1. Crear rama desde `main`: `git checkout -b feature/nombre-feature`
+2. Desarrollar siguiendo las convenciones del proyecto
+3. Asegurar que pasen lint y tests: `npm run lint && npm test`
+4. Crear Pull Request con descripción detallada
+
+### Convenciones de Código
+
+- **Commits**: Usar [Conventional Commits](https://www.conventionalcommits.org/)
+- **Naming**: camelCase para variables, PascalCase para clases
+- **Arquitectura**: Respetar la separación de capas
+
+### Antes de hacer Push
+
+```bash
+npm run lint:fix && npm run format && npm test
+```
+
+---
+
+## Documentación
+
+| Recurso | Enlace |
+|---------|--------|
+| Auth Service | [apps/auth/README.md](./apps/auth/README.md) |
+| Links Service | [apps/links/README.md](./apps/links/README.md) |
+| Common Library | [libs/common/README.md](./libs/common/README.md) |
+| Swagger (Auth) | `https://localhost:60200/api/docs` |
+| Swagger (Links) | `https://localhost:60201/api/docs` |
+
+---
+
+<p align="center">
+  <sub>Desarrollado con ❤️ por el equipo de NotBadCode</sub>
+</p>

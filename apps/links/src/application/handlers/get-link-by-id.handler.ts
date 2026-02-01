@@ -1,34 +1,33 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject } from '@nestjs/common';
+import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
-import { Repository } from 'typeorm';
 
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse } from '@common/responses';
 
-import { GetLinkByIdCommand } from '@apps/links/src/application/commands/get-link-by-id.command';
+import { GetLinkByIdQuery } from '@apps/links/src/application/queries/get-link-by-id.query';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 import { LinkByIdSpecification } from '@apps/links/src/domain/specifications/link-by-id.specification';
 
 import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
 
-@CommandHandler(GetLinkByIdCommand)
+@QueryHandler(GetLinkByIdQuery)
 export class GetLinkByIdHandler
-  extends BaseHandler<GetLinkByIdCommand, ApiResponse<GetLinkByIdResponse>>
-  implements ICommandHandler<GetLinkByIdCommand, ApiResponse<GetLinkByIdResponse>>
+  extends BaseHandler<GetLinkByIdQuery, ApiResponse<GetLinkByIdResponse>>
+  implements IQueryHandler<GetLinkByIdQuery, ApiResponse<GetLinkByIdResponse>>
 {
   constructor(
-    @InjectRepository(Link)
-    private readonly linkRepository: Repository<Link>,
+    @Inject('ILinkRepository')
+    private readonly linkRepository: ILinkRepository,
     i18nService: I18nService,
   ) {
     super(i18nService);
   }
 
-  async execute(command: GetLinkByIdCommand): Promise<ApiResponse<GetLinkByIdResponse>> {
-    const linkId = command.id ?? 0;
+  async execute(query: GetLinkByIdQuery): Promise<ApiResponse<GetLinkByIdResponse>> {
+    const linkId = query.id ?? 0;
     if (!linkId || linkId <= 0) {
       return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId);
     }

@@ -1,6 +1,5 @@
 import { hash as bcryptHash } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
-import { type Repository } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
@@ -13,6 +12,7 @@ import { type AuthService, type HashService } from '@apps/auth/src/application/s
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { type User } from '@apps/auth/src/domain/entities';
+import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
 
 import { RegisterHandlerFixture } from './register.handler.fixture';
 
@@ -24,7 +24,7 @@ let handler: RegisterHandler;
 
 describe('RegisterHandler', () => {
   let authService: jest.Mocked<AuthService>;
-  let userRepository: jest.Mocked<Repository<User>>;
+  let userRepository: jest.Mocked<IUserRepository>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
   let hashService: jest.Mocked<HashService>;
@@ -34,7 +34,12 @@ describe('RegisterHandler', () => {
     jest.clearAllMocks();
 
     authService = mockDeep<AuthService>();
-    userRepository = mockDeep<Repository<User>>();
+    userRepository = {
+      findByEmail: jest.fn(),
+      findByIdAndEmail: jest.fn(),
+      save: jest.fn(),
+      create: jest.fn(),
+    };
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
     hashService = mockDeep<HashService>();
@@ -72,7 +77,7 @@ describe('RegisterHandler', () => {
   it('returns failure when the email already exists', async () => {
     // Arrange
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.emailExistsResponse());
-    userRepository.findOne.mockResolvedValueOnce(RegisterHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(RegisterHandlerFixture.existingUser());
 
     // Act
     const result = await handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()));
@@ -91,7 +96,7 @@ describe('RegisterHandler', () => {
 
   it('returns failure when creating payload fails', async () => {
     // Arrange
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
     jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.payloadErrorResponse());
@@ -109,7 +114,7 @@ describe('RegisterHandler', () => {
 
   it('registers user, saves session and returns success', async () => {
     // Arrange
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
     authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
@@ -159,7 +164,7 @@ describe('RegisterHandler', () => {
 
   it('should NOT save session if jti is not a valid UUID', async () => {
     // Arrange
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
     authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
@@ -181,7 +186,7 @@ describe('RegisterHandler', () => {
 
   it('should return success but not update lastLoginAt if accessToken or refreshToken is empty', async () => {
     // Arrange
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
     const emptyTokens = RegisterHandlerFixture.emptyTokens();
@@ -210,7 +215,7 @@ describe('RegisterHandler', () => {
   it('should NOT update lastLoginAt if user.id is falsy (e.g. 0)', async () => {
     // Arrange
     const invalidUser = { ...RegisterHandlerFixture.createdUser(), id: 0 };
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(invalidUser as User);
     authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
@@ -234,7 +239,7 @@ describe('RegisterHandler', () => {
     // Arrange
     const spy = jest.spyOn(handler as any, 'createResponseFailure').mockRejectedValueOnce(new Error('forced-error'));
 
-    userRepository.findOne.mockResolvedValueOnce(RegisterHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(RegisterHandlerFixture.existingUser());
 
     // Act
     let thrown = false;
@@ -252,7 +257,7 @@ describe('RegisterHandler', () => {
 
   it('forces BaseHandler success branch by mocking createSuccessResponse to throw', async () => {
     // Arrange
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     userRepository.save.mockResolvedValueOnce(RegisterHandlerFixture.createdUser());
     authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());
 
@@ -278,7 +283,7 @@ describe('RegisterHandler', () => {
     // Arrange
     const createdUser = RegisterHandlerFixture.createdUser();
 
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     hashService.hash.mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(createdUser);
 
@@ -289,7 +294,7 @@ describe('RegisterHandler', () => {
 
     expect(resultError.success).toBe(false);
 
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
     hashService.hash.mockResolvedValueOnce('hash');
     userRepository.save.mockResolvedValueOnce(createdUser);
     authService.generateTokens.mockResolvedValueOnce(RegisterHandlerFixture.validTokens());

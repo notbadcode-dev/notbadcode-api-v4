@@ -3,6 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommonConfigModule } from '@common/config';
+import { CommonAuthGuardModule } from '@common/guards';
 import { CommonI18nModule } from '@common/i18n';
 import { CommonLoggerModule } from '@common/loggers';
 import { CommonCacheModule } from '@common/redis/cache';
@@ -13,6 +14,7 @@ import { GetLinksPaginatedHandler } from '@apps/links/src/application/handlers/g
 import { UpdateLinkHandler } from '@apps/links/src/application/handlers/update-link.handler';
 import { Link } from '@apps/links/src/domain/entities/link.entity';
 import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database/links-database.module';
+import { TypeOrmLinkRepository } from '@apps/links/src/infrastructure/repositories/typeorm-link.repository';
 import { LinksHealthController } from '@apps/links/src/links-healtz.controller';
 import { LinksController } from '@apps/links/src/links.controller';
 
@@ -29,9 +31,21 @@ import { LinkService } from './application/services/link.service';
     CommonSessionControlModule,
     LinksDatabaseModule,
     TypeOrmModule.forFeature([Link]),
+    CommonAuthGuardModule,
     CqrsModule,
   ],
   controllers: [LinksController, LinksHealthController],
-  providers: [GetLinkByIdHandler, GetLinksPaginatedHandler, UpdateLinkHandler, MarkLinksAsFavoriteHandler, UnmarkLinksAsFavoriteHandler, LinkService],
+  providers: [
+    GetLinkByIdHandler,
+    GetLinksPaginatedHandler,
+    UpdateLinkHandler,
+    MarkLinksAsFavoriteHandler,
+    UnmarkLinksAsFavoriteHandler,
+    LinkService,
+    {
+      provide: 'ILinkRepository',
+      useClass: TypeOrmLinkRepository,
+    },
+  ],
 })
 export class LinksModule {}

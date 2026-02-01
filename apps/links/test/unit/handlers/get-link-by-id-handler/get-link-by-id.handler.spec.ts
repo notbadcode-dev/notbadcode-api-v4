@@ -1,22 +1,25 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { mockDeep } from 'jest-mock-extended';
-import { type Repository } from 'typeorm';
-
-import { GetLinkByIdCommand } from '@apps/links/src/application/commands/get-link-by-id.command';
 import { GetLinkByIdHandler } from '@apps/links/src/application/handlers/get-link-by-id.handler';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
+import { GetLinkByIdQuery } from '@apps/links/src/application/queries/get-link-by-id.query';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 
 import { LinkByIdHandlerFixture } from './get-link-by-id.handler.fixture';
 
 describe('GetLinkByIdHandler', () => {
   let handler: GetLinkByIdHandler;
-  let linkRepository: jest.Mocked<Repository<Link>>;
+  let linkRepository: jest.Mocked<ILinkRepository>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
 
   beforeEach(() => {
-    linkRepository = mockDeep<Repository<Link>>();
+    linkRepository = {
+      findOne: jest.fn(),
+      findAndCount: jest.fn(),
+      find: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+    };
     i18nService = { translate: jest.fn(), t: jest.fn() };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     handler = new GetLinkByIdHandler(linkRepository, i18nService as any);
@@ -25,10 +28,10 @@ describe('GetLinkByIdHandler', () => {
   it('returns failure when id is invalid', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(null);
-    const command = new GetLinkByIdCommand(-1);
+    const query = new GetLinkByIdQuery(-1);
 
     // Act
-    const result = await handler.execute(command);
+    const result = await handler.execute(query);
 
     // Assert
     expect(linkRepository.findOne).not.toHaveBeenCalled();
@@ -39,10 +42,10 @@ describe('GetLinkByIdHandler', () => {
 
   it('returns failure when id is zero (falsy)', async () => {
     // Arrange
-    const command = new GetLinkByIdCommand(0);
+    const query = new GetLinkByIdQuery(0);
 
     // Act
-    const result = await handler.execute(command);
+    const result = await handler.execute(query);
 
     // Assert
     expect(linkRepository.findOne).not.toHaveBeenCalled();
@@ -52,10 +55,10 @@ describe('GetLinkByIdHandler', () => {
 
   it('returns failure when command id is undefined', async () => {
     // Arrange
-    const command = { id: undefined } as unknown as GetLinkByIdCommand;
+    const query = { id: undefined } as unknown as GetLinkByIdQuery;
 
     // Act
-    const result = await handler.execute(command);
+    const result = await handler.execute(query);
 
     // Assert
     expect(linkRepository.findOne).not.toHaveBeenCalled();
@@ -66,10 +69,10 @@ describe('GetLinkByIdHandler', () => {
   it('returns failure when link is not found', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(null);
-    const command = new GetLinkByIdCommand(LinkByIdHandlerFixture.notFoundId);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.notFoundId);
 
     // Act
-    const result = await handler.execute(command);
+    const result = await handler.execute(query);
 
     // Assert
     expect(linkRepository.findOne).toHaveBeenCalledWith(
@@ -85,10 +88,10 @@ describe('GetLinkByIdHandler', () => {
   it('returns success when link is found', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(LinkByIdHandlerFixture.validLink);
-    const command = new GetLinkByIdCommand(LinkByIdHandlerFixture.validLink.id);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.validLink.id);
 
     // Act
-    const result = await handler.execute(command);
+    const result = await handler.execute(query);
 
     // Assert
     expect(linkRepository.findOne).toHaveBeenCalledWith(

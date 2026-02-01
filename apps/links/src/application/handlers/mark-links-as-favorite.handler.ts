@@ -1,13 +1,13 @@
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse, SuccessFailureResponse } from '@common/responses';
 
 import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands/mark-links-as-favorite.command';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 
 @CommandHandler(MarkLinksAsFavoriteCommand)
 export class MarkLinksAsFavoriteHandler
@@ -15,8 +15,8 @@ export class MarkLinksAsFavoriteHandler
   implements ICommandHandler<MarkLinksAsFavoriteCommand>
 {
   constructor(
-    @InjectRepository(Link)
-    private readonly linkRepository: Repository<Link>,
+    @Inject('ILinkRepository')
+    private readonly linkRepository: ILinkRepository,
     i18nService: I18nService,
   ) {
     super(i18nService);

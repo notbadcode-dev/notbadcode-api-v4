@@ -48,13 +48,14 @@ async function bootstrap(): Promise<void> {
 void bootstrap();
 
 async function createApp(): Promise<INestApplication> {
-  const key = fs.readFileSync(process.env.SSL_KEY_PATH ?? path.resolve(ENV_DEFAULTS[ENV_KEYS.SSL_KEY_PATH]));
-  const cert = fs.readFileSync(
-    process.env.SSL_CERT_PATH ?? path.resolve(ENV_DEFAULTS[ENV_KEYS.SSL_CERT_PATH]),
-  );
-
   const isProd = process.env.NODE_ENV === CommonConstants.productionEnvironmentTag;
-  const httpsOptions = isProd ? { key, cert } : undefined;
+  let httpsOptions: { key: Buffer; cert: Buffer } | undefined;
+
+  if (isProd) {
+    const key = fs.readFileSync(process.env.SSL_KEY_PATH ?? path.resolve(ENV_DEFAULTS[ENV_KEYS.SSL_KEY_PATH]));
+    const cert = fs.readFileSync(process.env.SSL_CERT_PATH ?? path.resolve(ENV_DEFAULTS[ENV_KEYS.SSL_CERT_PATH]));
+    httpsOptions = { key, cert };
+  }
 
   return await NestFactory.create(LinksModule, {
     ...(httpsOptions ? { httpsOptions } : {}),

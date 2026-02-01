@@ -1,6 +1,4 @@
-import { type Repository } from 'typeorm';
-
-import { BasePaginatedHandler } from '@common/handler';
+import { BasePaginatedHandler, type IPaginatableRepository } from '@common/handler';
 import { PaginateHelper } from '@common/helpers';
 import { type I18nService } from '@common/i18n';
 import { type UserPaginatedRequest } from '@common/requests';
@@ -26,7 +24,7 @@ class TestBasePaginatedHandler extends BasePaginatedHandler<
   }
 
   async executeWrapper(
-    repository: Repository<TestEntity>,
+    repository: IPaginatableRepository<TestEntity>,
     request: UserPaginatedRequest,
     map: (entity: TestEntity) => TestResponseDto,
     notFoundMessage: string,
@@ -37,14 +35,14 @@ class TestBasePaginatedHandler extends BasePaginatedHandler<
 
 describe('BasePaginatedHandler', () => {
   let handler: TestBasePaginatedHandler;
-  let repository: jest.Mocked<Repository<TestEntity>>;
+  let repository: jest.Mocked<IPaginatableRepository<TestEntity>>;
   let request: UserPaginatedRequest;
 
   beforeEach(() => {
     handler = new TestBasePaginatedHandler(BasePaginatedHandlerFixture.i18nStub());
     repository = {
       findAndCount: jest.fn(),
-    } as unknown as jest.Mocked<Repository<TestEntity>>;
+    } as unknown as jest.Mocked<IPaginatableRepository<TestEntity>>;
     request = BasePaginatedHandlerFixture.request();
     jest.clearAllMocks();
   });

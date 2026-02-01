@@ -1,8 +1,7 @@
 import { UUID } from 'node:crypto';
 
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
@@ -17,12 +16,13 @@ import { AuthService, HashService, UserService } from '@apps/auth/src/applicatio
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
+import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
 
 @CommandHandler(RegisterCommand)
 export class RegisterHandler extends BaseHandler<RegisterCommand, ApiResponse<LoginResponse>> implements ICommandHandler<RegisterCommand, ApiResponse<LoginResponse>> {
   /* istanbul ignore next */
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly hashService: HashService,
@@ -35,7 +35,7 @@ export class RegisterHandler extends BaseHandler<RegisterCommand, ApiResponse<Lo
   async execute(command: RegisterCommand): Promise<ApiResponse<LoginResponse>> {
     const { email, password } = command;
 
-    const existing = await this.userRepository.findOne({ where: { email } });
+    const existing = await this.userRepository.findByEmail(email);
     if (existing) {
       return await this.createResponseFailure(AuthErrorMessageConstants.emailAlreadyExists);
     }

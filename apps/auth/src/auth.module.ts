@@ -1,10 +1,9 @@
 import { Logger, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommonConfigModule } from '@common/config';
-import { JwtAuthGuard } from '@common/guards';
+import { CommonAuthGuardModule } from '@common/guards';
 import { CommonI18nModule } from '@common/i18n';
 import { CommonLoggerModule } from '@common/loggers';
 import { CommonCacheModule } from '@common/redis/cache';
@@ -21,7 +20,7 @@ import { AuthService } from '@apps/auth/src/application/services/auth.service';
 import { AuthController } from '@apps/auth/src/auth.controller';
 import { User } from '@apps/auth/src/domain/entities/user.entity';
 import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database/auth-database.module';
-import { JwtConfigService } from '@apps/auth/src/infrastructure/jwt/jwt-config.service';
+import { TypeOrmUserRepository } from '@apps/auth/src/infrastructure/repositories/typeorm-user.repository';
 
 import { HashService, UserService } from './application/services';
 import { AuthHealthController } from './auth-healtz.controller';
@@ -35,12 +34,24 @@ import { AuthHealthController } from './auth-healtz.controller';
     CommonSessionControlModule,
     AuthDatabaseModule,
     TypeOrmModule.forFeature([User]),
-    JwtModule.registerAsync({
-      useClass: JwtConfigService,
-    }),
+    CommonAuthGuardModule,
     CqrsModule,
   ],
   controllers: [AuthController, AuthHealthController],
-  providers: [AuthService, HashService, LoginHandler, LogoutHandler, RefreshHandler, RegisterHandler, JwtConfigService, ApiResponseService, JwtAuthGuard, Logger, UserService],
+  providers: [
+    AuthService,
+    HashService,
+    LoginHandler,
+    LogoutHandler,
+    RefreshHandler,
+    RegisterHandler,
+    ApiResponseService,
+    Logger,
+    UserService,
+    {
+      provide: 'IUserRepository',
+      useClass: TypeOrmUserRepository,
+    },
+  ],
 })
 export class AuthModule {}

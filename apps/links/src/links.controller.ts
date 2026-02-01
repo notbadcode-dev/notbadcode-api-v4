@@ -1,13 +1,14 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOkResponse } from '@nestjs/swagger';
 
+import { JwtAuthGuard } from '@common/guards';
 import { UserPaginatedRequest } from '@common/requests';
 import { ApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
 
-import { GetLinkByIdCommand } from '@apps/links/src/application/commands/get-link-by-id.command';
-import { GetLinksPaginatedCommand } from '@apps/links/src/application/commands/get-links-paginated.command';
 import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-link.command';
+import { GetLinkByIdQuery } from '@apps/links/src/application/queries/get-link-by-id.query';
+import { GetLinksPaginatedQuery } from '@apps/links/src/application/queries/get-links-paginated.query';
 import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
 
@@ -17,19 +18,23 @@ import { MarkLinksAsFavoriteRequest } from './application/requests/mark-links-as
 import { UnmarkLinksAsFavoriteRequest } from './application/requests/unmark-links-as-favorite.request';
 
 @Controller('links')
+@UseGuards(JwtAuthGuard)
 export class LinksController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   @Get(':id')
   @ApiOkResponse({ type: GetLinkByIdResponse, description: 'Link retrieved successfully' })
   async getLinkById(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<GetLinkByIdResponse>> {
-    return this.commandBus.execute(new GetLinkByIdCommand(id));
+    return this.queryBus.execute(new GetLinkByIdQuery(id));
   }
 
   @Post('paginated')
   @ApiOkResponse({ type: createPaginatedResponse(GetLinkByIdResponse), description: 'Paginated links retrieved successfully' })
   async getLinksPaginated(@Body() request: UserPaginatedRequest): Promise<InstanceType<ReturnType<typeof createPaginatedResponse>>> {
-    return this.commandBus.execute(new GetLinksPaginatedCommand(request));
+    return this.queryBus.execute(new GetLinksPaginatedQuery(request));
   }
 
   @Patch(':id')

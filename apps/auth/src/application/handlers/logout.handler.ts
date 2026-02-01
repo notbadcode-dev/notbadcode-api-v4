@@ -1,8 +1,6 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { EJwtType, JwtPayloadPlain } from '@common/auth';
 import { BaseHandler } from '@common/handler';
@@ -15,12 +13,13 @@ import { TokenValidationHelper } from '@apps/auth/src/application/helpers';
 import { UserService } from '@apps/auth/src/application/services';
 import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
+import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
 
 @CommandHandler(LogoutCommand)
 export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolean>> implements ICommandHandler<LogoutCommand, ApiResponse<boolean>> {
   /* istanbul ignore next */
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly logger: Logger,
@@ -62,7 +61,7 @@ export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolea
       return await this.createResponseFailure(uuidResult.errorMessage);
     }
 
-    const user = await this.userRepository.findOne({ where: { id: sub, email } });
+    const user = await this.userRepository.findByIdAndEmail(sub, email);
     if (!user) {
       return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
     }

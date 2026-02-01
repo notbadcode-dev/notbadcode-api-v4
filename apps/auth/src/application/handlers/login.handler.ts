@@ -1,8 +1,7 @@
 import { UUID } from 'node:crypto';
 
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
   /* istanbul ignore next */
 import { BaseHandler } from '@common/handler';
@@ -20,12 +19,13 @@ import { UserService } from '@apps/auth/src/application/services/user.service';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants/auth-error-message.constants';
 import { User } from '@apps/auth/src/domain/entities';
+import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
 
 @CommandHandler(LoginCommand)
 export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginResponse>> implements ICommandHandler<LoginCommand, ApiResponse<LoginResponse>> {
   constructor(
     /* istanbul ignore next */
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
     private readonly commonSessionControlService: CommonSessionControlService,
     private readonly hashService: HashService,
@@ -38,7 +38,7 @@ export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginRes
   async execute(command: LoginCommand): Promise<ApiResponse<LoginResponse>> {
     const { email, password } = command;
 
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);

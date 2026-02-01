@@ -2,21 +2,19 @@ import { type I18nService } from '@common/i18n';
 
 import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands/mark-links-as-favorite.command';
 import { MarkLinksAsFavoriteHandler } from '@apps/links/src/application/handlers/mark-links-as-favorite.handler';
-import type { Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 
 import { MarkLinksAsFavoriteFixture } from './mark-links-as-favorite.handler.fixture';
 
-import type { Repository } from 'typeorm';
-
 describe('MarkLinksAsFavoriteHandler', () => {
   let handler: MarkLinksAsFavoriteHandler;
-  let mockRepo: Partial<Repository<Link>>;
+  let mockRepo: Partial<jest.Mocked<ILinkRepository>>;
   let mockI18n: Partial<I18nService>;
 
   beforeEach(() => {
     mockRepo = {};
     mockI18n = { translate: jest.fn().mockResolvedValue('') };
-    handler = new MarkLinksAsFavoriteHandler(mockRepo as Repository<Link>, mockI18n as I18nService);
+    handler = new MarkLinksAsFavoriteHandler(mockRepo as ILinkRepository, mockI18n as I18nService);
   });
 
   it('should mark all links as favorite and return success', async () => {

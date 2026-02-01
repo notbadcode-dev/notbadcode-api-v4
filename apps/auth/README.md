@@ -1,157 +1,424 @@
+<p align="center">
+  <img src="https://nestjs.com/img/logo-small.svg" width="80" alt="NestJS Logo" />
+</p>
 
-# Auth Microservice
+<h1 align="center">Auth Microservice</h1>
 
-Microservicio de autenticación (`auth`) para la plataforma **NotBadCode API v4**, desarrollado con [NestJS](https://nestjs.com/). Gestiona autenticación basada en JWT, control de sesiones con Redis, integración con MariaDB y soporte completo de internacionalización (i18n). El servicio está preparado para funcionar de manera autónoma y dentro de una arquitectura de microservicios.
+<p align="center">
+  Servicio de autenticación y gestión de sesiones para <strong>NotBadCode API v4</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/NestJS-11-ea2845?logo=nestjs" alt="NestJS" />
+  <img src="https://img.shields.io/badge/JWT-Passport-000000?logo=jsonwebtokens" alt="JWT" />
+  <img src="https://img.shields.io/badge/MariaDB-11-003545?logo=mariadb" alt="MariaDB" />
+  <img src="https://img.shields.io/badge/Redis-7-DC382D?logo=redis" alt="Redis" />
+</p>
 
 ---
 
-## Índice
+## Descripción
 
-- [Auth Microservice](#auth-microservice)
-  - [Índice](#índice)
-  - [Estructura del proyecto](#estructura-del-proyecto)
-  - [Variables de entorno](#variables-de-entorno)
-  - [Comandos útiles](#comandos-útiles)
-  - [Arquitectura y tecnologías](#arquitectura-y-tecnologías)
-  - [Buenas prácticas](#buenas-prácticas)
-  - [Notas adicionales](#notas-adicionales)
+El microservicio **Auth** gestiona todo el ciclo de autenticación de usuarios: registro, login, logout y renovación de tokens. Implementa **arquitectura hexagonal** con **CQRS**, control de sesiones distribuido con Redis y soporte completo de internacionalización.
 
 ---
 
-## Estructura del proyecto
+## Tabla de Contenidos
 
-```text
-apps/auth
+- [Descripción](#descripción)
+- [Arquitectura](#arquitectura)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [API Endpoints](#api-endpoints)
+- [Configuración](#configuración)
+- [Comandos](#comandos)
+- [Seguridad](#seguridad)
+- [Testing](#testing)
+
+---
+
+## Arquitectura
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       PRESENTATION                           │
+│                                                              │
+│  ┌─────────────────┐    ┌─────────────────────────────────┐  │
+│  │ AuthController  │    │      AuthHealthController       │  │
+│  └────────┬────────┘    └─────────────────────────────────┘  │
+│           │                                                  │
+│           ▼                                                  │
+│  ┌─────────────────┐                                         │
+│  │   CommandBus    │  ◄── CQRS Pattern                       │
+│  └────────┬────────┘                                         │
+└───────────┼──────────────────────────────────────────────────┘
+            │
+            ▼
+┌──────────────────────────────────────────────────────────────┐
+│                       APPLICATION                            │
+│                                                              │
+│  Commands              Handlers                Services      │
+│  ┌──────────────┐     ┌──────────────┐     ┌─────────────┐  │
+│  │ LoginCommand │────►│ LoginHandler │────►│ AuthService │  │
+│  │ RegisterCmd  │     │ RegisterHdlr │     │ HashService │  │
+│  │ LogoutCommand│     │ LogoutHandler│     │ UserService │  │
+│  │ RefreshCmd   │     │ RefreshHdlr  │     └─────────────┘  │
+│  └──────────────┘     └──────┬───────┘                       │
+│                              │                               │
+│  Value Objects               │     Helpers                   │
+│  ┌──────────────┐            │     ┌────────────────────┐   │
+│  │  JwtPayload  │◄───────────┼────►│TokenValidationHlpr │   │
+│  └──────────────┘            │     └────────────────────┘   │
+└──────────────────────────────┼───────────────────────────────┘
+                               │
+                               ▼
+┌──────────────────────────────────────────────────────────────┐
+│                         DOMAIN                               │
+│                                                              │
+│  Entities                      Ports (Interfaces)            │
+│  ┌──────────────┐             ┌──────────────────────┐      │
+│  │    User      │             │   IUserRepository    │      │
+│  └──────────────┘             └──────────────────────┘      │
+│                                          ▲                   │
+└──────────────────────────────────────────┼───────────────────┘
+                                           │
+                                           │ implements
+                                           │
+┌──────────────────────────────────────────┼───────────────────┐
+│                     INFRASTRUCTURE                           │
+│                                           │                  │
+│  ┌────────────────────────────────────────┼───────────────┐  │
+│  │              TypeOrmUserRepository     ▼               │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ┌─────────────────┐    ┌─────────────────────────────────┐  │
+│  │ AuthDatabase    │    │        JwtConfigService         │  │
+│  │    Module       │    └─────────────────────────────────┘  │
+│  └─────────────────┘                                         │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Flujo de Autenticación
+
+```
+┌─────────┐     POST /auth/login      ┌─────────────┐
+│ Cliente │ ─────────────────────────►│   Auth API  │
+└─────────┘                           └──────┬──────┘
+                                             │
+                 ┌───────────────────────────┼───────────────────────────┐
+                 │                           ▼                           │
+                 │  1. Validar credenciales (bcrypt)                     │
+                 │  2. Generar JwtPayload (Value Object)                 │
+                 │  3. Crear tokens (access + refresh)                   │
+                 │  4. Guardar sesión en Redis                           │
+                 │  5. Actualizar lastLoginAt                            │
+                 └───────────────────────────┬───────────────────────────┘
+                                             │
+┌─────────┐     { accessToken, refreshToken } │
+│ Cliente │ ◄─────────────────────────────────┘
+└─────────┘
+```
+
+---
+
+## Estructura del Proyecto
+
+```
+apps/auth/
+│
+├── src/
+│   ├── main.ts                          # Bootstrap de la aplicación
+│   ├── auth.module.ts                   # Módulo principal
+│   ├── auth.controller.ts               # Controlador REST
+│   ├── auth-healtz.controller.ts        # Health check endpoint
+│   │
+│   ├── application/                     # Capa de aplicación
+│   │   ├── commands/                    # Commands CQRS
+│   │   │   ├── login.command.ts
+│   │   │   ├── logout.command.ts
+│   │   │   ├── refresh.command.ts
+│   │   │   └── register.command.ts
+│   │   │
+│   │   ├── handlers/                    # Command Handlers
+│   │   │   ├── login.handler.ts
+│   │   │   ├── logout.handler.ts
+│   │   │   ├── refresh.handler.ts
+│   │   │   └── register.handler.ts
+│   │   │
+│   │   ├── services/                    # Servicios de aplicación
+│   │   │   ├── auth.service.ts          # Generación de tokens
+│   │   │   ├── hash.service.ts          # Hashing con bcrypt
+│   │   │   └── user.service.ts          # Gestión de usuarios
+│   │   │
+│   │   ├── requests/                    # DTOs de entrada
+│   │   ├── responses/                   # DTOs de salida
+│   │   ├── value-objects/               # Value Objects
+│   │   │   └── jwt-payload.vo.ts        # Payload inmutable
+│   │   └── helpers/
+│   │       └── token-validation.helper.ts
+│   │
+│   ├── domain/                          # Capa de dominio
+│   │   ├── entities/
+│   │   │   └── user.entity.ts           # Entidad User
+│   │   └── ports/
+│   │       └── user-repository.port.ts  # Interface del repositorio
+│   │
+│   ├── infrastructure/                  # Capa de infraestructura
+│   │   ├── database/
+│   │   │   ├── auth-database.module.ts
+│   │   │   └── auth-database.config.ts
+│   │   ├── repositories/
+│   │   │   └── typeorm-user.repository.ts
+│   │   └── jwt/
+│   │       └── jwt-config.service.ts
+│   │
+│   └── constants/                       # Constantes del servicio
+│       ├── auth.constants.ts
+│       ├── auth-error-message.constants.ts
+│       └── jwt.constants.ts
+│
+├── test/
+│   ├── unit/                            # Tests unitarios
+│   └── utils/                           # Utilidades para tests
+│
 ├── Dockerfile
-├── README.md
-├── src
-│   ├── application
-│   │   ├── commands
-│   │   ├── dtos
-│   │   ├── handlers
-│   │   └── value-objects
-│   ├── auth.controller.ts
-│   ├── auth.module.ts
-│   ├── auth.service.ts
-│   ├── constants
-│   ├── domain
-│   │   └── entities
-│   ├── infrastructure
-│   │   ├── database
-│   │   └── jwt
-│   └── main.ts
-├── test
-│   ├── unit
-│   └── utils
+├── .env.example
 ├── tsconfig.build.json
 └── tsconfig.json
 ```
 
 ---
 
-## Variables de entorno
+## API Endpoints
 
-Crea un archivo `.env` en la raíz del microservicio `auth` basado en el siguiente ejemplo:
+### Autenticación
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| `POST` | `/auth/register` | Registrar nuevo usuario | No |
+| `POST` | `/auth/login` | Iniciar sesión | No |
+| `POST` | `/auth/logout` | Cerrar sesión | Sí |
+| `POST` | `/auth/refresh` | Renovar access token | No |
+
+### Health Check
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/health` | Estado del servicio |
+
+### Ejemplos de Uso
+
+#### Registro
+
+```bash
+curl -X POST https://localhost:60200/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePass123!"
+  }'
+```
+
+**Respuesta exitosa:**
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+  },
+  "messages": []
+}
+```
+
+#### Login
+
+```bash
+curl -X POST https://localhost:60200/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePass123!"
+  }'
+```
+
+#### Refresh Token
+
+```bash
+curl -X POST https://localhost:60200/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+  }'
+```
+
+---
+
+## Configuración
+
+### Variables de Entorno
+
+Crear archivo `.env` basado en `.env.example`:
 
 ```dotenv
-# Nombre del microservicio
+# ══════════════════════════════════════════════════════════════
+# SERVICIO
+# ══════════════════════════════════════════════════════════════
 AUTH_SERVICE_NAME=auth
-
-# Puerto de escucha
 AUTH_PORT=60200
 
+# ══════════════════════════════════════════════════════════════
 # JWT
-AUTH_JWT_SECRET=        # Requerido: Clave secreta segura para firmar JWT
-AUTH_JWT_EXPIRES_IN=15m # Ejemplo: 15m, 1h, 7d
+# ══════════════════════════════════════════════════════════════
+AUTH_JWT_SECRET=your-super-secret-key-min-32-chars
+AUTH_JWT_EXPIRES_IN=15m
+AUTH_JWT_REFRESH_EXPIRES_IN=7d
 
-# Base de datos específica de Auth
+# ══════════════════════════════════════════════════════════════
+# BASE DE DATOS
+# ══════════════════════════════════════════════════════════════
+AUTH_DB_HOST=localhost
+AUTH_DB_PORT=3306
+AUTH_DB_USER=auth_user
+AUTH_DB_PASS=auth_password
 AUTH_DB_NAME=auth_db
 
-# Configuración Redis (sesión y caché)
-REDIS_SESSION_URL=redis://:PASSWORD@redis-session-dev:6379/0
-REDIS_CACHE_URL=redis://:PASSWORD@redis-cache-dev:6379/0
+# ══════════════════════════════════════════════════════════════
+# REDIS
+# ══════════════════════════════════════════════════════════════
+REDIS_SESSION_URL=redis://:password@localhost:63792/0
+REDIS_CACHE_URL=redis://:password@localhost:63791/0
 
-# SSL (si aplica)
-SSL_KEY_PATH=/app/certs/dev-key.pem
-SSL_CERT_PATH=/app/certs/dev-cert.pem
+# ══════════════════════════════════════════════════════════════
+# SSL (HTTPS)
+# ══════════════════════════════════════════════════════════════
+SSL_KEY_PATH=./certs/dev-key.pem
+SSL_CERT_PATH=./certs/dev-cert.pem
 
-# i18n
+# ══════════════════════════════════════════════════════════════
+# INTERNACIONALIZACIÓN
+# ══════════════════════════════════════════════════════════════
 I18N_DIR=/app/libs/common/src/i18n
 FALLBACK_LANGUAGE=en
 ```
 
 ---
 
-## Comandos útiles
+## Comandos
 
-- **Arrancar en desarrollo:**
-  ```bash
-  npm run start:auth:dev
-  ```
+### Desarrollo
 
-- **Arrancar en modo debug (puerto 9229):**
-  ```bash
-  npm run start:auth:debug
-  ```
+```bash
+# Iniciar con hot-reload
+npm run start:auth:dev
 
-- **Tests unitarios:**
-  ```bash
-  npm run test:auth
-  ```
+# Iniciar en modo debug (puerto 9229)
+npm run start:auth:debug
+```
 
-- **Coverage:**
-  ```bash
-  npm run test:cov:auth
-  ```
+### Build
 
-- **Build del microservicio:**
-  ```bash
-  npm run build:auth
-  ```
+```bash
+npm run build:auth
+```
 
-- **Docker Compose (solo auth):**
-  ```bash
-  npm run docker:up:auth
-  ```
+### Docker
 
----
+```bash
+# Solo el servicio auth
+npm run docker:up:auth
 
-## Arquitectura y tecnologías
+# Build de la imagen
+npm run docker:build:auth
+```
 
-- **NestJS 11**  
-  Patrones CQRS y SOLID.
-- **JWT y Passport**  
-  Login seguro, expiración configurable.
-- **Redis**  
-  Control de sesiones y caché desacoplado.
-- **MariaDB/MySQL**  
-  Persistencia de usuarios y credenciales.
-- **i18n**  
-  Internacionalización basada en ficheros.
-- **Swagger**  
-  Documentación automática de endpoints (si está habilitado).
-- **Testing**  
-  Unitarios y mocks avanzados organizados en `test/unit`.
+### Tests
+
+```bash
+# Tests unitarios
+npm run test:auth
+
+# Con coverage
+npm run test:cov:auth
+
+# Watch mode
+npm run test:watch:auth
+```
 
 ---
 
-## Buenas prácticas
+## Seguridad
 
-- Nunca subas archivos `.env` ni credenciales al repositorio.
-- Revisa y actualiza las dependencias regularmente.
-- Asegura que todos los comandos (`npm run ...`) pasan sin errores antes de hacer push.
-- Mantén el código formateado (`npm run format`).
-- Los tests deben estar siempre actualizados y pasar en CI.
+### Características Implementadas
+
+| Característica | Implementación |
+|----------------|----------------|
+| **Hashing de passwords** | bcrypt con salt rounds configurables |
+| **Tokens JWT** | Access token (15m) + Refresh token (7d) |
+| **JTI (JWT ID)** | Identificador único por token para revocación |
+| **Sesiones distribuidas** | Redis con persistencia |
+| **HTTPS** | Certificados SSL configurables |
+| **Soft Delete** | Usuarios nunca se eliminan físicamente |
+
+### Estructura del Token
+
+```json
+{
+  "sub": 1,                                    // User ID
+  "email": "user@example.com",
+  "jti": "550e8400-e29b-41d4-a716-446655440000", // Unique Token ID
+  "tokenType": "access",
+  "iat": 1699000000,
+  "exp": 1699000900
+}
+```
 
 ---
 
-## Notas adicionales
+## Testing
 
-- El microservicio `auth` está diseñado para funcionar de forma autónoma, pero integrado dentro de una arquitectura de microservicios.
-- Consulta la documentación de arquitectura global en el README raíz del monorepo para ver dependencias cruzadas y configuración compartida.
-- Si necesitas añadir endpoints o lógica nueva, sigue las convenciones de CQRS (command/handler) y añade siempre sus tests unitarios.
+### Estructura de Tests
+
+```
+test/
+├── unit/
+│   ├── handlers/
+│   │   ├── login.handler.spec.ts
+│   │   ├── register.handler.spec.ts
+│   │   └── ...
+│   └── services/
+│       ├── auth.service.spec.ts
+│       └── hash.service.spec.ts
+│
+└── utils/
+    ├── mock-factories.ts
+    └── test-helpers.ts
+```
+
+### Ejecutar Tests
+
+```bash
+# Todos los tests
+npm run test:auth
+
+# Con coverage
+npm run test:cov:auth
+
+# Watch mode
+npm run test:watch:auth
+```
 
 ---
 
-**¿Dudas, sugerencias o bugs?**  
-Contacta con el responsable de backend o abre un issue en el repositorio central.
+## Swagger
+
+La documentación interactiva de la API está disponible en:
+
+```
+https://localhost:60200/api/docs
+```
+
+---
+
+<p align="center">
+  <a href="../../../README.md">← Volver al README principal</a>
+</p>

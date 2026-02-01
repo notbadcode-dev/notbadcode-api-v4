@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { mockDeep } from 'jest-mock-extended';
-import { type Repository } from 'typeorm';
-
 import { type CommonSessionControlService } from '@common/redis/session';
 import { ErrorOnFactory } from '@common/types/error-on.type';
 
@@ -11,6 +8,9 @@ import { type AuthService, type HashService } from '@apps/auth/src/application/s
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { type User } from '@apps/auth/src/domain/entities';
+import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
+
+import { mockDeep } from 'jest-mock-extended';
 
 import { LoginHandlerFixture } from './login.handler.fixture';
 
@@ -22,7 +22,7 @@ let handler: LoginHandler;
 
 describe('LoginHandler', () => {
   let authService: jest.Mocked<AuthService>;
-  let userRepository: jest.Mocked<Repository<User>>;
+  let userRepository: jest.Mocked<IUserRepository>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
   let commonSessionControlService: jest.Mocked<CommonSessionControlService>;
   let hashService: jest.Mocked<HashService>;
@@ -32,7 +32,12 @@ describe('LoginHandler', () => {
     jest.clearAllMocks();
 
     authService = mockDeep<AuthService>();
-    userRepository = mockDeep<Repository<User>>();
+    userRepository = {
+      findByEmail: jest.fn(),
+      findByIdAndEmail: jest.fn(),
+      save: jest.fn(),
+      create: jest.fn(),
+    };
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
     hashService = mockDeep<HashService>();
@@ -66,7 +71,7 @@ describe('LoginHandler', () => {
     }).not.toThrow();
   });
   it('returns failure when the user does not exist', async () => {
-    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findByEmail.mockResolvedValueOnce(null);
 
     const result = await handler.execute(new LoginCommand(LoginHandlerFixture.invalidEmail(), LoginHandlerFixture.invalidPassword()));
 
@@ -75,7 +80,7 @@ describe('LoginHandler', () => {
   });
 
   it('returns failure when the password does not match', async () => {
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(false);
 
     const result = await handler.execute(new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.invalidPassword()));
@@ -86,7 +91,7 @@ describe('LoginHandler', () => {
   });
 
   it('returns failure if JwtPayload.create fails', async () => {
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     jest.spyOn(JwtPayload, 'create').mockReturnValue(ErrorOnFactory.error(AuthErrorMessageConstants.invalidUserId));
 
@@ -99,7 +104,7 @@ describe('LoginHandler', () => {
   it('returns success with tokens when credentials are valid', async () => {
     userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
     jest.spyOn(JwtPayload, 'create').mockReturnValue(ErrorOnFactory.success(LoginHandlerFixture.mockJwtPayload()));
@@ -127,7 +132,7 @@ describe('LoginHandler', () => {
   it('should NOT update lastLoginAt if accessToken or refreshToken is empty', async () => {
     userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     const emptyTokens = LoginHandlerFixture.emptyTokens();
     authService.generateTokens.mockResolvedValueOnce(emptyTokens);
@@ -146,7 +151,7 @@ describe('LoginHandler', () => {
   it('should NOT update lastLoginAt if refreshToken is empty', async () => {
     userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     const partialTokens = { accessToken: 'token', refreshToken: '' };
     authService.generateTokens.mockResolvedValueOnce(partialTokens);
@@ -164,7 +169,7 @@ describe('LoginHandler', () => {
   it('should NOT save session if jti is not a valid UUID', async () => {
     userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
-    userRepository.findOne.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
+    userRepository.findByEmail.mockResolvedValueOnce(LoginHandlerFixture.existingUser());
     hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
     jest.spyOn(JwtPayload, 'create').mockReturnValue(ErrorOnFactory.success(LoginHandlerFixture.mockJwtPayloadWithInvalidJti()));
@@ -181,7 +186,7 @@ describe('LoginHandler', () => {
     userService.getUserSessionWithDate.mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     userService.getUserSessionWithDate = jest.fn().mockReturnValue(LoginHandlerFixture.getUserSessionWithDate());
     const invalidUser = { ...LoginHandlerFixture.existingUser(), id: 0 };
-    userRepository.findOne.mockResolvedValueOnce(invalidUser as User);
+    userRepository.findByEmail.mockResolvedValueOnce(invalidUser as User);
     hashService.compare.mockResolvedValueOnce(true);
     authService.generateTokens.mockResolvedValueOnce(LoginHandlerFixture.validTokens());
     jest.spyOn(JwtPayload, 'create').mockReturnValue(ErrorOnFactory.success(LoginHandlerFixture.mockJwtPayload()));

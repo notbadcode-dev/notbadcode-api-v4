@@ -21,7 +21,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue(UnmarkLinksAsFavoriteFixture.links);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: UnmarkLinksAsFavoriteFixture.links.length });
-    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.validRequest);
+    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.validRequest, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -36,7 +36,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue(UnmarkLinksAsFavoriteFixture.partialLinks);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: UnmarkLinksAsFavoriteFixture.partialLinks.length });
-    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.partialRequest);
+    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.partialRequest, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -51,7 +51,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue([]);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: 0 });
-    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.notFoundRequest);
+    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.notFoundRequest, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -66,7 +66,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue([]);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: 0 });
-    const command = new UnmarkLinksAsFavoriteCommand({ linkIdList: [] });
+    const command = new UnmarkLinksAsFavoriteCommand({ linkIdList: [] }, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -81,7 +81,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue(UnmarkLinksAsFavoriteFixture.partialUpdateLinks);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: 1 });
-    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.partialUpdateRequest);
+    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.partialUpdateRequest, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -96,7 +96,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue(UnmarkLinksAsFavoriteFixture.partialUpdateLinks);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: 0 });
-    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.partialUpdateRequest);
+    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.partialUpdateRequest, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -111,7 +111,7 @@ describe('UnmarkLinksAsFavoriteHandler', () => {
     // Arrange
     mockRepo.find = jest.fn().mockResolvedValue(UnmarkLinksAsFavoriteFixture.duplicateLinks);
     mockRepo.update = jest.fn().mockResolvedValue({ affected: 1 });
-    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.duplicateRequest);
+    const command = new UnmarkLinksAsFavoriteCommand(UnmarkLinksAsFavoriteFixture.duplicateRequest, UnmarkLinksAsFavoriteFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);

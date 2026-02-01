@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
+import { CommonSessionControlModule } from '@common/redis/session';
+
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtConfigService } from './jwt-config.service';
 
@@ -9,6 +11,7 @@ import { JwtConfigService } from './jwt-config.service';
     JwtModule.registerAsync({
       useClass: JwtConfigService,
     }),
+    CommonSessionControlModule,
   ],
   providers: [JwtAuthGuard, JwtConfigService],
   exports: [JwtAuthGuard, JwtModule],

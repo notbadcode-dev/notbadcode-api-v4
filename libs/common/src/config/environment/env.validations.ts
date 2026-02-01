@@ -70,6 +70,17 @@ const i18nSchema = {
     .default(ENV_DEFAULTS[ENV_KEYS.FALLBACK_LANGUAGE]),
 };
 
+// --- CORS ---
+const corsSchema = {
+  [ENV_KEYS.CORS_ORIGINS]: Joi.string().trim().default(ENV_DEFAULTS[ENV_KEYS.CORS_ORIGINS] as string),
+};
+
+// --- Throttle / Rate Limiting ---
+const throttleSchema = {
+  [ENV_KEYS.THROTTLE_TTL]: Joi.number().integer().positive().default(ENV_DEFAULTS[ENV_KEYS.THROTTLE_TTL]),
+  [ENV_KEYS.THROTTLE_LIMIT]: Joi.number().integer().positive().default(ENV_DEFAULTS[ENV_KEYS.THROTTLE_LIMIT]),
+};
+
 // --- Redis ---
 const redisSchema = {
   [ENV_KEYS.REDIS_CACHE_URL]: Joi.string()
@@ -103,6 +114,8 @@ export const envValidationSchema = Joi.object({
   ...dbSchema,
   ...sslSchema,
   ...i18nSchema,
+  ...corsSchema,
+  ...throttleSchema,
   ...redisSchema,
 })
   .with(ENV_KEYS.REDIS_CACHE_URL, [ENV_KEYS.REDIS_SESSION_URL])

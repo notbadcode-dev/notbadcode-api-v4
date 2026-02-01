@@ -28,7 +28,7 @@ describe('GetLinkByIdHandler', () => {
   it('returns failure when id is invalid', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(null);
-    const query = new GetLinkByIdQuery(-1);
+    const query = new GetLinkByIdQuery(-1, LinkByIdHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(query);
@@ -42,7 +42,7 @@ describe('GetLinkByIdHandler', () => {
 
   it('returns failure when id is zero (falsy)', async () => {
     // Arrange
-    const query = new GetLinkByIdQuery(0);
+    const query = new GetLinkByIdQuery(0, LinkByIdHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(query);
@@ -69,7 +69,7 @@ describe('GetLinkByIdHandler', () => {
   it('returns failure when link is not found', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(null);
-    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.notFoundId);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.notFoundId, LinkByIdHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(query);
@@ -77,7 +77,7 @@ describe('GetLinkByIdHandler', () => {
     // Assert
     expect(linkRepository.findOne).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: LinkByIdHandlerFixture.notFoundId },
+        where: { id: LinkByIdHandlerFixture.notFoundId, userId: LinkByIdHandlerFixture.validUserId },
       }),
     );
     expect(result.success).toBe(false);
@@ -88,7 +88,7 @@ describe('GetLinkByIdHandler', () => {
   it('returns success when link is found', async () => {
     // Arrange
     linkRepository.findOne.mockResolvedValueOnce(LinkByIdHandlerFixture.validLink);
-    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.validLink.id);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.validLink.id, LinkByIdHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(query);
@@ -96,7 +96,7 @@ describe('GetLinkByIdHandler', () => {
     // Assert
     expect(linkRepository.findOne).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: LinkByIdHandlerFixture.validLink.id },
+        where: { id: LinkByIdHandlerFixture.validLink.id, userId: LinkByIdHandlerFixture.validUserId },
       }),
     );
     expect(result.success).toBe(true);

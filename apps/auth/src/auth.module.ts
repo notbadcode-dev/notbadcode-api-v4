@@ -9,6 +9,7 @@ import { CommonLoggerModule } from '@common/loggers';
 import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
 import { ApiResponseService } from '@common/responses';
+import { CommonThrottlerModule } from '@common/throttler';
 
 import {
   LoginHandler,
@@ -32,6 +33,7 @@ import { AuthHealthController } from './auth-healtz.controller';
     CommonI18nModule,
     CommonCacheModule,
     CommonSessionControlModule,
+    CommonThrottlerModule,
     AuthDatabaseModule,
     TypeOrmModule.forFeature([User]),
     CommonAuthGuardModule,

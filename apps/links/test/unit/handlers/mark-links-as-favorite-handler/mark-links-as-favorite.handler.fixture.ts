@@ -46,4 +46,6 @@ export class MarkLinksAsFavoriteFixture {
 
   static expectedPartialUpdateSuccess = [];
   static expectedPartialUpdateFailure = [MarkLinksAsFavoriteFixture.LINK_IDS.ONE, MarkLinksAsFavoriteFixture.LINK_IDS.TWO];
+
+  static readonly validUserId = 1;
 }

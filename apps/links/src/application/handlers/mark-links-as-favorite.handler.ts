@@ -24,6 +24,7 @@ export class MarkLinksAsFavoriteHandler
 
   async execute(command: MarkLinksAsFavoriteCommand): Promise<ApiResponse<SuccessFailureResponse<number>>> {
     const { linkIdList } = command.request;
+    const userId = command.userId;
 
     const result: SuccessFailureResponse<number> = {
       successList: [],
@@ -36,7 +37,7 @@ export class MarkLinksAsFavoriteHandler
 
     const existingLinks = await this.linkRepository.find({
       select: ['id'],
-      where: { id: In(linkIdList) },
+      where: { id: In(linkIdList), userId },
     });
 
     const existingIds = existingLinks.map((l) => l.id);
@@ -48,7 +49,7 @@ export class MarkLinksAsFavoriteHandler
       return this.createSuccessResponse(result);
     }
 
-    const updateResult = await this.linkRepository.update({ id: In(existingIds) }, { isFavorite: true });
+    const updateResult = await this.linkRepository.update({ id: In(existingIds), userId }, { isFavorite: true });
 
     const affected = updateResult.affected ?? 0;
 

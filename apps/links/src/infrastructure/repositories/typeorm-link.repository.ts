@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { type FindOneOptions, type FindOptionsOrder, Repository } from 'typeorm';
+import { type FindOneOptions, type FindOptionsOrder, type FindOptionsWhere, Repository } from 'typeorm';
 
 import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 import { Link } from '@apps/links/src/domain/entities/link.entity';
@@ -16,7 +16,7 @@ export class TypeOrmLinkRepository implements ILinkRepository {
     return this.repository.findOne(options);
   }
 
-  async findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<Link> }): Promise<[Link[], number]> {
+  async findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<Link>; where?: FindOptionsWhere<Link> }): Promise<[Link[], number]> {
     return this.repository.findAndCount(options);
   }
 

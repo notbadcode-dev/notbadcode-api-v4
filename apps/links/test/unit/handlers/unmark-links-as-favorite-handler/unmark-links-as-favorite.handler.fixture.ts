@@ -54,4 +54,6 @@ export class UnmarkLinksAsFavoriteFixture {
 
   static expectedDuplicateSuccess = [UnmarkLinksAsFavoriteFixture.LINK_IDS.ONE];
   static expectedDuplicateFailure = [];
+
+  static readonly validUserId = 1;
 }

@@ -1,4 +1,4 @@
-import { type FindOptionsOrder, type ObjectLiteral } from 'typeorm';
+import { type FindOptionsOrder, type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import { PaginateHelper } from '@common/helpers';
 import { type I18nService } from '@common/i18n';
@@ -8,7 +8,7 @@ import { type ApiResponse, type PaginatedResponse } from '@common/responses';
 import { BaseHandler } from './base.handler';
 
 export interface IPaginatableRepository<TEntity extends ObjectLiteral> {
-  findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<TEntity> }): Promise<[TEntity[], number]>;
+  findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<TEntity>; where?: FindOptionsWhere<TEntity> }): Promise<[TEntity[], number]>;
 }
 
 export abstract class BasePaginatedHandler<TCommand, TEntity extends ObjectLiteral, TResponseDto> extends BaseHandler<TCommand, ApiResponse<PaginatedResponse<TResponseDto>>> {
@@ -21,10 +21,11 @@ export abstract class BasePaginatedHandler<TCommand, TEntity extends ObjectLiter
     request: UserPaginatedRequest,
     map: (entity: TEntity) => TResponseDto,
     notFoundMessage: string,
+    where?: FindOptionsWhere<TEntity>,
   ): Promise<ApiResponse<PaginatedResponse<TResponseDto>>> {
     const { skip, take, order } = PaginateHelper.calculateRepositoryPagination<TEntity>(request);
 
-    const [entities, total] = await repository.findAndCount({ skip, take, order });
+    const [entities, total] = await repository.findAndCount({ skip, take, order, where });
 
     if (!entities.length) {
       return this.createResponseFailure(notFoundMessage);

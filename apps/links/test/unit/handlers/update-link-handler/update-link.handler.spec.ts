@@ -30,7 +30,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when id is invalid', async () => {
     // Arrange
-    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.invalidId, UpdateLinkHandlerFixture.updatePayload());
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.invalidId, UpdateLinkHandlerFixture.updatePayload(), UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -44,7 +44,7 @@ describe('UpdateLinkHandler', () => {
   it('returns failure when description is empty', async () => {
     // Arrange
     const payload = UpdateLinkHandlerFixture.updatePayload('   ');
-    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload);
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -58,7 +58,7 @@ describe('UpdateLinkHandler', () => {
   it('returns failure when url is invalid', async () => {
     // Arrange
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), url: UpdateLinkHandlerFixture.invalidUrl };
-    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload);
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -71,7 +71,7 @@ describe('UpdateLinkHandler', () => {
   it('returns failure when title is invalid', async () => {
     // Arrange
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), title: UpdateLinkHandlerFixture.invalidTitle };
-    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload);
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -84,7 +84,7 @@ describe('UpdateLinkHandler', () => {
   it('returns failure when favorite flag is invalid', async () => {
     // Arrange
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), isFavorite: undefined } as unknown as UpdateLinkRequest;
-    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload);
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -97,7 +97,7 @@ describe('UpdateLinkHandler', () => {
   it('returns failure when tag list is invalid', async () => {
     // Arrange
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), tagList: UpdateLinkHandlerFixture.invalidTagList };
-    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload);
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);
@@ -128,7 +128,7 @@ describe('UpdateLinkHandler', () => {
     linkRepository.save.mockResolvedValueOnce(link);
 
     const payload = UpdateLinkHandlerFixture.updatePayload(UpdateLinkHandlerFixture?.existingLink?.description ?? '');
-    const command = new UpdateLinkCommand(link.id, payload);
+    const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act
     const result = await handler.execute(command);

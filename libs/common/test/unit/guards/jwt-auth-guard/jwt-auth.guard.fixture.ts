@@ -16,4 +16,10 @@ export class JwtAuthGuardFixture {
     jti: 'uuid',
     tokenType: EJwtType.REFRESH,
   } as const;
+
+  static readonly validSession = {
+    userId: 1,
+    sessionId: 'uuid',
+    loginAt: new Date().toISOString(),
+  };
 }

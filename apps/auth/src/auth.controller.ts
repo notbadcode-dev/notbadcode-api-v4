@@ -1,6 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiOkResponse } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+
 
 import { ApiResponse } from '@common/responses';
 
@@ -13,13 +15,17 @@ export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post('register')
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOkResponse({ type: LoginResponse, description: 'User registered successfully' })
   async register(@Body() request: RegisterRequest): Promise<ApiResponse<LoginResponse>> {
     return this.commandBus.execute(new RegisterCommand(request.email, request.password));
   }
 
   @Post('login')
-  @ApiOkResponse({ type: LoginResponse, description: 'User logged in successfully' })
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiOkResponse({ type: LoginResponse })
   async login(@Body() request: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     return this.commandBus.execute(new LoginCommand(request.email, request.password));
   }

@@ -25,6 +25,13 @@ export const ENV_DEFAULTS = {
   [ENV_KEYS.I18N_DIR]: '/app/libs/common/src/i18n',
   [ENV_KEYS.FALLBACK_LANGUAGE]: ESupportedLanguage?.English,
 
+  [ENV_KEYS.CORS_ORIGINS]: 'http://localhost:3000',
+
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  [ENV_KEYS.THROTTLE_TTL]: 60000,
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  [ENV_KEYS.THROTTLE_LIMIT]: 60,
+
   [ENV_KEYS.REDIS_CACHE_URL]: 'redis://redis:6379',
   [ENV_KEYS.REDIS_CACHE_PASSWORD]: '',
 

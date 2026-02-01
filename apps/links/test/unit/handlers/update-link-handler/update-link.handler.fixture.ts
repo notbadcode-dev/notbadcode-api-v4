@@ -40,4 +40,6 @@ export class UpdateLinkHandlerFixture {
   static readonly invalidTagList = ['valid', '   '];
 
   static readonly invalidUrl = 'notaurl';
+
+  static readonly validUserId = 7;
 }

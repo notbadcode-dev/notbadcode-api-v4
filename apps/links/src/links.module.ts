@@ -8,6 +8,7 @@ import { CommonI18nModule } from '@common/i18n';
 import { CommonLoggerModule } from '@common/loggers';
 import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
+import { CommonThrottlerModule } from '@common/throttler';
 
 import { GetLinkByIdHandler } from '@apps/links/src/application/handlers/get-link-by-id.handler';
 import { GetLinksPaginatedHandler } from '@apps/links/src/application/handlers/get-links-paginated.handler';
@@ -29,6 +30,7 @@ import { LinkService } from './application/services/link.service';
     CommonI18nModule,
     CommonCacheModule,
     CommonSessionControlModule,
+    CommonThrottlerModule,
     LinksDatabaseModule,
     TypeOrmModule.forFeature([Link]),
     CommonAuthGuardModule,

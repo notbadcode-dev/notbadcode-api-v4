@@ -39,7 +39,7 @@ export class Link extends DeletableEntity {
   @Column(ColumnJsonArray())
   tagList?: string[];
 
-  @Column(ColumnBoolean())
+  @Column(ColumnBoolean(true))
   isActive!: boolean;
 
   @Column(ColumnEnumNonNullable(LinkLastStatusCode, LinkLastStatusCode.PENDING))

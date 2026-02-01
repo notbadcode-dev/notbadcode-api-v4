@@ -4,5 +4,6 @@ export class UpdateLinkCommand {
   constructor(
     public readonly id: number,
     public readonly payload: UpdateLinkRequest,
+    public readonly userId: number,
   ) {}
 }

@@ -1,5 +1,8 @@
 import { type UnmarkLinksAsFavoriteRequest } from '../requests/unmark-links-as-favorite.request';
 
 export class UnmarkLinksAsFavoriteCommand {
-  constructor(public readonly request: UnmarkLinksAsFavoriteRequest) {}
+  constructor(
+    public readonly request: UnmarkLinksAsFavoriteRequest,
+    public readonly userId: number,
+  ) {}
 }

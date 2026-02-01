@@ -2,12 +2,17 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { JwtService } from '@nestjs/jwt';
 
 import { EJwtType, JwtPayloadPlain } from '@common/auth';
+import { CommonSessionControlService, UserSession } from '@common/redis/session';
 
 import type { Request } from 'express';
+import type { UUID } from 'node:crypto';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly sessionControlService: CommonSessionControlService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -23,6 +28,17 @@ export class JwtAuthGuard implements CanActivate {
       if (payload.tokenType !== EJwtType.ACCESS) {
         throw new UnauthorizedException();
       }
+
+      const userSession = { userId: payload.sub, sessionId: payload.jti as UUID, csrfToken: payload.csrfToken } as UserSession;
+      const key = this.sessionControlService.getUserSessionKey(userSession);
+      const session = await this.sessionControlService.getSession(key);
+if (!session || session.csrfToken !== request.headers['x-csrf-token']) {
+  throw new UnauthorizedException();
+}
+      if (!session) {
+        throw new UnauthorizedException();
+      }
+
       (request as Request & { user: JwtPayloadPlain<number> }).user = payload;
       return true;
     } catch {

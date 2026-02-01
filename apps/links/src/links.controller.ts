@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } fr
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOkResponse } from '@nestjs/swagger';
 
+import { CurrentUserId } from '@common/decorators';
 import { JwtAuthGuard } from '@common/guards';
 import { UserPaginatedRequest } from '@common/requests';
 import { ApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
@@ -27,31 +28,32 @@ export class LinksController {
 
   @Get(':id')
   @ApiOkResponse({ type: GetLinkByIdResponse, description: 'Link retrieved successfully' })
-  async getLinkById(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<GetLinkByIdResponse>> {
-    return this.queryBus.execute(new GetLinkByIdQuery(id));
+  async getLinkById(@Param('id', ParseIntPipe) id: number, @CurrentUserId() userId: number): Promise<ApiResponse<GetLinkByIdResponse>> {
+    return this.queryBus.execute(new GetLinkByIdQuery(id, userId));
   }
 
   @Post('paginated')
   @ApiOkResponse({ type: createPaginatedResponse(GetLinkByIdResponse), description: 'Paginated links retrieved successfully' })
-  async getLinksPaginated(@Body() request: UserPaginatedRequest): Promise<InstanceType<ReturnType<typeof createPaginatedResponse>>> {
+  async getLinksPaginated(@Body() request: UserPaginatedRequest, @CurrentUserId() userId: number): Promise<InstanceType<ReturnType<typeof createPaginatedResponse>>> {
+    request.userId = userId;
     return this.queryBus.execute(new GetLinksPaginatedQuery(request));
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: GetLinkByIdResponse, description: 'Link updated successfully' })
-  async updateLink(@Param('id', ParseIntPipe) id: number, @Body() request: UpdateLinkRequest): Promise<ApiResponse<GetLinkByIdResponse>> {
-    return this.commandBus.execute(new UpdateLinkCommand(id, request));
+  async updateLink(@Param('id', ParseIntPipe) id: number, @Body() request: UpdateLinkRequest, @CurrentUserId() userId: number): Promise<ApiResponse<GetLinkByIdResponse>> {
+    return this.commandBus.execute(new UpdateLinkCommand(id, request, userId));
   }
 
   @Post('favorite')
   @ApiOkResponse({ type: SuccessFailureResponse<number>, description: 'Links marked as favorite' })
-  async markLinksAsFavorite(@Body() body: MarkLinksAsFavoriteRequest): Promise<ApiResponse<SuccessFailureResponse<number>>> {
-    return this.commandBus.execute(new MarkLinksAsFavoriteCommand(body));
+  async markLinksAsFavorite(@Body() body: MarkLinksAsFavoriteRequest, @CurrentUserId() userId: number): Promise<ApiResponse<SuccessFailureResponse<number>>> {
+    return this.commandBus.execute(new MarkLinksAsFavoriteCommand(body, userId));
   }
 
   @Post('unfavorite')
   @ApiOkResponse({ type: SuccessFailureResponse<number>, description: 'Links unmarked as favorite' })
-  async unmarkLinksAsFavorite(@Body() body: UnmarkLinksAsFavoriteRequest): Promise<ApiResponse<SuccessFailureResponse<number>>> {
-    return this.commandBus.execute(new UnmarkLinksAsFavoriteCommand(body));
+  async unmarkLinksAsFavorite(@Body() body: UnmarkLinksAsFavoriteRequest, @CurrentUserId() userId: number): Promise<ApiResponse<SuccessFailureResponse<number>>> {
+    return this.commandBus.execute(new UnmarkLinksAsFavoriteCommand(body, userId));
   }
 }

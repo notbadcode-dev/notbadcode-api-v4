@@ -16,11 +16,45 @@
   <img src="https://img.shields.io/badge/license-UNLICENSED-lightgrey" alt="License" />
 </p>
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ## Descripción
 
 **NotBadCode API v4** es un monorepo de microservicios desarrollado con [NestJS](https://nestjs.com/), diseñado siguiendo principios de **Clean Architecture**, **CQRS** y **Domain-Driven Design (DDD)**. Cada microservicio es independiente, escalable y cuenta con su propia base de datos lógica.
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -39,6 +73,23 @@
 - [Testing](#testing)
 - [Contribución](#contribución)
 - [Documentación](#documentación)
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -74,12 +125,131 @@ El proyecto implementa una arquitectura robusta basada en múltiples patrones:
 ### Patrones Implementados
 
 | Patrón | Descripción |
-|--------|-------------|
+|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+-----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|
 | **CQRS** | Separación de Commands (escritura) y Queries (lectura) |
 | **Hexagonal** | Puertos y Adaptadores para inversión de dependencias |
 | **Repository** | Abstracción del acceso a datos mediante interfaces |
 | **Value Objects** | Objetos inmutables con validación en factory methods |
 | **Result Pattern** | Manejo de errores sin excepciones (`ErrorOn<T>`) |
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -135,6 +305,23 @@ notbadcode-api-v4/
 └── tsconfig.base.json             # Configuración base de TypeScript
 ```
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ## Requisitos
@@ -142,11 +329,215 @@ notbadcode-api-v4/
 Antes de comenzar, asegúrate de tener instalado:
 
 | Herramienta | Versión Mínima | Notas |
-|-------------|----------------|-------|
+|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|
 | **Node.js** | `>= 22.14.0` | Recomendado usar [nvm](https://github.com/nvm-sh/nvm) |
 | **npm** | `>= 10.9.2` | Incluido con Node.js |
 | **Docker** | `>= 24.0` | Para contenedores |
 | **Docker Compose** | `>= 2.20` | Orquestación |
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -167,6 +558,23 @@ cp .env.example .env
 # 4. Generar certificados SSL (desarrollo)
 npm run certs:generate
 ```
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -203,6 +611,23 @@ SSL_CERT_PATH=./certs/dev-cert.pem
 ```
 
 > Cada microservicio puede tener su propio `.env` en `apps/<service>/.env`
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -252,6 +677,23 @@ npm run format                  # Formatear con Prettier
 npm run format:check            # Verificar formato
 ```
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ## Docker
@@ -261,7 +703,160 @@ npm run format:check            # Verificar formato
 El proyecto incluye una infraestructura completa con Docker:
 
 | Servicio | Puerto | Descripción |
-|----------|--------|-------------|
+|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+-----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|
 | **MariaDB** | `3306` | Base de datos principal |
 | **Redis Cache** | `63791` | Caché LRU (512MB) |
 | **Redis Session** | `63792` | Sesiones persistentes (256MB) |
@@ -292,6 +887,23 @@ npm run docker:down             # Detener todo
 npm run docker:prune            # Limpiar recursos
 ```
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ## Microservicios
@@ -301,7 +913,160 @@ npm run docker:prune            # Limpiar recursos
 Gestiona autenticación y autorización de usuarios.
 
 | Característica | Tecnología |
-|----------------|------------|
+|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---|
 | Autenticación | JWT + Passport |
 | Sesiones | Redis (persistente) |
 | Passwords | bcrypt |
@@ -315,6 +1080,23 @@ Gestiona autenticación y autorización de usuarios.
 
 📖 [Documentación completa](./apps/auth/README.md)
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ### Links Service
@@ -322,12 +1104,182 @@ Gestiona autenticación y autorización de usuarios.
 Gestiona enlaces y colecciones de usuarios.
 
 | Característica | Tecnología |
-|----------------|------------|
+|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+----|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---|
 | CQRS completo | Commands + Queries |
 | Especificaciones | Domain Specifications |
 | Cache | Redis LRU |
 
 📖 [Documentación completa](./apps/links/README.md)
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -346,6 +1298,23 @@ Código reutilizable entre microservicios:
 
 📖 [Documentación completa](./libs/common/README.md)
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ## Testing
@@ -363,6 +1332,23 @@ test/
 - Archivos de test: `*.spec.ts`
 - Mocks con `jest-mock-extended`
 - Coverage mínimo recomendado: 80%
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 
@@ -387,17 +1373,136 @@ test/
 npm run lint:fix && npm run format && npm test
 ```
 
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
 ---
 
 ## Documentación
 
 | Recurso | Enlace |
-|---------|--------|
+|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---|## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+---## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
+
+-----|
 | Auth Service | [apps/auth/README.md](./apps/auth/README.md) |
 | Links Service | [apps/links/README.md](./apps/links/README.md) |
 | Common Library | [libs/common/README.md](./libs/common/README.md) |
 | Swagger (Auth) | `https://localhost:60200/api/docs` |
 | Swagger (Links) | `https://localhost:60201/api/docs` |
+
+## CSRF Protection
+
+This project has been updated to include CSRF protection for all mutating (POST, PUT, DELETE) requests.
+
+The key changes are:
+
+1. The `AuthService` now generates a CSRF token and stores it in the user's session when they log in.
+2. The `LoginResponse` returned from the `AuthController` includes the CSRF token.
+3. The `JwtAuthGuard` has been updated to extract the CSRF token from the JWT payload and store it in the `UserSession` object.
+4. The `JwtAuthGuard` now verifies that the CSRF token in the request headers matches the one stored in the user's session.
+
+Requests without a valid CSRF token will be rejected with a 401 Unauthorized response.
+
+Unit tests have been added to the `AuthController` to ensure the CSRF protection is working as expected.
+
+Developers should use the CSRF token provided in the login response and include it in the `X-CSRF-Token` header for all mutating requests.
 
 ---
 

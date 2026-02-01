@@ -32,7 +32,7 @@ export class GetLinkByIdHandler
       return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId);
     }
 
-    const link = await this.linkRepository.findOne(LinkByIdSpecification.options(linkId));
+    const link = await this.linkRepository.findOne(LinkByIdSpecification.options(linkId, query.userId));
 
     if (!link) {
       return this.createResponseFailure(LinksErrorMessageConstants.notFound);

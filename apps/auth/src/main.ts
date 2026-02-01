@@ -20,6 +20,18 @@ import { AuthConstants } from 'apps/auth/src/constants';
 async function bootstrap(): Promise<void> {
   const app = await createApp();
 
+  const corsOrigins = (process.env[ENV_KEYS.CORS_ORIGINS] || (ENV_DEFAULTS[ENV_KEYS.CORS_ORIGINS] as string))
+    .split(',')
+    .map((origin: string) => origin.trim())
+    .filter(Boolean);
+
+  app.enableCors({
+    origin: corsOrigins,
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
+  });
+
   addSwaggerConfiguration(app);
 
   const i18n = app.get(I18nService);

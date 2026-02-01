@@ -43,7 +43,7 @@ export class UpdateLinkHandler
     }
     const sanitizedPayload = validationResult.value;
 
-    const link = await this.linkRepository.findOne(LinkByIdSpecification.options(linkId));
+    const link = await this.linkRepository.findOne(LinkByIdSpecification.options(linkId, command.userId));
 
     if (!link) {
       return this.createResponseFailure(LinksErrorMessageConstants.notFound);

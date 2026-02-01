@@ -23,4 +23,6 @@ export class LinkByIdHandlerFixture {
   });
 
   static readonly notFoundId = 999;
+
+  static readonly validUserId = 1;
 }

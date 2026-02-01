@@ -1,7 +1,7 @@
 -- Crear la base de datos si no existe
 CREATE DATABASE IF NOT EXISTS `auth_db` DEFAULT CHARACTER
 SET
-    utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+    utf8mb4 DEFAULT COLLATE utf8mb4_uca1400_ai_ci;
 
 USE `auth_db`;
 
@@ -18,7 +18,7 @@ CREATE TABLE
         `deletedAt` DATETIME (6) DEFAULT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `UX_users_email` (`email`)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_uca1400_ai_ci ROW_FORMAT = DYNAMIC;
 
 USE `auth_db`;
 

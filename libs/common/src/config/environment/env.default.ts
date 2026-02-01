@@ -19,6 +19,10 @@ export const ENV_DEFAULTS = {
   [ENV_KEYS.AUTH_DB_PORT]: 3306,
   [ENV_KEYS.AUTH_DB_NAME]: 'mysql',
 
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  [ENV_KEYS.LINKS_DB_PORT]: 3306,
+  [ENV_KEYS.LINKS_DB_NAME]: 'mysql',
+
   [ENV_KEYS.SSL_KEY_PATH]: 'certs/dev-key.pem',
   [ENV_KEYS.SSL_CERT_PATH]: 'certs/dev-cert.pem',
 

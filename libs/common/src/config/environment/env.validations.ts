@@ -46,6 +46,15 @@ const authDbSchema = {
   [ENV_KEYS.AUTH_DB_NAME]: Joi.string().trim().required(),
 };
 
+// --- Links database ---
+const linksDbSchema = {
+  [ENV_KEYS.LINKS_DB_HOST]: Joi.string().hostname().allow(CommonConstants.localhostTag).trim().required(),
+  [ENV_KEYS.LINKS_DB_PORT]: Joi.number().port().default(ENV_DEFAULTS[ENV_KEYS.LINKS_DB_PORT]),
+  [ENV_KEYS.LINKS_DB_USER]: Joi.string().trim().required(),
+  [ENV_KEYS.LINKS_DB_PASS]: Joi.string().allow('').trim().required(),
+  [ENV_KEYS.LINKS_DB_NAME]: Joi.string().trim().required(),
+};
+
 // --- Global (opcional) database ---
 const dbSchema = {
   [ENV_KEYS.DB_ROOT_PASSWORD]: Joi.string().allow('').trim(),
@@ -111,6 +120,7 @@ export const envValidationSchema = Joi.object({
   ...linksServiceSchema,
   ...jwtSchema,
   ...authDbSchema,
+  ...linksDbSchema,
   ...dbSchema,
   ...sslSchema,
   ...i18nSchema,

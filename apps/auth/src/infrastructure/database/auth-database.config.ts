@@ -12,5 +12,5 @@ export const getAuthDbConfig = (configService: ConfigService): TypeOrmModuleOpti
   database: configService.get<string>('AUTH_DB_NAME'),
   entities: [User],
   synchronize: false,
-  logging: true,
+  logging: configService.get<string>('NODE_ENV') !== 'production',
 });

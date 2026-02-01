@@ -12,5 +12,5 @@ export const getLinksDbConfig = (configService: ConfigService): TypeOrmModuleOpt
   database: configService.get<string>('LINKS_DB_NAME'),
   entities: [Link],
   synchronize: false,
-  logging: true,
+  logging: configService.get<string>('NODE_ENV') !== 'production',
 });

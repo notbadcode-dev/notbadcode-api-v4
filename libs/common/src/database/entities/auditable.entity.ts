@@ -1,14 +1,14 @@
 import { BaseEntity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-import { ColumnDateTimeNullable } from '../configurations/column-types';
+import { ColumnDateTimeNonNullable } from '../configurations/column-types';
 
 export abstract class AuditableEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id!: number;
 
-  @CreateDateColumn(ColumnDateTimeNullable())
+  @CreateDateColumn(ColumnDateTimeNonNullable())
   createdAt!: Date;
 
-  @UpdateDateColumn(ColumnDateTimeNullable())
+  @UpdateDateColumn(ColumnDateTimeNonNullable())
   updatedAt!: Date;
 }

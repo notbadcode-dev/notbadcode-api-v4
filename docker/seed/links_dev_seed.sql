@@ -1,7 +1,7 @@
 -- Crear la base de datos si no existe
 CREATE DATABASE IF NOT EXISTS `links_db` DEFAULT CHARACTER
 SET
-    utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+    utf8mb4 DEFAULT COLLATE utf8mb4_uca1400_ai_ci;
 
 USE `links_db`;
 
@@ -19,7 +19,7 @@ CREATE TABLE
         `isFavorite` TINYINT(1) NOT NULL DEFAULT 0,
         `tagList` JSON NULL,
         `isActive` TINYINT(1) NOT NULL DEFAULT 1,
-        `lastStatusCode` INT NOT NULL DEFAULT 0,
+        `lastStatusCode` ENUM('0','200','201','202','204','400','401','403','404','500','503','520') NOT NULL DEFAULT '0',
         `lastCheckedAt` DATETIME(6) NULL,
         `lastVisitedAt` DATETIME(6) NULL,
         `createdAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -30,7 +30,7 @@ CREATE TABLE
         KEY `IX_links_userId` (`userId`),
         KEY `IX_links_isFavorite` (`isFavorite`),
         KEY `IX_links_isActive` (`isActive`)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_uca1400_ai_ci ROW_FORMAT = DYNAMIC;
 
 USE `links_db`;
 

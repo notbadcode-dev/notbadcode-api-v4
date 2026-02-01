@@ -1,18 +1,20 @@
 import { Column, Entity } from 'typeorm';
 
+import { LengthSizes } from '@common/constants';
 import { DeletableEntity } from '@common/database';
+import { ColumnDateTimeNullable, ColumnVarchar } from '@common/database/configurations/column-types';
 
-@Entity({ name: 'users', database: 'auth_db' })
+@Entity({ name: 'users' })
 export class User extends DeletableEntity {
-  @Column({ unique: true })
+  @Column({ ...ColumnVarchar(LengthSizes.regular), unique: true })
   email!: string;
 
-  @Column()
+  @Column(ColumnVarchar(LengthSizes.regular))
   passwordHash!: string;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column(ColumnDateTimeNullable())
   lastLoginAt?: Date | null;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column(ColumnDateTimeNullable())
   lastLogoutAt?: Date | null;
 }

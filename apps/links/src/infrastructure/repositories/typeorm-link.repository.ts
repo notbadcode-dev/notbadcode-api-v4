@@ -20,7 +20,7 @@ export class TypeOrmLinkRepository implements ILinkRepository {
     return this.repository.findAndCount(options);
   }
 
-  async find(options: { select?: (keyof Link)[]; where: Record<string, unknown> }): Promise<Link[]> {
+  async find(options: { select?: (keyof Link)[]; where: FindOptionsWhere<Link> }): Promise<Link[]> {
     return this.repository.find(options);
   }
 
@@ -28,7 +28,7 @@ export class TypeOrmLinkRepository implements ILinkRepository {
     return this.repository.save(link);
   }
 
-  async update(criteria: Record<string, unknown>, data: Partial<Link>): Promise<{ affected?: number }> {
+  async update(criteria: FindOptionsWhere<Link>, data: Partial<Link>): Promise<{ affected?: number }> {
     return this.repository.update(criteria, data);
   }
 }

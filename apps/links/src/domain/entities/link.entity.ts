@@ -6,20 +6,20 @@ import { ColumnBoolean, ColumnDateTimeNullable, ColumnEnumNonNullable, ColumnJso
 
 import { LinkLastStatusCode } from '../enums/link-last-status-code.enum';
 
-@Entity({ name: 'links', database: 'links_db' })
+@Entity({ name: 'links' })
 @Index('IX_links_userId', ['userId'])
 @Index('IX_links_isFavorite', ['isFavorite'])
 @Index('IX_links_isActive', ['isActive'])
 @Index('UX_links_user_normalizedUrl', ['userId', 'normalizedUrl'], { unique: true })
 export class Link extends DeletableEntity {
-  @Column()
+  @Column({ type: 'int', unsigned: true })
   userId!: number;
 
   @Column(ColumnVarchar(LengthSizes.extraLarge))
   url!: string;
 
-  @Column(ColumnVarchar(LengthSizes.extraLarge))
-  normalizedUrl?: string;
+  @Column(ColumnVarchar(LengthSizes.extraLarge, true))
+  normalizedUrl?: string | null;
 
   @Column(ColumnVarchar(LengthSizes.regular))
   title?: string | null;

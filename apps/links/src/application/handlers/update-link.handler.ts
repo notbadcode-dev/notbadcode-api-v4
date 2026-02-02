@@ -56,54 +56,66 @@ export class UpdateLinkHandler
     return this.createSuccessResponse(response);
   }
 
-  private validatePayload(payload: UpdateLinkRequest | undefined): ErrorOn<UpdateLinkRequest> {
+  private validatePayload(payload: UpdateLinkRequest | undefined): ErrorOn<Partial<UpdateLinkRequest>> {
     if (!payload) {
       return ErrorOnFactory.error(LinksErrorMessageConstants.invalidPayload);
     }
 
-    if (typeof payload.url !== 'string') {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl);
+    const result: Partial<UpdateLinkRequest> = {};
+
+    if (payload.url !== undefined) {
+      if (typeof payload.url !== 'string') {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl);
+      }
+      const url = payload.url.trim();
+      if (!url || !this.isValidUrl(url) || url.length > LengthSizes.extraLarge) {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl);
+      }
+      result.url = url;
     }
 
-    const url = payload.url.trim();
-    if (!url || !this.isValidUrl(url) || url.length > LengthSizes.extraLarge) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl);
+    if (payload.title !== undefined) {
+      if (typeof payload.title !== 'string') {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle);
+      }
+      const title = payload.title.trim();
+      if (!title || title.length > LengthSizes.regular) {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle);
+      }
+      result.title = title;
     }
 
-    if (typeof payload.title !== 'string') {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle);
+    if (payload.description !== undefined) {
+      if (typeof payload.description !== 'string') {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired);
+      }
+      const description = payload.description.trim();
+      if (!description || description.length > LengthSizes.medium) {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired);
+      }
+      result.description = description;
     }
 
-    const title = payload.title.trim();
-    if (!title || title.length > LengthSizes.regular) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle);
+    if (payload.isFavorite !== undefined) {
+      if (typeof payload.isFavorite !== 'boolean') {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidFavoriteFlag);
+      }
+      result.isFavorite = payload.isFavorite;
     }
 
-    if (typeof payload.description !== 'string') {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired);
+    if (payload.tagList !== undefined) {
+      const tagValidation = this.validateTags(payload.tagList);
+      if (tagValidation.isError) {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
+      }
+      result.tagList = tagValidation.value;
     }
 
-    const description = payload.description.trim();
-    if (!description || description.length > LengthSizes.medium) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired);
+    if (Object.keys(result).length === 0) {
+      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidPayload);
     }
 
-    if (typeof payload.isFavorite !== 'boolean') {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidFavoriteFlag);
-    }
-
-    const tagValidation = this.validateTags(payload.tagList);
-    if (tagValidation.isError) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
-    }
-
-    return ErrorOnFactory.success({
-      url,
-      title,
-      description,
-      isFavorite: payload.isFavorite,
-      tagList: tagValidation.value,
-    });
+    return ErrorOnFactory.success(result);
   }
 
   private validateTags(tagList: unknown): ErrorOn<string[]> {

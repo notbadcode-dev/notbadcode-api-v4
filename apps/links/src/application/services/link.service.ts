@@ -5,13 +5,28 @@ import { Link } from '@apps/links/src/domain/entities/link.entity';
 
 @Injectable()
 export class LinkService {
-  updateLink(link: Link, payload: UpdateLinkRequest): Link {
-    link.url = payload.url.trim();
-    link.normalizedUrl = payload.url.trim().toLowerCase();
-    link.title = payload.title.trim();
-    link.description = payload.description.trim();
-    link.isFavorite = payload.isFavorite;
-    link.tagList = payload.tagList.map((tag) => tag.trim());
+  updateLink(link: Link, payload: Partial<UpdateLinkRequest>): Link {
+    if (payload.url !== undefined) {
+      link.url = payload.url;
+      link.normalizedUrl = payload.url.toLowerCase();
+    }
+
+    if (payload.title !== undefined) {
+      link.title = payload.title;
+    }
+
+    if (payload.description !== undefined) {
+      link.description = payload.description;
+    }
+
+    if (payload.isFavorite !== undefined) {
+      link.isFavorite = payload.isFavorite;
+    }
+
+    if (payload.tagList !== undefined) {
+      link.tagList = payload.tagList;
+    }
+
     return link;
   }
 }

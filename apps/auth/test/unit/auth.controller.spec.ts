@@ -60,16 +60,16 @@ describe('AuthController', () => {
   describe('logout', () => {
     it('should execute LogoutCommand with accessToken', async () => {
       // Arrange
-      const request = AuthControllerFixture.logoutRequest;
+      const accessToken = AuthControllerFixture.logoutAccessToken;
       const expectedResponse = { success: true, data: null };
       commandBus.execute.mockResolvedValueOnce(expectedResponse);
 
       // Act
-      const result = await controller.logout(request);
+      const result = await controller.logout(accessToken);
 
       // Assert
       expect(commandBus.execute).toHaveBeenCalledWith(
-        new LogoutCommand(request.accessToken),
+        new LogoutCommand(accessToken),
       );
       expect(result).toEqual(expectedResponse);
     });

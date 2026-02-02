@@ -2,7 +2,7 @@ import { type FindOptionsOrder, type FindOptionsWhere, type ObjectLiteral } from
 
 import { PaginateHelper } from '@common/helpers';
 import { type I18nService } from '@common/i18n';
-import { type UserPaginatedRequest } from '@common/requests';
+import { type PaginatedRequest } from '@common/requests';
 import { type ApiResponse, type PaginatedResponse } from '@common/responses';
 
 import { BaseHandler } from './base.handler';
@@ -18,7 +18,7 @@ export abstract class BasePaginatedHandler<TCommand, TEntity extends ObjectLiter
 
   protected async executePaginated(
     repository: IPaginatableRepository<TEntity>,
-    request: UserPaginatedRequest,
+    request: PaginatedRequest,
     map: (entity: TEntity) => TResponseDto,
     notFoundMessage: string,
     where?: FindOptionsWhere<TEntity>,

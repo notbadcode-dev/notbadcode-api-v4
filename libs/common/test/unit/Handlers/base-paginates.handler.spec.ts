@@ -1,7 +1,7 @@
 import { BasePaginatedHandler, type IPaginatableRepository } from '@common/handler';
 import { PaginateHelper } from '@common/helpers';
 import { type I18nService } from '@common/i18n';
-import { type UserPaginatedRequest } from '@common/requests';
+import { type PaginatedRequest } from '@common/requests';
 import { type ApiResponse, type PaginatedResponse } from '@common/responses';
 
 import {
@@ -25,7 +25,7 @@ class TestBasePaginatedHandler extends BasePaginatedHandler<
 
   async executeWrapper(
     repository: IPaginatableRepository<TestEntity>,
-    request: UserPaginatedRequest,
+    request: PaginatedRequest,
     map: (entity: TestEntity) => TestResponseDto,
     notFoundMessage: string,
   ): Promise<ApiResponse<PaginatedResponse<TestResponseDto>>> {
@@ -36,7 +36,7 @@ class TestBasePaginatedHandler extends BasePaginatedHandler<
 describe('BasePaginatedHandler', () => {
   let handler: TestBasePaginatedHandler;
   let repository: jest.Mocked<IPaginatableRepository<TestEntity>>;
-  let request: UserPaginatedRequest;
+  let request: PaginatedRequest;
 
   beforeEach(() => {
     handler = new TestBasePaginatedHandler(BasePaginatedHandlerFixture.i18nStub());

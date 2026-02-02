@@ -4,6 +4,7 @@ export const AuthErrorMessageConstants = {
   invalidUserId: `${AuthErrorMessageTag}.invalidUserId`,
   invalidEmail: `${AuthErrorMessageTag}.invalidEmail`,
   invalidLengthPassword: `${AuthErrorMessageTag}.invalidLengthPassword`,
+  invalidMaxLengthPassword: `${AuthErrorMessageTag}.invalidMaxLengthPassword`,
   invalidCredentials: `${AuthErrorMessageTag}.invalidCredentials`,
   invalidToken: `${AuthErrorMessageTag}.invalidToken`,
   invalidSessionId: `${AuthErrorMessageTag}.invalidSessionId`,

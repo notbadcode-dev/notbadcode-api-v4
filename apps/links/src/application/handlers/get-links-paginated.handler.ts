@@ -32,7 +32,7 @@ export class GetLinksPaginatedHandler
         excludeExtraneousValues: true,
       });
 
-    const where = { userId: query.request.userId } as FindOptionsWhere<Link>;
+    const where = { userId: query.userId } as FindOptionsWhere<Link>;
 
     return this.executePaginated(this.linkRepository, query.request, map, LinksErrorMessageConstants.notFound, where);
   }

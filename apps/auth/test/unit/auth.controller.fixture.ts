@@ -1,4 +1,4 @@
-import { type LoginRequest, type LogoutRequest, type RefreshRequest, type RegisterRequest } from '@apps/auth/src/application/requests';
+import { type LoginRequest, type RefreshRequest, type RegisterRequest } from '@apps/auth/src/application/requests';
 import { LoginResponse } from '@apps/auth/src/application/responses';
 
 export class AuthControllerFixture {
@@ -12,9 +12,7 @@ export class AuthControllerFixture {
     password: 'password123',
   };
 
-  static readonly logoutRequest: LogoutRequest = {
-    accessToken: 'access-token',
-  };
+  static readonly logoutAccessToken = 'access-token';
 
   static readonly refreshRequest: RefreshRequest = {
     refreshToken: 'refresh-token',

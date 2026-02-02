@@ -4,7 +4,7 @@ import { ApiOkResponse } from '@nestjs/swagger';
 
 import { CurrentUserId } from '@common/decorators';
 import { JwtAuthGuard } from '@common/guards';
-import { UserPaginatedRequest } from '@common/requests';
+import { PaginatedRequest } from '@common/requests';
 import { ApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
 
 import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-link.command';
@@ -34,9 +34,8 @@ export class LinksController {
 
   @Post('paginated')
   @ApiOkResponse({ type: createPaginatedResponse(GetLinkByIdResponse), description: 'Paginated links retrieved successfully' })
-  async getLinksPaginated(@Body() request: UserPaginatedRequest, @CurrentUserId() userId: number): Promise<InstanceType<ReturnType<typeof createPaginatedResponse>>> {
-    request.userId = userId;
-    return this.queryBus.execute(new GetLinksPaginatedQuery(request));
+  async getLinksPaginated(@Body() request: PaginatedRequest, @CurrentUserId() userId: number): Promise<InstanceType<ReturnType<typeof createPaginatedResponse>>> {
+    return this.queryBus.execute(new GetLinksPaginatedQuery(request, userId));
   }
 
   @Patch(':id')

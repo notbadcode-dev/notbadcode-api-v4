@@ -1,33 +1,41 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, IsArray, IsBoolean, IsString, IsUrl, MaxLength } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ArrayMaxSize, IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
 
 import { LengthSizes } from '@common/constants';
 
+import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
+
 export class UpdateLinkRequest {
-  @ApiProperty({ maxLength: LengthSizes.extraLarge })
-  @IsString()
-  @IsUrl()
-  @MaxLength(LengthSizes.extraLarge)
-  url!: string;
+  @ApiPropertyOptional({ description: 'Link URL', example: 'https://example.com', maxLength: LengthSizes.extraLarge })
+  @IsOptional()
+  @IsString({ message: LinksErrorMessageConstants.invalidUrl })
+  @IsUrl({}, { message: LinksErrorMessageConstants.invalidUrl })
+  @MaxLength(LengthSizes.extraLarge, { message: LinksErrorMessageConstants.invalidUrl })
+  url?: string;
 
-  @ApiProperty({ maxLength: LengthSizes.regular })
-  @IsString()
-  @MaxLength(LengthSizes.regular)
-  title!: string;
+  @ApiPropertyOptional({ description: 'Link title', example: 'My favorite article', maxLength: LengthSizes.regular })
+  @IsOptional()
+  @IsString({ message: LinksErrorMessageConstants.invalidTitle })
+  @IsNotEmpty({ message: LinksErrorMessageConstants.invalidTitle })
+  @MaxLength(LengthSizes.regular, { message: LinksErrorMessageConstants.invalidTitle })
+  title?: string;
 
-  @ApiProperty({ maxLength: LengthSizes.medium })
-  @IsString()
-  @MaxLength(LengthSizes.medium)
-  description!: string;
+  @ApiPropertyOptional({ description: 'Link description', example: 'An interesting read about NestJS', maxLength: LengthSizes.medium })
+  @IsOptional()
+  @IsString({ message: LinksErrorMessageConstants.descriptionRequired })
+  @MaxLength(LengthSizes.medium, { message: LinksErrorMessageConstants.descriptionRequired })
+  description?: string;
 
-  @ApiProperty()
-  @IsBoolean()
-  isFavorite!: boolean;
+  @ApiPropertyOptional({ description: 'Whether the link is marked as favorite', example: false })
+  @IsOptional()
+  @IsBoolean({ message: LinksErrorMessageConstants.invalidFavoriteFlag })
+  isFavorite?: boolean;
 
-  @ApiProperty({ type: [String] })
-  @IsArray()
-  @ArrayMaxSize(LengthSizes.small)
-  @IsString({ each: true })
-  @MaxLength(LengthSizes.regular, { each: true })
-  tagList!: string[];
+  @ApiPropertyOptional({ description: 'List of tags associated with the link', example: ['nestjs', 'typescript'], type: [String] })
+  @IsOptional()
+  @IsArray({ message: LinksErrorMessageConstants.invalidTagList })
+  @ArrayMaxSize(LengthSizes.small, { message: LinksErrorMessageConstants.invalidTagList })
+  @IsString({ each: true, message: LinksErrorMessageConstants.invalidTagList })
+  @MaxLength(LengthSizes.regular, { each: true, message: LinksErrorMessageConstants.invalidTagList })
+  tagList?: string[];
 }

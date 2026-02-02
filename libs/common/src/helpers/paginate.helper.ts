@@ -12,10 +12,14 @@ export class PaginateHelper {
     skip: number;
     sortBy?: string;
     sortOrder?: string;
+    previousPage?: number;
+    currentPage: number;
+    nextPage?: number;
   } {
     const page = PaginateHelper.getPage(request);
     const take = PaginateHelper.getTake(request, request.take);
     const skip = PaginateHelper.getSkip(request, page, take);
+    const totalPages = Math.ceil(total / take);
 
     return {
       items,
@@ -25,6 +29,9 @@ export class PaginateHelper {
       skip,
       sortBy: request.sortBy,
       sortOrder: request.sortOrder,
+      previousPage: page > 1 ? page - 1 : undefined,
+      currentPage: page,
+      nextPage: page < totalPages ? page + 1 : undefined,
     };
   }
 

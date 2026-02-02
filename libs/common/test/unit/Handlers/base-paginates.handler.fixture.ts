@@ -1,7 +1,7 @@
 import { type ObjectLiteral } from 'typeorm';
 
 import { type I18nService } from '@common/i18n';
-import { type UserPaginatedRequest } from '@common/requests';
+import { type PaginatedRequest } from '@common/requests';
 import { type ApiResponse, type PaginatedResponse } from '@common/responses';
 
 export interface TestEntity extends ObjectLiteral {
@@ -15,16 +15,15 @@ export interface TestResponseDto {
 }
 
 export class BasePaginatedHandlerFixture {
-  static request(): UserPaginatedRequest {
+  static request(): PaginatedRequest {
     return {
-      userId: 1,
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       currentPage: 2,
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       take: 10,
       sortBy: 'createdAt',
       sortOrder: 'DESC',
-    } as UserPaginatedRequest;
+    } as PaginatedRequest;
   }
 
   static entities(): TestEntity[] {

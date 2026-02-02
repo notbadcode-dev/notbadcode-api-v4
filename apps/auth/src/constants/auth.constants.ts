@@ -10,5 +10,11 @@ export const AuthConstants = {
   swaggerVersion: '1.0.0',
 
   userPasswordMinLength: 6,
+  userPasswordMaxLength: 128,
   saltsRounds: 10,
+
+  throttle: {
+    defaultLimit: 5,
+    defaultTtl: 60000,
+  },
 };

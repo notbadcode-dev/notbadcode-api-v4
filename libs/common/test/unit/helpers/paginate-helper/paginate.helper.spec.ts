@@ -23,6 +23,9 @@ describe('PaginateHelper', () => {
         skip: (request.currentPage - 1) * request.take,
         sortBy: request.sortBy,
         sortOrder: request.sortOrder,
+        previousPage: 1,
+        currentPage: request.currentPage,
+        nextPage: 3,
       });
     });
 
@@ -38,6 +41,9 @@ describe('PaginateHelper', () => {
       // Assert
       expect(result.skip).toBe(request.skip);
       expect(result.take).toBe(request.take);
+      expect(result.previousPage).toBe(2);
+      expect(result.currentPage).toBe(request.currentPage);
+      expect(result.nextPage).toBeUndefined();
     });
   });
 

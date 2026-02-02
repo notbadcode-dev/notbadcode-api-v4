@@ -83,7 +83,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when favorite flag is invalid', async () => {
     // Arrange
-    const payload = { ...UpdateLinkHandlerFixture.updatePayload(), isFavorite: undefined } as unknown as UpdateLinkRequest;
+    const payload = { ...UpdateLinkHandlerFixture.updatePayload(), isFavorite: 'not-a-boolean' } as unknown as UpdateLinkRequest;
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
     // Act

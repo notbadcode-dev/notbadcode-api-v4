@@ -1,5 +1,8 @@
-import { type UserPaginatedRequest } from '@common/requests/user-paginated-request';
+import { type PaginatedRequest } from '@common/requests';
 
 export class GetLinksPaginatedQuery {
-  constructor(public readonly request: UserPaginatedRequest) {}
+  constructor(
+    public readonly request: PaginatedRequest,
+    public readonly userId: number,
+  ) {}
 }

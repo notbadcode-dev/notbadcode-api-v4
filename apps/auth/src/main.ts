@@ -4,7 +4,7 @@ import * as path from 'path';
 import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
-import { I18nService } from 'nestjs-i18n';
+import { I18nService } from '@common/i18n';
 import open from 'open';
 
 import { buildSwaggerConfig, buildSwaggerUrl, ENV_DEFAULTS, ENV_KEYS } from '@common/config';
@@ -44,7 +44,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
   app.useGlobalInterceptors(app.get(LoggingInterceptor));
-  app.useGlobalFilters(new ValidationExceptionFilter(i18n as I18nService<Record<string, unknown>>));
+  app.useGlobalFilters(new ValidationExceptionFilter(i18n));
 
   const listenPort = Number(process.env.AUTH_PORT || ENV_DEFAULTS[ENV_KEYS.AUTH_PORT]);
   await app.listen(listenPort, AuthConstants.nodeInspectHost);

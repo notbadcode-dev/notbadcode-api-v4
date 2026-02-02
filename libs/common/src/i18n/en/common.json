@@ -2,8 +2,13 @@
   "error-message": {
     "defaultApiFailureResponseMessage": "An error occurred while processing the request",
     "unknownValidationError": "Unknown validation error",
-    "redidCacheNotInitialized": "Redis cache is not initialized. Ensure CommonCacheModule is imported in the module.",
-    "entityNotFound": "{{entityName}} not found."
+    "redisCacheNotInitialized": "Redis cache is not initialized. Ensure CommonCacheModule is imported in the module.",
+    "entityNotFound": "{entityName} not found.",
+    "invalidSkip": "The skip value must be a valid number greater than or equal to 0.",
+    "invalidTake": "The take value must be a valid number greater than or equal to 1.",
+    "invalidCurrentPage": "The current page must be a valid number greater than or equal to 1.",
+    "invalidSortBy": "The sort field must be a valid string.",
+    "invalidSortOrder": "The sort order must be a valid option (ASC or DESC)."
   },
   "message": {
     "defaultApiSuccessResponseMessage": "Request completed successfully"

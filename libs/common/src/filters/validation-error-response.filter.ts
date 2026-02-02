@@ -1,8 +1,7 @@
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
-import { I18nService } from 'nestjs-i18n';
-
 import { CommonErrorMessageConstants, SymbolConstants } from '@common/constants';
+import { I18nService } from '@common/i18n';
 import { ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
 interface ValidationErrorResponse {
@@ -64,15 +63,15 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     if (input !== undefined) {
       return [JSON.stringify(input)];
     }
-    return [this.i18n.t(CommonErrorMessageConstants.unknownValidationError)];
+    return [await this.i18n.translate(CommonErrorMessageConstants.unknownValidationError)];
   }
 
   private async safeTranslate(msg: unknown): Promise<string> {
-    if (typeof msg === 'string' && typeof this.i18n.t === 'function') {
+    if (typeof msg === 'string') {
       try {
         const [key, params] = msg.split(SymbolConstants.Pipe);
         const paramObj = parseParams(params);
-        const translated = await this.i18n.t(key, { args: paramObj });
+        const translated = await this.i18n.translate(key, { args: paramObj });
         return String(translated);
       } catch {
         return msg;

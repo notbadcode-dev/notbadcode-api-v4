@@ -53,8 +53,6 @@ export class BasePaginatedHandlerFixture {
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       total: 50,
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      page: 2,
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       take: 10,
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       skip: 10,

@@ -103,4 +103,53 @@ describe('GetLinkByIdHandler', () => {
     expect(result.data).toBeInstanceOf(GetLinkByIdResponse);
     expect(result.data?.id).toBe(LinkByIdHandlerFixture.validLink.id);
   });
+
+  it('returns success with group data when link has a group', async () => {
+    // Arrange
+    linkRepository.findOne.mockResolvedValueOnce(LinkByIdHandlerFixture.validLinkWithGroup);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.validLinkWithGroup.id, LinkByIdHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(query);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(result.data).toBeInstanceOf(GetLinkByIdResponse);
+    expect(result.data?.groupLinkId).toBe(LinkByIdHandlerFixture.validLinkWithGroup.groupLinkId);
+    expect(result.data?.groupLink).toBeDefined();
+    expect(result.data?.groupLink?.id).toBe(LinkByIdHandlerFixture.validLinkWithGroup.groupLink?.id);
+    expect(result.data?.groupLink?.title).toBe(LinkByIdHandlerFixture.validLinkWithGroup.groupLink?.title);
+    expect(result.data?.groupLink?.color).toEqual(LinkByIdHandlerFixture.validLinkWithGroup.groupLink?.color);
+    expect(result.data?.groupLink?.icon).toBe(LinkByIdHandlerFixture.validLinkWithGroup.groupLink?.icon);
+  });
+
+  it('returns success with null group when link has no group', async () => {
+    // Arrange
+    linkRepository.findOne.mockResolvedValueOnce(LinkByIdHandlerFixture.validLink);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.validLink.id, LinkByIdHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(query);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(result.data?.groupLinkId).toBeNull();
+    expect(result.data?.groupLink).toBeNull();
+  });
+
+  it('includes relations in the specification options', async () => {
+    // Arrange
+    linkRepository.findOne.mockResolvedValueOnce(LinkByIdHandlerFixture.validLink);
+    const query = new GetLinkByIdQuery(LinkByIdHandlerFixture.validLink.id, LinkByIdHandlerFixture.validUserId);
+
+    // Act
+    await handler.execute(query);
+
+    // Assert
+    expect(linkRepository.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        relations: ['groupLink'],
+      }),
+    );
+  });
 });

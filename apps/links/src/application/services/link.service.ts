@@ -27,6 +27,10 @@ export class LinkService {
       link.tagList = payload.tagList;
     }
 
+    if (payload.groupLinkId !== undefined) {
+      link.groupLinkId = payload.groupLinkId;
+    }
+
     return link;
   }
 }

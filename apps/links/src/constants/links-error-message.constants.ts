@@ -10,4 +10,7 @@ export const LinksErrorMessageConstants = {
   invalidFavoriteFlag: `${LinksErrorMessageTag}.invalidFavoriteFlag`,
   invalidTagList: `${LinksErrorMessageTag}.invalidTagList`,
   arrayNotEmpty: `${LinksErrorMessageTag}.arrayNotEmpty`,
+  invalidGroupLinkId: `${LinksErrorMessageTag}.invalidGroupLinkId`,
+  groupLinkNotFound: `${LinksErrorMessageTag}.groupLinkNotFound`,
+  duplicateUrl: `${LinksErrorMessageTag}.duplicateUrl`,
 };

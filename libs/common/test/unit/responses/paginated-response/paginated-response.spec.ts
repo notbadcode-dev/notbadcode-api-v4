@@ -11,7 +11,6 @@ describe('PaginatedResponse', () => {
     // Assert
     expect(response.items).toEqual(data.items);
     expect(response.total).toBe(data.total);
-    expect(response.page).toBe(data.page);
     expect(response.take).toBe(data.take);
     expect(response.skip).toBe(data.skip);
     expect(response.sortBy).toBe(data.sortBy);
@@ -38,7 +37,6 @@ describe('PaginatedResponse', () => {
     });
 
     expect(response.total).toBe(data.total);
-    expect(response.page).toBe(data.page);
     expect(response.take).toBe(data.take);
     expect(response.skip).toBe(data.skip);
     expect(response.sortBy).toBe(data.sortBy);

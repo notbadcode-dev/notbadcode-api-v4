@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { type UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
+import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
 import { Link } from '@apps/links/src/domain/entities/link.entity';
 
 export class UpdateLinkHandlerFixture {
@@ -18,9 +19,16 @@ export class UpdateLinkHandlerFixture {
     lastCheckedAt: null,
     lastVisitedAt: null,
     userId: 7,
+    groupLinkId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: undefined,
+  });
+
+  static readonly existingLinkWithGroup: Link = Object.assign(new Link(), {
+    ...UpdateLinkHandlerFixture.existingLink,
+    id: 43,
+    groupLinkId: 5,
   });
 
   static updatePayload(description = 'Updated description'): UpdateLinkRequest {
@@ -32,6 +40,41 @@ export class UpdateLinkHandlerFixture {
       tagList: ['updated', 'links'],
     };
   }
+
+  static updatePayloadWithGroup(groupLinkId: number | null): UpdateLinkRequest {
+    return {
+      ...UpdateLinkHandlerFixture.updatePayload(),
+      groupLinkId,
+    };
+  }
+
+  static readonly validGroupLink: GroupLink = Object.assign(new GroupLink(), {
+    id: 5,
+    userId: 7,
+    title: 'Development',
+    description: null,
+    color: null,
+    icon: null,
+    parentGroupLinkId: null,
+    isFavorite: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: undefined,
+  });
+
+  static readonly anotherGroupLink: GroupLink = Object.assign(new GroupLink(), {
+    id: 10,
+    userId: 7,
+    title: 'Design',
+    description: null,
+    color: null,
+    icon: null,
+    parentGroupLinkId: null,
+    isFavorite: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: undefined,
+  });
 
   static readonly invalidId = 0;
 

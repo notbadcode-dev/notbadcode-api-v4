@@ -30,10 +30,6 @@ export class AuthService {
       },
     );
 
-  const csrfToken = this.jwtService.sign(payload.toPlainObject(), {
-        expiresIn: this.configService.get<string>(ENV_KEYS.AUTH_JWT_CSRF_EXPIRES_IN),
-      });
-
-      return new LoginResponse(accessToken, refreshToken, csrfToken);
+    return new LoginResponse(accessToken, refreshToken);
   }
 }

@@ -22,6 +22,31 @@ export const ColumnBoolean = (defaultValue = false): ColumnOptions => ({
   },
 });
 
+export interface RgbColor {
+  r: number;
+  g: number;
+  b: number;
+}
+
+const isRgbColor = (value: unknown): value is RgbColor =>
+  typeof value === 'object' &&
+  value !== null &&
+  'r' in value &&
+  'g' in value &&
+  'b' in value &&
+  typeof (value as RgbColor).r === 'number' &&
+  typeof (value as RgbColor).g === 'number' &&
+  typeof (value as RgbColor).b === 'number';
+
+export const ColumnJsonRgb = (nullable = true): ColumnOptions => ({
+  type: 'json',
+  nullable,
+  transformer: {
+    to: (value: RgbColor | null): RgbColor | null => (isRgbColor(value) ? { r: value.r, g: value.g, b: value.b } : null),
+    from: (value: unknown): RgbColor | null => (isRgbColor(value) ? { r: value.r, g: value.g, b: value.b } : null),
+  },
+});
+
 export const ColumnJsonArray = (nullable = true): ColumnOptions => ({
   type: 'json',
   nullable,

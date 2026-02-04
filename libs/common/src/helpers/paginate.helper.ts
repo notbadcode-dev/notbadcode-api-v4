@@ -7,7 +7,6 @@ export class PaginateHelper {
   static buildPaginatedResponse<T>({ items, total, request }: { items: T[]; total: number; request: PaginatedRequest }): {
     items: T[];
     total: number;
-    page: number;
     take: number;
     skip: number;
     sortBy?: string;
@@ -24,7 +23,6 @@ export class PaginateHelper {
     return {
       items,
       total,
-      page,
       take,
       skip,
       sortBy: request.sortBy,

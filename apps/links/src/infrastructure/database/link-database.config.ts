@@ -1,6 +1,7 @@
 import { type ConfigService } from '@nestjs/config';
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
 import { Link } from '@apps/links/src/domain/entities/link.entity';
 
 export const getLinksDbConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
@@ -10,7 +11,7 @@ export const getLinksDbConfig = (configService: ConfigService): TypeOrmModuleOpt
   username: configService.get<string>('LINKS_DB_USER'),
   password: configService.get<string>('LINKS_DB_PASS'),
   database: configService.get<string>('LINKS_DB_NAME'),
-  entities: [Link],
+  entities: [Link, GroupLink],
   synchronize: false,
   logging: configService.get<string>('NODE_ENV') !== 'production',
 });

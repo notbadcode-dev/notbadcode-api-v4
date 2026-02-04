@@ -29,12 +29,9 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
 
-      const userSession = { userId: payload.sub, sessionId: payload.jti as UUID, csrfToken: payload.csrfToken } as UserSession;
+      const userSession = { userId: payload.sub, sessionId: payload.jti as UUID } as UserSession;
       const key = this.sessionControlService.getUserSessionKey(userSession);
       const session = await this.sessionControlService.getSession(key);
-if (!session || session.csrfToken !== request.headers['x-csrf-token']) {
-  throw new UnauthorizedException();
-}
       if (!session) {
         throw new UnauthorizedException();
       }

@@ -8,7 +8,7 @@ import { type ApiResponse, type PaginatedResponse } from '@common/responses';
 import { BaseHandler } from './base.handler';
 
 export interface IPaginatableRepository<TEntity extends ObjectLiteral> {
-  findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<TEntity>; where?: FindOptionsWhere<TEntity> }): Promise<[TEntity[], number]>;
+  findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<TEntity>; where?: FindOptionsWhere<TEntity>; relations?: string[] }): Promise<[TEntity[], number]>;
 }
 
 export abstract class BasePaginatedHandler<TCommand, TEntity extends ObjectLiteral, TResponseDto> extends BaseHandler<TCommand, ApiResponse<PaginatedResponse<TResponseDto>>> {
@@ -22,10 +22,11 @@ export abstract class BasePaginatedHandler<TCommand, TEntity extends ObjectLiter
     map: (entity: TEntity) => TResponseDto,
     notFoundMessage: string,
     where?: FindOptionsWhere<TEntity>,
+    relations?: string[],
   ): Promise<ApiResponse<PaginatedResponse<TResponseDto>>> {
     const { skip, take, order } = PaginateHelper.calculateRepositoryPagination<TEntity>(request);
 
-    const [entities, total] = await repository.findAndCount({ skip, take, order, where });
+    const [entities, total] = await repository.findAndCount({ skip, take, order, where, relations });
 
     if (!entities.length) {
       return this.createResponseFailure(notFoundMessage);

@@ -16,7 +16,7 @@ export class TypeOrmLinkRepository implements ILinkRepository {
     return this.repository.findOne(options);
   }
 
-  async findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<Link>; where?: FindOptionsWhere<Link> }): Promise<[Link[], number]> {
+  async findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<Link>; where?: FindOptionsWhere<Link>; relations?: string[] }): Promise<[Link[], number]> {
     return this.repository.findAndCount(options);
   }
 
@@ -30,5 +30,9 @@ export class TypeOrmLinkRepository implements ILinkRepository {
 
   async update(criteria: FindOptionsWhere<Link>, data: Partial<Link>): Promise<{ affected?: number }> {
     return this.repository.update(criteria, data);
+  }
+
+  async softDelete(criteria: FindOptionsWhere<Link>): Promise<{ affected?: number }> {
+    return this.repository.softDelete(criteria);
   }
 }

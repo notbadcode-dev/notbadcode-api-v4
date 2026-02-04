@@ -15,7 +15,6 @@ export class PaginatedResponseFixture {
     return {
       items,
       total: 20,
-      page: 2,
       take: 5,
       skip: 5,
       sortBy: 'createdAt',

@@ -4,6 +4,7 @@ import { UpdateLinkHandler } from '@apps/links/src/application/handlers/update-l
 import { type UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
 import { type LinkService } from '@apps/links/src/application/services/link.service';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
 import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 
 import { UpdateLinkHandlerFixture } from './update-link.handler.fixture';
@@ -11,6 +12,7 @@ import { UpdateLinkHandlerFixture } from './update-link.handler.fixture';
 describe('UpdateLinkHandler', () => {
   let handler: UpdateLinkHandler;
   let linkRepository: jest.Mocked<ILinkRepository>;
+  let groupLinkRepository: jest.Mocked<IGroupLinkRepository>;
   let linkService: jest.Mocked<LinkService>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
 
@@ -22,10 +24,17 @@ describe('UpdateLinkHandler', () => {
       save: jest.fn(),
       update: jest.fn(),
     };
+    groupLinkRepository = {
+      findOne: jest.fn(),
+      findAndCount: jest.fn(),
+      find: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+    };
     linkService = { updateLink: jest.fn() } as unknown as jest.Mocked<LinkService>;
     i18nService = { translate: jest.fn(), t: jest.fn() };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    handler = new UpdateLinkHandler(linkRepository, linkService, i18nService as any);
+    handler = new UpdateLinkHandler(linkRepository, groupLinkRepository, linkService, i18nService as any);
   });
 
   it('returns failure when id is invalid', async () => {
@@ -138,5 +147,98 @@ describe('UpdateLinkHandler', () => {
     expect(linkRepository.save).toHaveBeenCalledWith(link);
     expect(result.success).toBe(true);
     expect(result.data?.description).toBe(link.description);
+  });
+
+  describe('groupLinkId scenarios', () => {
+    it('adds link to a group when groupLinkId is provided', async () => {
+      // Arrange
+      const link = UpdateLinkHandlerFixture.existingLink;
+      const updatedLink = Object.assign(new (link.constructor as new () => typeof link)(), { ...link, groupLinkId: UpdateLinkHandlerFixture.validGroupLink.id });
+      linkRepository.findOne.mockResolvedValueOnce(link);
+      groupLinkRepository.findOne.mockResolvedValueOnce(UpdateLinkHandlerFixture.validGroupLink);
+      linkRepository.save.mockResolvedValueOnce(updatedLink);
+
+      const payload = UpdateLinkHandlerFixture.updatePayloadWithGroup(UpdateLinkHandlerFixture.validGroupLink.id);
+      const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(groupLinkRepository.findOne).toHaveBeenCalled();
+      expect(linkService.updateLink).toHaveBeenCalledWith(link, payload);
+      expect(result.success).toBe(true);
+      expect(result.data?.groupLinkId).toBe(UpdateLinkHandlerFixture.validGroupLink.id);
+    });
+
+    it('moves link from one group to another', async () => {
+      // Arrange
+      const link = UpdateLinkHandlerFixture.existingLinkWithGroup;
+      const updatedLink = Object.assign(new (link.constructor as new () => typeof link)(), { ...link, groupLinkId: UpdateLinkHandlerFixture.anotherGroupLink.id });
+      linkRepository.findOne.mockResolvedValueOnce(link);
+      groupLinkRepository.findOne.mockResolvedValueOnce(UpdateLinkHandlerFixture.anotherGroupLink);
+      linkRepository.save.mockResolvedValueOnce(updatedLink);
+
+      const payload = UpdateLinkHandlerFixture.updatePayloadWithGroup(UpdateLinkHandlerFixture.anotherGroupLink.id);
+      const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(groupLinkRepository.findOne).toHaveBeenCalled();
+      expect(result.success).toBe(true);
+      expect(result.data?.groupLinkId).toBe(UpdateLinkHandlerFixture.anotherGroupLink.id);
+    });
+
+    it('removes link from group when groupLinkId is null', async () => {
+      // Arrange
+      const link = UpdateLinkHandlerFixture.existingLinkWithGroup;
+      const updatedLink = Object.assign(new (link.constructor as new () => typeof link)(), { ...link, groupLinkId: null });
+      linkRepository.findOne.mockResolvedValueOnce(link);
+      linkRepository.save.mockResolvedValueOnce(updatedLink);
+
+      const payload = UpdateLinkHandlerFixture.updatePayloadWithGroup(null);
+      const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(groupLinkRepository.findOne).not.toHaveBeenCalled();
+      expect(result.success).toBe(true);
+      expect(result.data?.groupLinkId).toBeNull();
+    });
+
+    it('returns failure when groupLinkId does not exist', async () => {
+      // Arrange
+      const link = UpdateLinkHandlerFixture.existingLink;
+      linkRepository.findOne.mockResolvedValueOnce(link);
+      groupLinkRepository.findOne.mockResolvedValueOnce(null);
+
+      const payload = UpdateLinkHandlerFixture.updatePayloadWithGroup(999);
+      const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(groupLinkRepository.findOne).toHaveBeenCalled();
+      expect(result.success).toBe(false);
+      expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.groupLinkNotFound);
+    });
+
+    it('returns failure when groupLinkId is not a valid integer', async () => {
+      // Arrange
+      const payload = { ...UpdateLinkHandlerFixture.updatePayload(), groupLinkId: -1 };
+      const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(result.success).toBe(false);
+      expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidGroupLinkId);
+    });
   });
 });

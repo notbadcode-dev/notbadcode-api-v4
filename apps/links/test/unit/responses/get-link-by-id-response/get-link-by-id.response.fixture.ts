@@ -1,4 +1,5 @@
 import { type GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
+import { GroupLinkBasicResponse } from '@apps/links/src/application/responses/group-link-basic.response';
 import { LinkLastStatusCode } from '@apps/links/src/domain/enums/link-last-status-code.enum';
 
 export class GetLinkByIdResponseFixture {
@@ -17,6 +18,27 @@ export class GetLinkByIdResponseFixture {
       lastStatusCode: LinkLastStatusCode.OK,
       lastCheckedAt: new Date('2024-01-01T10:00:00.000Z'),
       lastVisitedAt: new Date('2024-01-02T10:00:00.000Z'),
+    };
+  }
+
+  static partialResponseWithGroup(): Partial<GetLinkByIdResponse> {
+    return {
+      ...GetLinkByIdResponseFixture.partialResponse(),
+      groupLinkId: 5,
+      groupLink: new GroupLinkBasicResponse({
+        id: 5,
+        title: 'Development',
+        color: { r: 59, g: 130, b: 246 },
+        icon: 'code',
+      }),
+    };
+  }
+
+  static partialResponseWithNullGroup(): Partial<GetLinkByIdResponse> {
+    return {
+      ...GetLinkByIdResponseFixture.partialResponse(),
+      groupLinkId: null,
+      groupLink: null,
     };
   }
 }

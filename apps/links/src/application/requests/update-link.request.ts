@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { ArrayMaxSize, IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, Min } from 'class-validator';
 
 import { LengthSizes } from '@common/constants';
 
@@ -38,4 +38,10 @@ export class UpdateLinkRequest {
   @IsString({ each: true, message: LinksErrorMessageConstants.invalidTagList })
   @MaxLength(LengthSizes.regular, { each: true, message: LinksErrorMessageConstants.invalidTagList })
   tagList?: string[];
+
+  @ApiPropertyOptional({ description: 'Group link ID to assign this link to (null to remove from group)', example: 1, type: Number, nullable: true })
+  @IsOptional()
+  @IsInt({ message: LinksErrorMessageConstants.invalidGroupLinkId })
+  @Min(1, { message: LinksErrorMessageConstants.invalidGroupLinkId })
+  groupLinkId?: number | null;
 }

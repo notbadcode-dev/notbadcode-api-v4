@@ -33,7 +33,6 @@ export class AuthController {
   @Post('logout')
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'User logged out successfully' })
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   async logout(@CurrentAccessToken() accessToken: string): Promise<ApiResponse<null>> {
     return this.commandBus.execute(new LogoutCommand(accessToken));
   }

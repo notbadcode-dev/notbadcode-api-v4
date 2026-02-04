@@ -10,9 +10,6 @@ export class PaginatedResponse<T> {
   total!: number;
 
   @ApiProperty()
-  page!: number;
-
-  @ApiProperty()
   take!: number;
 
   @ApiProperty({ required: false })
@@ -43,7 +40,6 @@ export const createPaginatedResponse = <TModel extends abstract new (...args: an
 ): abstract new (...args: TModel[]) => {
   items: InstanceType<TModel>[];
   total: number;
-  page: number;
   take: number;
   skip?: number;
   sortBy?: string;
@@ -59,9 +55,6 @@ export const createPaginatedResponse = <TModel extends abstract new (...args: an
 
     @ApiProperty()
     total!: number;
-
-    @ApiProperty()
-    page!: number;
 
     @ApiProperty()
     take!: number;

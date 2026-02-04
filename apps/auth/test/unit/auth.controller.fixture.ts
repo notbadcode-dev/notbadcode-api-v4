@@ -21,6 +21,5 @@ export class AuthControllerFixture {
   static readonly loginResponse: LoginResponse = new LoginResponse(
     'access-token',
     'refresh-token',
-    'csrf-token',
   );
 }

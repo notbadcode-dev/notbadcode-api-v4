@@ -12,6 +12,7 @@ import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-l
 import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
 import { LinkService } from '@apps/links/src/application/services/link.service';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
 import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
 import { LinkByIdSpecification } from '@apps/links/src/domain/specifications/link-by-id.specification';
 
@@ -25,6 +26,8 @@ export class UpdateLinkHandler
   constructor(
     @Inject('ILinkRepository')
     private readonly linkRepository: ILinkRepository,
+    @Inject('IGroupLinkRepository')
+    private readonly groupLinkRepository: IGroupLinkRepository,
     private readonly linkService: LinkService,
     i18nService: I18nService,
   ) {
@@ -47,6 +50,13 @@ export class UpdateLinkHandler
 
     if (!link) {
       return this.createResponseFailure(LinksErrorMessageConstants.notFound);
+    }
+
+    if (sanitizedPayload.groupLinkId !== undefined && sanitizedPayload.groupLinkId !== null) {
+      const groupLink = await this.groupLinkRepository.findOne({ where: { id: sanitizedPayload.groupLinkId, userId: command.userId } });
+      if (!groupLink) {
+        return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound);
+      }
     }
 
     this.linkService.updateLink(link, sanitizedPayload);
@@ -109,6 +119,16 @@ export class UpdateLinkHandler
         return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
       }
       result.tagList = tagValidation.value;
+    }
+
+    if (payload.groupLinkId !== undefined) {
+      if (payload.groupLinkId === null) {
+        result.groupLinkId = null;
+      } else if (typeof payload.groupLinkId !== 'number' || !Number.isInteger(payload.groupLinkId) || payload.groupLinkId <= 0) {
+        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidGroupLinkId);
+      } else {
+        result.groupLinkId = payload.groupLinkId;
+      }
     }
 
     if (Object.keys(result).length === 0) {

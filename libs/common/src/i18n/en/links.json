@@ -8,6 +8,9 @@
     "invalidTitle": "Title is required and must meet the length constraints.",
     "invalidFavoriteFlag": "Favorite flag must be true or false.",
     "invalidTagList": "Tag list must contain valid string values.",
-    "arrayNotEmpty": "You must provide at least one link ID."
+    "arrayNotEmpty": "You must provide at least one link ID.",
+    "invalidGroupLinkId": "Invalid group link ID.",
+    "groupLinkNotFound": "Group link not found.",
+    "duplicateUrl": "A link with this URL already exists."
   }
 }

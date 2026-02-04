@@ -1,19 +1,28 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
 import { LengthSizes } from '@common/constants';
 import { DeletableEntity } from '@common/database';
 import { ColumnBoolean, ColumnDateTimeNullable, ColumnEnumNonNullable, ColumnJsonArray, ColumnVarchar } from '@common/database/configurations/column-types';
 
 import { LinkLastStatusCode } from '../enums/link-last-status-code.enum';
+import { GroupLink } from './group-link.entity';
 
 @Entity({ name: 'links' })
 @Index('IX_links_userId', ['userId'])
+@Index('IX_links_groupLinkId', ['groupLinkId'])
 @Index('IX_links_isFavorite', ['isFavorite'])
 @Index('IX_links_isActive', ['isActive'])
 @Index('UX_links_user_normalizedUrl', ['userId', 'normalizedUrl'], { unique: true })
 export class Link extends DeletableEntity {
   @Column({ type: 'int', unsigned: true })
   userId!: number;
+
+  @Column({ type: 'int', unsigned: true, nullable: true })
+  groupLinkId?: number | null;
+
+  @ManyToOne(() => GroupLink, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'groupLinkId' })
+  groupLink?: GroupLink | null;
 
   @Column(ColumnVarchar(LengthSizes.extraLarge))
   url!: string;

@@ -5,11 +5,32 @@ SET
 
 USE `links_db`;
 
+-- Crear tabla 'group_links' si no existe
+CREATE TABLE
+    IF NOT EXISTS `group_links` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `userId` INT UNSIGNED NOT NULL,
+        `title` VARCHAR(250) NOT NULL,
+        `description` VARCHAR(500) NULL,
+        `color` JSON NULL,
+        `icon` VARCHAR(250) NULL,
+        `parentGroupLinkId` INT UNSIGNED NULL,
+        `isFavorite` TINYINT(1) NOT NULL DEFAULT 0,
+        `createdAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        `updatedAt` DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+        `deletedAt` DATETIME (6) DEFAULT NULL,
+        PRIMARY KEY (`id`),
+        KEY `IX_group_links_userId` (`userId`),
+        KEY `IX_group_links_parentGroupLinkId` (`parentGroupLinkId`),
+        CONSTRAINT `FK_group_links_parentGroupLinkId` FOREIGN KEY (`parentGroupLinkId`) REFERENCES `group_links` (`id`) ON DELETE SET NULL
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_uca1400_ai_ci ROW_FORMAT = DYNAMIC;
+
 -- Crear tabla 'links' con buenas prácticas
 CREATE TABLE
     IF NOT EXISTS `links` (
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
         `userId` INT UNSIGNED NOT NULL,
+        `groupLinkId` INT UNSIGNED NULL,
         `url` VARCHAR(2000) NOT NULL,
         `normalizedUrl` VARCHAR(2000) NULL,
         `title` VARCHAR(250) NULL,
@@ -28,15 +49,98 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         UNIQUE KEY `UX_links_user_normalizedUrl` (`userId`, `normalizedUrl`),
         KEY `IX_links_userId` (`userId`),
+        KEY `IX_links_groupLinkId` (`groupLinkId`),
         KEY `IX_links_isFavorite` (`isFavorite`),
-        KEY `IX_links_isActive` (`isActive`)
+        KEY `IX_links_isActive` (`isActive`),
+        CONSTRAINT `FK_links_groupLinkId` FOREIGN KEY (`groupLinkId`) REFERENCES `group_links` (`id`) ON DELETE SET NULL
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_uca1400_ai_ci ROW_FORMAT = DYNAMIC;
 
 USE `links_db`;
 
+-- Insertar grupos de prueba solo si no existen (idempotente)
+INSERT IGNORE INTO `group_links` (
+    `id`,
+    `userId`,
+    `title`,
+    `description`,
+    `color`,
+    `icon`,
+    `parentGroupLinkId`,
+    `isFavorite`,
+    `createdAt`
+)
+VALUES
+    (
+        1,
+        1,
+        'Development',
+        'Enlaces relacionados con desarrollo de software.',
+        '{"r":59,"g":130,"b":246}',
+        'code',
+        NULL,
+        1,
+        NOW(6)
+    ),
+    (
+        2,
+        1,
+        'Design',
+        'Recursos de diseño y tipografías.',
+        '{"r":236,"g":72,"b":153}',
+        'palette',
+        NULL,
+        0,
+        NOW(6)
+    ),
+    (
+        3,
+        1,
+        'AI & ML',
+        'Inteligencia artificial y machine learning.',
+        '{"r":139,"g":92,"b":246}',
+        'brain',
+        NULL,
+        1,
+        NOW(6)
+    ),
+    (
+        4,
+        1,
+        'DevOps',
+        'Infraestructura, contenedores y despliegue.',
+        '{"r":249,"g":115,"b":22}',
+        'server',
+        NULL,
+        0,
+        NOW(6)
+    ),
+    (
+        5,
+        1,
+        'Reading',
+        'Artículos y tutoriales para leer.',
+        '{"r":16,"g":185,"b":129}',
+        'book',
+        NULL,
+        0,
+        NOW(6)
+    ),
+    (
+        6,
+        1,
+        'Frontend Frameworks',
+        'Frameworks de frontend específicos.',
+        '{"r":6,"g":182,"b":212}',
+        'layout',
+        1,
+        0,
+        NOW(6)
+    );
+
 -- Insertar links de prueba solo si no existen (idempotente)
 INSERT IGNORE INTO `links` (
     `userId`,
+    `groupLinkId`,
     `url`,
     `normalizedUrl`,
     `title`,
@@ -51,6 +155,7 @@ INSERT IGNORE INTO `links` (
 VALUES
     (
         1,
+        1,
         'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
         'https://developer.mozilla.org/en-us/docs/web/javascript',
         'MDN JavaScript docs',
@@ -64,6 +169,7 @@ VALUES
     ),
     (
         1,
+        NULL,
         'https://news.ycombinator.com/',
         'https://news.ycombinator.com',
         'Hacker News',
@@ -76,6 +182,7 @@ VALUES
         NOW(6)
     ),
     (
+        1,
         1,
         'https://github.com/trending',
         'https://github.com/trending',
@@ -90,6 +197,7 @@ VALUES
     ),
     (
         1,
+        NULL,
         'https://example.com/?utm_source=twitter',
         'https://example.com',
         'Example',
@@ -103,6 +211,7 @@ VALUES
     ),
     (
         1,
+        NULL,
         'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         'https://www.youtube.com/watch?v=dQw4w9wgxcq',
         'YouTube video',
@@ -115,6 +224,7 @@ VALUES
         NOW(6)
     ),
     (
+        1,
         1,
         'https://stackoverflow.com/questions/tagged/nestjs',
         'https://stackoverflow.com/questions/tagged/nestjs',
@@ -129,6 +239,7 @@ VALUES
     ),
     (
         1,
+        6,
         'https://nestjs.com/',
         'https://nestjs.com',
         'NestJS',
@@ -142,6 +253,7 @@ VALUES
     ),
     (
         1,
+        6,
         'https://react.dev/',
         'https://react.dev',
         'React',
@@ -155,6 +267,7 @@ VALUES
     ),
     (
         1,
+        6,
         'https://angular.dev/',
         'https://angular.dev',
         'Angular',
@@ -167,6 +280,7 @@ VALUES
         NOW(6)
     ),
     (
+        1,
         1,
         'https://www.prisma.io/docs',
         'https://www.prisma.io/docs',
@@ -181,6 +295,7 @@ VALUES
     ),
     (
         1,
+        1,
         'https://www.mysqltutorial.org/',
         'https://www.mysqltutorial.org',
         'MySQL Tutorial',
@@ -193,6 +308,7 @@ VALUES
         NOW(6)
     ),
     (
+        1,
         1,
         'https://www.typescriptlang.org/docs/',
         'https://www.typescriptlang.org/docs',
@@ -207,6 +323,7 @@ VALUES
     ),
     (
         1,
+        5,
         'https://medium.com/tag/programming',
         'https://medium.com/tag/programming',
         'Medium Programming',
@@ -220,6 +337,7 @@ VALUES
     ),
     (
         1,
+        5,
         'https://calibre-ebook.com/',
         'https://calibre-ebook.com',
         'Calibre',
@@ -233,6 +351,7 @@ VALUES
     ),
     (
         1,
+        4,
         'https://www.terraform.io/docs',
         'https://www.terraform.io/docs',
         'Terraform Docs',
@@ -246,6 +365,7 @@ VALUES
     ),
     (
         1,
+        4,
         'https://hub.docker.com/',
         'https://hub.docker.com',
         'Docker Hub',
@@ -258,6 +378,7 @@ VALUES
         NOW(6)
     ),
     (
+        1,
         1,
         'https://www.postman.com/',
         'https://www.postman.com',
@@ -272,6 +393,7 @@ VALUES
     ),
     (
         1,
+        2,
         'https://www.fontshare.com/',
         'https://www.fontshare.com',
         'Fontshare',
@@ -285,6 +407,7 @@ VALUES
     ),
     (
         1,
+        3,
         'https://openai.com/',
         'https://openai.com',
         'OpenAI',
@@ -298,6 +421,7 @@ VALUES
     ),
     (
         1,
+        4,
         'https://vercel.com/docs',
         'https://vercel.com/docs',
         'Vercel Docs',

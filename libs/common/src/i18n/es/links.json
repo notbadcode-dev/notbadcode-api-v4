@@ -8,6 +8,9 @@
     "invalidTitle": "El título es obligatorio y debe respetar la longitud permitida.",
     "invalidFavoriteFlag": "El campo de favorito debe ser verdadero o falso.",
     "invalidTagList": "La lista de etiquetas debe contener valores de texto válidos.",
-    "arrayNotEmpty": "Debes proporcionar al menos un ID de enlace."
+    "arrayNotEmpty": "Debes proporcionar al menos un ID de enlace.",
+    "invalidGroupLinkId": "ID de grupo de enlaces no válido.",
+    "groupLinkNotFound": "Grupo de enlaces no encontrado.",
+    "duplicateUrl": "Ya existe un enlace con esta URL."
   }
 }

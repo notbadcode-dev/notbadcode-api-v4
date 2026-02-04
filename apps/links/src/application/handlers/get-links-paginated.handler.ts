@@ -34,6 +34,6 @@ export class GetLinksPaginatedHandler
 
     const where = { userId: query.userId } as FindOptionsWhere<Link>;
 
-    return this.executePaginated(this.linkRepository, query.request, map, LinksErrorMessageConstants.notFound, where);
+    return this.executePaginated(this.linkRepository, query.request, map, LinksErrorMessageConstants.notFound, where, ['groupLink']);
   }
 }

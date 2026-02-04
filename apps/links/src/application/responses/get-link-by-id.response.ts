@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Exclude, Expose, Type } from 'class-transformer';
 
 import { LinkLastStatusCode } from '../../domain/enums/link-last-status-code.enum';
+import { GroupLinkBasicResponse } from './group-link-basic.response';
 
 type NullableString = string | null;
 type LinkStatusCode = LinkLastStatusCode;
@@ -36,6 +37,15 @@ export class GetLinkByIdResponse {
   @ApiProperty({ required: false })
   @Expose()
   imagePreviewUrl?: NullableString;
+
+  @ApiProperty({ type: Number, required: false, nullable: true })
+  @Expose()
+  groupLinkId?: number | null;
+
+  @ApiPropertyOptional({ type: () => GroupLinkBasicResponse, nullable: true })
+  @Expose()
+  @Type(() => GroupLinkBasicResponse)
+  groupLink?: GroupLinkBasicResponse | null;
 
   @ApiProperty()
   @Expose()

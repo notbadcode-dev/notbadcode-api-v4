@@ -18,7 +18,6 @@ describe('PaginateHelper', () => {
       expect(result).toEqual({
         items,
         total,
-        page: request.currentPage,
         take: request.take,
         skip: (request.currentPage - 1) * request.take,
         sortBy: request.sortBy,

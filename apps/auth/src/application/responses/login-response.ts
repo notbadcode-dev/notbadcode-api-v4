@@ -7,12 +7,8 @@ export class LoginResponse {
   @ApiProperty()
   refreshToken: string;
 
-  constructor(accessToken: string, refreshToken: string, csrfToken: string) {
+  constructor(accessToken: string, refreshToken: string) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
-    this.csrfToken = csrfToken;
   }
-
-  @ApiProperty()
-  csrfToken: string;
 }

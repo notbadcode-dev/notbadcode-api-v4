@@ -12,7 +12,7 @@ import { type AuthService, type HashService } from '@apps/auth/src/application/s
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { type User } from '@apps/auth/src/domain/entities';
-import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
+import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
 import { RegisterHandlerFixture } from './register.handler.fixture';
 

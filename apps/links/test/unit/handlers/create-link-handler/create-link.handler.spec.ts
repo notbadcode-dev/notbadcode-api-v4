@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { CreateLinkCommand } from '@apps/links/src/application/commands/create-link.command';
-import { CreateLinkHandler } from '@apps/links/src/application/handlers/create-link.handler';
-import { type CreateLinkRequest } from '@apps/links/src/application/requests/create-link.request';
-import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { CreateLinkCommand } from '@apps/links/src/application/commands';
+import { CreateLinkHandler } from '@apps/links/src/application/handlers';
+import { type CreateLinkRequest } from '@apps/links/src/application/requests';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
+import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 
 import { CreateLinkHandlerFixture } from './create-link.handler.fixture';
 

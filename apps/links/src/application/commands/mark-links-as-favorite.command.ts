@@ -1,4 +1,4 @@
-import { type MarkLinksAsFavoriteRequest } from '../requests/mark-links-as-favorite.request';
+import { type MarkLinksAsFavoriteRequest } from '@apps/links/src/application/requests';
 
 export class MarkLinksAsFavoriteCommand {
   constructor(

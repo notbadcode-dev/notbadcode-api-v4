@@ -1,4 +1,4 @@
-import { ESupportedLanguage } from '../../enums/';
+import { ESupportedLanguage } from '@common/enums/';
 // eslint-disable-next-line import/order
 import { ENV_KEYS } from './env.keys';
 

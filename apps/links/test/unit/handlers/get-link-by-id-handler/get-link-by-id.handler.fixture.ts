@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { GroupLink, Link } from '@apps/links/src/domain/entities';
 
 export class LinkByIdHandlerFixture {
   static readonly validLink: Link = Object.assign(new Link(), {

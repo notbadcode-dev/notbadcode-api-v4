@@ -6,12 +6,12 @@ import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse } from '@common/responses';
 
-import { GetLinkByIdQuery } from '@apps/links/src/application/queries/get-link-by-id.query';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
-import { LinkByIdSpecification } from '@apps/links/src/domain/specifications/link-by-id.specification';
+import { GetLinkByIdQuery } from '@apps/links/src/application/queries';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
+import { LinkByIdSpecification } from '@apps/links/src/domain/specifications';
 
-import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @QueryHandler(GetLinkByIdQuery)
 export class GetLinkByIdHandler

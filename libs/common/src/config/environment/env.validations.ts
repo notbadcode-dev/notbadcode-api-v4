@@ -10,7 +10,7 @@ import {
   ENV_KEYS,
   ENV_REDIS_SCHEMES,
 } from '.';
-import { REDIS_DB_SUFFIX } from '../helpers/require-redis-db.helper';
+import { REDIS_DB_SUFFIX } from '@common/config/helpers/require-redis-db.helper';
 
 // --- Auth Servicio ---
 const authServiceSchema = {

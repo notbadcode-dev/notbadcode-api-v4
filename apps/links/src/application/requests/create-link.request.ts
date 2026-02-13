@@ -3,7 +3,7 @@ import { ArrayMaxSize, IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsStri
 
 import { LengthSizes } from '@common/constants';
 
-import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 export class CreateLinkRequest {
   @ApiProperty({ description: 'Link URL', example: 'https://example.com', maxLength: LengthSizes.extraLarge })

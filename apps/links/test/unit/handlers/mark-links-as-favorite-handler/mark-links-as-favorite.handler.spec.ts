@@ -1,8 +1,8 @@
 import { type I18nService } from '@common/i18n';
 
-import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands/mark-links-as-favorite.command';
-import { MarkLinksAsFavoriteHandler } from '@apps/links/src/application/handlers/mark-links-as-favorite.handler';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands';
+import { MarkLinksAsFavoriteHandler } from '@apps/links/src/application/handlers';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 import { MarkLinksAsFavoriteFixture } from './mark-links-as-favorite.handler.fixture';
 

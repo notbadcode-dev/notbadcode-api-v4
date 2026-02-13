@@ -3,7 +3,7 @@ import { RedisCacheConstants } from '@common/constants/redis-cache.constants';
 import { type I18nService } from '@common/i18n';
 import { apiResponseFailure, EApiResponseMessageType } from '@common/responses';
 
-import { CacheAccessor } from '../cache-accessor';
+import { CacheAccessor } from '@common/redis/cache/cache-accessor';
 
 type AsyncMethod<This, A extends unknown[], R> = (this: This, ...args: A) => Promise<R>;
 type AsyncMethodDecorator = <This, A extends unknown[], R>(

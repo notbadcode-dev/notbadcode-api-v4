@@ -5,6 +5,7 @@ export const LoggerConstants = {
   defaultMaxFiles: '30d',
   defaultAppFilename: 'app-%DATE%.log',
   defaultErrorFilename: 'error-%DATE%.log',
+  defaultLogLevel: 'info',
   defaultFormat: (
     serviceName: string,
     timestamp: string | number | Date | null | undefined,

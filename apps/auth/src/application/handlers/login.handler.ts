@@ -19,7 +19,7 @@ import { UserService } from '@apps/auth/src/application/services/user.service';
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants/auth-error-message.constants';
 import { User } from '@apps/auth/src/domain/entities';
-import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
+import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
 @CommandHandler(LoginCommand)
 export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginResponse>> implements ICommandHandler<LoginCommand, ApiResponse<LoginResponse>> {

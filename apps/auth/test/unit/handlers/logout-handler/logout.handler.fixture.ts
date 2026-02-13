@@ -6,7 +6,7 @@ import { EApiResponseMessageType, type ApiFailureResponse } from '@common/respon
 
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 
-import { BaseHandlerFixture } from '../base.handler.fixture';
+import { BaseHandlerFixture } from '@apps/auth/test/unit/handlers/base.handler.fixture';
 
 export class LogoutHandlerFixture extends BaseHandlerFixture {
   static spacesToken(): string {

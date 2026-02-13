@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type FindOneOptions, type FindOptionsOrder, type FindOptionsWhere, Repository } from 'typeorm';
 
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
+import { Link } from '@apps/links/src/domain/entities';
 
 @Injectable()
 export class TypeOrmLinkRepository implements ILinkRepository {
@@ -32,7 +32,7 @@ export class TypeOrmLinkRepository implements ILinkRepository {
     return this.repository.update(criteria, data);
   }
 
-  async softDelete(criteria: FindOptionsWhere<Link>): Promise<{ affected?: number }> {
+  async softDelete(criteria: Pick<Link, 'id' | 'userId'>): Promise<{ affected?: number }> {
     return this.repository.softDelete(criteria);
   }
 }

@@ -4,7 +4,7 @@ import { LengthSizes } from '@common/constants';
 import { DeletableEntity } from '@common/database';
 import { ColumnBoolean, ColumnDateTimeNullable, ColumnEnumNonNullable, ColumnJsonArray, ColumnVarchar } from '@common/database/configurations/column-types';
 
-import { LinkLastStatusCode } from '../enums/link-last-status-code.enum';
+import { LinkLastStatusCode } from '@apps/links/src/domain/enums';
 import { GroupLink } from './group-link.entity';
 
 @Entity({ name: 'links' })

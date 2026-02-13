@@ -1,0 +1,47 @@
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { plainToInstance } from 'class-transformer';
+
+import { BaseHandler } from '@common/handler';
+import { I18nService } from '@common/i18n';
+import { ApiResponse } from '@common/responses';
+
+import { DeleteGroupLinkCommand } from '@apps/links/src/application/commands';
+import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
+
+import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
+
+@CommandHandler(DeleteGroupLinkCommand)
+export class DeleteGroupLinkHandler
+  extends BaseHandler<DeleteGroupLinkCommand, ApiResponse<GetGroupLinkByIdResponse>>
+  implements ICommandHandler<DeleteGroupLinkCommand, ApiResponse<GetGroupLinkByIdResponse>>
+{
+  constructor(
+    @Inject('IGroupLinkRepository')
+    private readonly groupLinkRepository: IGroupLinkRepository,
+    i18nService: I18nService,
+  ) {
+    super(i18nService);
+  }
+
+  async execute(command: DeleteGroupLinkCommand): Promise<ApiResponse<GetGroupLinkByIdResponse>> {
+    const groupLinkId = command.id ?? 0;
+    if (!groupLinkId || groupLinkId <= 0) {
+      return this.createResponseFailure(GroupLinksErrorMessageConstants.invalidGroupLinkId);
+    }
+
+    const groupLink = await this.groupLinkRepository.findOne({
+      where: { id: groupLinkId, userId: command.userId },
+    });
+
+    if (!groupLink) {
+      return this.createResponseFailure(GroupLinksErrorMessageConstants.notFound);
+    }
+
+    await this.groupLinkRepository.softDelete({ id: groupLinkId, userId: command.userId });
+
+    const response = plainToInstance(GetGroupLinkByIdResponse, groupLink, { excludeExtraneousValues: true });
+    return this.createSuccessResponse(response);
+  }
+}

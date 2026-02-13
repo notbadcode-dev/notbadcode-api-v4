@@ -6,8 +6,8 @@ import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse, SuccessFailureResponse } from '@common/responses';
 
-import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands/mark-links-as-favorite.command';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 @CommandHandler(MarkLinksAsFavoriteCommand)
 export class MarkLinksAsFavoriteHandler

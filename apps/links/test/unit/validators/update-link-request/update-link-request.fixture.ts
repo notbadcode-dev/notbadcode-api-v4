@@ -1,4 +1,4 @@
-import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
+import { UpdateLinkRequest } from '@apps/links/src/application/requests';
 
 export class UpdateLinkRequestValidatorFixture {
   static getValidFullRequest(): UpdateLinkRequest {

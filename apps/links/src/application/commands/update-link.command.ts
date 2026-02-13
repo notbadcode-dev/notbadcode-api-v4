@@ -1,4 +1,4 @@
-import { type UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
+import { type UpdateLinkRequest } from '@apps/links/src/application/requests';
 
 export class UpdateLinkCommand {
   constructor(

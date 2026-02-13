@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { DeleteLinkCommand } from '@apps/links/src/application/commands/delete-link.command';
-import { DeleteLinkHandler } from '@apps/links/src/application/handlers/delete-link.handler';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { DeleteLinkCommand } from '@apps/links/src/application/commands';
+import { DeleteLinkHandler } from '@apps/links/src/application/handlers';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 import { DeleteLinkHandlerFixture } from './delete-link.handler.fixture';
 

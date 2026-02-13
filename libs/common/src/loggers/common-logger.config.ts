@@ -17,6 +17,7 @@ interface ServiceInfo extends TransformableInfo {
 export function loggerConfiguration(): winston.LoggerOptions {
   const logsDir = path.resolve(process.cwd(), LoggerConstants.path);
   const serviceName = process.env.SERVICE_NAME ?? LoggerConstants.defaultServiceName;
+  const logLevel = process.env.LOG_LEVEL ?? LoggerConstants.defaultLogLevel;
 
   if (!fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir, { recursive: true });
@@ -59,6 +60,7 @@ export function loggerConfiguration(): winston.LoggerOptions {
   };
 
   return {
+    level: logLevel,
     transports: [
       new transports.Console({ format: consoleFormat }),
       createDailyRotateFile(LoggerConstants.defaultAppFilename),

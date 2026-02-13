@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { UpdateLinkRequest } from '@apps/links/src/application/requests';
+import { Link } from '@apps/links/src/domain/entities';
 
 @Injectable()
 export class LinkService {

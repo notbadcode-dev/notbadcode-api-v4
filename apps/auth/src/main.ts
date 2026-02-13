@@ -1,15 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as express from 'express';
+import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
-import { I18nService } from '@common/i18n';
 import open from 'open';
 
-import { buildSwaggerConfig, buildSwaggerUrl, ENV_DEFAULTS, ENV_KEYS } from '@common/config';
-import { CommonConstants } from '@common/constants';
-import { ValidationExceptionFilter } from '@common/filters';
+import { buildSwaggerConfig, buildSwaggerUrl, ENV_DEFAULTS, ENV_KEYS, getCorsConfig, helmetConfig, helmetConfigDev, permissionsPolicyMiddleware } from '@common/config';
+import { CommonConstants, SecurityConstants } from '@common/constants';
+import { GlobalExceptionFilter, ValidationExceptionFilter } from '@common/filters';
+import { I18nService } from '@common/i18n';
 import { LoggingInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
@@ -19,18 +25,15 @@ import { AuthConstants } from 'apps/auth/src/constants';
 
 async function bootstrap(): Promise<void> {
   const app = await createApp();
+  const isProd = process.env.NODE_ENV === CommonConstants.productionEnvironmentTag;
 
-  const corsOrigins = (process.env[ENV_KEYS.CORS_ORIGINS] || (ENV_DEFAULTS[ENV_KEYS.CORS_ORIGINS] as string))
-    .split(',')
-    .map((origin: string) => origin.trim())
-    .filter(Boolean);
+  app.use(express.json({ limit: SecurityConstants.bodyLimit }));
+  app.use(express.urlencoded({ extended: true, limit: SecurityConstants.bodyLimit }));
 
-  app.enableCors({
-    origin: corsOrigins,
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
-  });
+  app.use(helmet(isProd ? helmetConfig : helmetConfigDev));
+  app.use(permissionsPolicyMiddleware);
+
+  app.enableCors(getCorsConfig());
 
   addSwaggerConfiguration(app);
 
@@ -44,7 +47,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
   app.useGlobalInterceptors(app.get(LoggingInterceptor));
-  app.useGlobalFilters(new ValidationExceptionFilter(i18n));
+  app.useGlobalFilters(new GlobalExceptionFilter(), new ValidationExceptionFilter(i18n));
 
   const listenPort = Number(process.env.AUTH_PORT || ENV_DEFAULTS[ENV_KEYS.AUTH_PORT]);
   await app.listen(listenPort, AuthConstants.nodeInspectHost);
@@ -76,11 +79,7 @@ async function createApp(): Promise<INestApplication> {
 }
 
 function addSwaggerConfiguration(app: INestApplication): void {
-  const info = SwaggerInfo.create(
-    AuthConstants.swaggerTitle,
-    AuthConstants.swaggerDescription,
-    AuthConstants.swaggerVersion,
-  );
+  const info = SwaggerInfo.create(AuthConstants.swaggerTitle, AuthConstants.swaggerDescription, AuthConstants.swaggerVersion);
 
   buildSwaggerConfig(app, info);
 }

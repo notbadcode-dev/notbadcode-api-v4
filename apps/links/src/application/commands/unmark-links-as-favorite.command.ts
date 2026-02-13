@@ -1,4 +1,4 @@
-import { type UnmarkLinksAsFavoriteRequest } from '../requests/unmark-links-as-favorite.request';
+import { type UnmarkLinksAsFavoriteRequest } from '@apps/links/src/application/requests';
 
 export class UnmarkLinksAsFavoriteCommand {
   constructor(

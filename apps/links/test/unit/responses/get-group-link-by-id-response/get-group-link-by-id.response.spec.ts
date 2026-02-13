@@ -1,4 +1,4 @@
-import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses/get-group-link-by-id.response';
+import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
 
 import { GetGroupLinkByIdResponseFixture } from './get-group-link-by-id.response.fixture';
 

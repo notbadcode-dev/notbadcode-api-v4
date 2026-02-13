@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type FindOneOptions, type FindOptionsOrder, type FindOptionsWhere, Repository } from 'typeorm';
 
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
-import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
+import { GroupLink } from '@apps/links/src/domain/entities';
 
 @Injectable()
 export class TypeOrmGroupLinkRepository implements IGroupLinkRepository {
@@ -16,7 +16,7 @@ export class TypeOrmGroupLinkRepository implements IGroupLinkRepository {
     return this.repository.findOne(options);
   }
 
-  async findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<GroupLink>; where?: FindOptionsWhere<GroupLink> }): Promise<[GroupLink[], number]> {
+  async findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<GroupLink>; where?: FindOptionsWhere<GroupLink>; relations?: string[] }): Promise<[GroupLink[], number]> {
     return this.repository.findAndCount(options);
   }
 
@@ -30,5 +30,9 @@ export class TypeOrmGroupLinkRepository implements IGroupLinkRepository {
 
   async update(criteria: FindOptionsWhere<GroupLink>, data: Partial<GroupLink>): Promise<{ affected?: number }> {
     return this.repository.update(criteria, data);
+  }
+
+  async softDelete(criteria: Pick<GroupLink, 'id' | 'userId'>): Promise<{ affected?: number }> {
+    return this.repository.softDelete(criteria);
   }
 }

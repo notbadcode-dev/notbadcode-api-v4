@@ -1,4 +1,4 @@
-import { type CreateLinkRequest } from '@apps/links/src/application/requests/create-link.request';
+import { type CreateLinkRequest } from '@apps/links/src/application/requests';
 
 export class CreateLinkCommand {
   constructor(

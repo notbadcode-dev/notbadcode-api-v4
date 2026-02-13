@@ -1,4 +1,4 @@
-import { UnmarkLinksAsFavoriteRequest } from '@apps/links/src/application/requests/unmark-links-as-favorite.request';
+import { UnmarkLinksAsFavoriteRequest } from '@apps/links/src/application/requests';
 
 export class UnmarkLinksAsFavoriteRequestValidatorFixture {
   static getValidRequest(): UnmarkLinksAsFavoriteRequest {

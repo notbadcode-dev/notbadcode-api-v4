@@ -16,7 +16,7 @@ import { AuthService, HashService, UserService } from '@apps/auth/src/applicatio
 import { JwtPayload } from '@apps/auth/src/application/value-objects';
 import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
-import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
+import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
 @CommandHandler(RegisterCommand)
 export class RegisterHandler extends BaseHandler<RegisterCommand, ApiResponse<LoginResponse>> implements ICommandHandler<RegisterCommand, ApiResponse<LoginResponse>> {

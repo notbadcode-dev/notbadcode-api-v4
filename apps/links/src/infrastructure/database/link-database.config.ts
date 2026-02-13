@@ -1,8 +1,7 @@
 import { type ConfigService } from '@nestjs/config';
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { GroupLink, Link } from '@apps/links/src/domain/entities';
 
 export const getLinksDbConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'mariadb',

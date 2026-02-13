@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-link.command';
-import { UpdateLinkHandler } from '@apps/links/src/application/handlers/update-link.handler';
-import { type UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
-import { type LinkService } from '@apps/links/src/application/services/link.service';
-import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { UpdateLinkCommand } from '@apps/links/src/application/commands';
+import { UpdateLinkHandler } from '@apps/links/src/application/handlers';
+import { type UpdateLinkRequest } from '@apps/links/src/application/requests';
+import { type LinkService } from '@apps/links/src/application/services';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
+import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 
 import { UpdateLinkHandlerFixture } from './update-link.handler.fixture';
 

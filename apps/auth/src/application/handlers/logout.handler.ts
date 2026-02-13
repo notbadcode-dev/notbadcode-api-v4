@@ -13,7 +13,7 @@ import { TokenValidationHelper } from '@apps/auth/src/application/helpers';
 import { UserService } from '@apps/auth/src/application/services';
 import { AuthErrorMessageConstants, JwtConstants } from '@apps/auth/src/constants';
 import { User } from '@apps/auth/src/domain/entities';
-import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
+import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
 @CommandHandler(LogoutCommand)
 export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolean>> implements ICommandHandler<LogoutCommand, ApiResponse<boolean>> {

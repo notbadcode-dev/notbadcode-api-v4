@@ -8,15 +8,14 @@ import { I18nService } from '@common/i18n';
 import { ApiResponse } from '@common/responses';
 import { ErrorOn, ErrorOnFactory } from '@common/types';
 
-import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-link.command';
-import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { LinkService } from '@apps/links/src/application/services/link.service';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
-import { LinkByIdSpecification } from '@apps/links/src/domain/specifications/link-by-id.specification';
+import { UpdateLinkCommand } from '@apps/links/src/application/commands';
+import { UpdateLinkRequest } from '@apps/links/src/application/requests';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { LinkService } from '@apps/links/src/application/services';
+import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
+import { LinkByIdSpecification } from '@apps/links/src/domain/specifications';
 
-import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @CommandHandler(UpdateLinkCommand)
 export class UpdateLinkHandler

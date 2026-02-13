@@ -6,12 +6,12 @@ import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse } from '@common/responses';
 
-import { GetGroupLinkByIdQuery } from '@apps/links/src/application/queries/get-group-link-by-id.query';
-import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses/get-group-link-by-id.response';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
-import { GroupLinkByIdSpecification } from '@apps/links/src/domain/specifications/group-link-by-id.specification';
+import { GetGroupLinkByIdQuery } from '@apps/links/src/application/queries';
+import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
+import { GroupLinkByIdSpecification } from '@apps/links/src/domain/specifications';
 
-import { LinksErrorMessageConstants } from '../../constants/links-error-message.constants';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @QueryHandler(GetGroupLinkByIdQuery)
 export class GetGroupLinkByIdHandler

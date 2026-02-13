@@ -20,8 +20,8 @@ import {
 import { AuthService } from '@apps/auth/src/application/services/auth.service';
 import { AuthController } from '@apps/auth/src/auth.controller';
 import { User } from '@apps/auth/src/domain/entities/user.entity';
-import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database/auth-database.module';
-import { TypeOrmUserRepository } from '@apps/auth/src/infrastructure/repositories/typeorm-user.repository';
+import { AuthDatabaseModule } from '@apps/auth/src/infrastructure/database';
+import { TypeOrmUserRepository } from '@apps/auth/src/infrastructure/repositories';
 
 import { HashService, UserService } from './application/services';
 import { AuthHealthController } from './auth-healtz.controller';

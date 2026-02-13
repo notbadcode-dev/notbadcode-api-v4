@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { type CreateLinkRequest } from '@apps/links/src/application/requests/create-link.request';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
-import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
+import { type CreateLinkRequest } from '@apps/links/src/application/requests';
+import { GroupLink, Link } from '@apps/links/src/domain/entities';
 
 export class CreateLinkHandlerFixture {
   static readonly validUserId = 7;

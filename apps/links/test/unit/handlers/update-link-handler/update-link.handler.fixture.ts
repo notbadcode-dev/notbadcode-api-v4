@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { type UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
-import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { type UpdateLinkRequest } from '@apps/links/src/application/requests';
+import { GroupLink, Link } from '@apps/links/src/domain/entities';
 
 export class UpdateLinkHandlerFixture {
   static readonly existingLink: Link = Object.assign(new Link(), {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { GetGroupLinkByIdHandler } from '@apps/links/src/application/handlers/get-group-link-by-id.handler';
-import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses/get-group-link-by-id.response';
-import { GetGroupLinkByIdQuery } from '@apps/links/src/application/queries/get-group-link-by-id.query';
-import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports/group-link-repository.port';
+import { GetGroupLinkByIdHandler } from '@apps/links/src/application/handlers';
+import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { GetGroupLinkByIdQuery } from '@apps/links/src/application/queries';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 
 import { GroupLinkByIdHandlerFixture } from './get-group-link-by-id.handler.fixture';
 

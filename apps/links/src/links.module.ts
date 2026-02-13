@@ -10,24 +10,29 @@ import { CommonCacheModule } from '@common/redis/cache';
 import { CommonSessionControlModule } from '@common/redis/session';
 import { CommonThrottlerModule } from '@common/throttler';
 
-import { CreateLinkHandler } from '@apps/links/src/application/handlers/create-link.handler';
-import { DeleteLinkHandler } from '@apps/links/src/application/handlers/delete-link.handler';
-import { GetGroupLinkByIdHandler } from '@apps/links/src/application/handlers/get-group-link-by-id.handler';
-import { GetLinkByIdHandler } from '@apps/links/src/application/handlers/get-link-by-id.handler';
-import { GetLinksPaginatedHandler } from '@apps/links/src/application/handlers/get-links-paginated.handler';
-import { UpdateLinkHandler } from '@apps/links/src/application/handlers/update-link.handler';
-import { GroupLink } from '@apps/links/src/domain/entities/group-link.entity';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
-import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database/links-database.module';
-import { TypeOrmGroupLinkRepository } from '@apps/links/src/infrastructure/repositories/typeorm-group-link.repository';
-import { TypeOrmLinkRepository } from '@apps/links/src/infrastructure/repositories/typeorm-link.repository';
+import {
+  CreateGroupLinkHandler,
+  CreateLinkHandler,
+  DeleteGroupLinkHandler,
+  DeleteLinkHandler,
+  GetGroupLinkByIdHandler,
+  GetGroupLinksPaginatedHandler,
+  GetLinkByIdHandler,
+  GetLinksPaginatedHandler,
+  MarkGroupLinksAsFavoriteHandler,
+  MarkLinksAsFavoriteHandler,
+  UnmarkGroupLinksAsFavoriteHandler,
+  UnmarkLinksAsFavoriteHandler,
+  UpdateGroupLinkHandler,
+  UpdateLinkHandler,
+} from '@apps/links/src/application/handlers';
+import { LinkService } from '@apps/links/src/application/services';
+import { GroupLink, Link } from '@apps/links/src/domain/entities';
+import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database';
+import { TypeOrmGroupLinkRepository, TypeOrmLinkRepository } from '@apps/links/src/infrastructure/repositories';
 import { GroupLinksController } from '@apps/links/src/group-links.controller';
 import { LinksHealthController } from '@apps/links/src/links-healtz.controller';
 import { LinksController } from '@apps/links/src/links.controller';
-
-import { MarkLinksAsFavoriteHandler } from './application/handlers/mark-links-as-favorite.handler';
-import { UnmarkLinksAsFavoriteHandler } from './application/handlers/unmark-links-as-favorite.handler';
-import { LinkService } from './application/services/link.service';
 
 @Module({
   imports: [
@@ -44,13 +49,19 @@ import { LinkService } from './application/services/link.service';
   ],
   controllers: [LinksController, GroupLinksController, LinksHealthController],
   providers: [
+    CreateGroupLinkHandler,
     CreateLinkHandler,
+    DeleteGroupLinkHandler,
     DeleteLinkHandler,
     GetGroupLinkByIdHandler,
+    GetGroupLinksPaginatedHandler,
     GetLinkByIdHandler,
     GetLinksPaginatedHandler,
+    UpdateGroupLinkHandler,
     UpdateLinkHandler,
+    MarkGroupLinksAsFavoriteHandler,
     MarkLinksAsFavoriteHandler,
+    UnmarkGroupLinksAsFavoriteHandler,
     UnmarkLinksAsFavoriteHandler,
     LinkService,
     {

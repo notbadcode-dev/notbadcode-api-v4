@@ -1,4 +1,4 @@
-import { MarkLinksAsFavoriteRequest } from '@apps/links/src/application/requests/mark-links-as-favorite.request';
+import { MarkLinksAsFavoriteRequest } from '@apps/links/src/application/requests';
 
 export class MarkLinksAsFavoriteRequestValidatorFixture {
   static getValidRequest(): MarkLinksAsFavoriteRequest {

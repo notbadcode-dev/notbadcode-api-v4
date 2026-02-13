@@ -1,0 +1,16 @@
+{
+  "error-message": {
+    "invalidGroupLinkId": "ID de grupo de enlaces no válido.",
+    "groupLinkNotFound": "Grupo de enlaces no encontrado.",
+    "invalidPayload": "El cuerpo de la actualización no es válido.",
+    "invalidTitle": "El título es obligatorio y debe respetar la longitud permitida.",
+    "invalidDescription": "La descripción debe ser un texto válido.",
+    "invalidColor": "El color debe ser un objeto RGB válido con valores r, g y b.",
+    "invalidIcon": "El icono debe ser un texto válido.",
+    "invalidParentGroupLinkId": "El ID del grupo padre debe ser un número válido.",
+    "parentGroupLinkNotFound": "Grupo de enlaces padre no encontrado.",
+    "invalidFavoriteFlag": "El campo de favorito debe ser verdadero o falso.",
+    "duplicateTitle": "Ya existe un grupo de enlaces con este título.",
+    "arrayNotEmpty": "Debes proporcionar al menos un ID de grupo de enlaces."
+  }
+}

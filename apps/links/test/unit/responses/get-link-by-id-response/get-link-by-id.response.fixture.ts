@@ -1,6 +1,5 @@
-import { type GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { GroupLinkBasicResponse } from '@apps/links/src/application/responses/group-link-basic.response';
-import { LinkLastStatusCode } from '@apps/links/src/domain/enums/link-last-status-code.enum';
+import { type GetLinkByIdResponse, GroupLinkBasicResponse } from '@apps/links/src/application/responses';
+import { LinkLastStatusCode } from '@apps/links/src/domain/enums';
 
 export class GetLinkByIdResponseFixture {
   static partialResponse(): Partial<GetLinkByIdResponse> {

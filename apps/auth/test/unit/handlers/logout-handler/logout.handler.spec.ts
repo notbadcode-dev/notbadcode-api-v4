@@ -9,7 +9,7 @@ import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
 import { LogoutCommand } from '@apps/auth/src/application/commands';
 import { LogoutHandler } from '@apps/auth/src/application/handlers/logout.handler';
 import { type User } from '@apps/auth/src/domain/entities';
-import { type IUserRepository } from '@apps/auth/src/domain/ports/user-repository.port';
+import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
 import { LogoutHandlerFixture } from './logout.handler.fixture';
 

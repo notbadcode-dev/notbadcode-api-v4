@@ -6,8 +6,8 @@ import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse, SuccessFailureResponse } from '@common/responses';
 
-import { UnmarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands/unmark-links-as-favorite.command';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { UnmarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 @CommandHandler(UnmarkLinksAsFavoriteCommand)
 export class UnmarkLinksAsFavoriteHandler

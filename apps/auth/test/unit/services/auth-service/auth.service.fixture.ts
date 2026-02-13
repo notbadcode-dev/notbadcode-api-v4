@@ -3,7 +3,7 @@ import { EJwtType } from '@common/auth';
 
 import { type JwtPayload } from '@apps/auth/src/application/value-objects/jwt-payload.vo';
 
-import { BaseHandlerFixture } from '../../handlers/base.handler.fixture';
+import { BaseHandlerFixture } from '@apps/auth/test/unit/handlers/base.handler.fixture';
 
 export class AuthServiceFixture {
   static validJwtPayload: JwtPayload = BaseHandlerFixture.mockJwtPayload();

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Link } from '@apps/links/src/domain/entities/link.entity';
+import { Link } from '@apps/links/src/domain/entities';
 
 export class DeleteLinkHandlerFixture {
   static readonly validLink: Link = Object.assign(new Link(), {

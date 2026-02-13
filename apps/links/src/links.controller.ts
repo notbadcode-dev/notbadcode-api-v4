@@ -7,19 +7,10 @@ import { JwtAuthGuard } from '@common/guards';
 import { PaginatedRequest } from '@common/requests';
 import { ApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
 
-import { CreateLinkCommand } from '@apps/links/src/application/commands/create-link.command';
-import { DeleteLinkCommand } from '@apps/links/src/application/commands/delete-link.command';
-import { UpdateLinkCommand } from '@apps/links/src/application/commands/update-link.command';
-import { GetLinkByIdQuery } from '@apps/links/src/application/queries/get-link-by-id.query';
-import { GetLinksPaginatedQuery } from '@apps/links/src/application/queries/get-links-paginated.query';
-import { CreateLinkRequest } from '@apps/links/src/application/requests/create-link.request';
-import { UpdateLinkRequest } from '@apps/links/src/application/requests/update-link.request';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-
-import { MarkLinksAsFavoriteCommand } from './application/commands/mark-links-as-favorite.command';
-import { UnmarkLinksAsFavoriteCommand } from './application/commands/unmark-links-as-favorite.command';
-import { MarkLinksAsFavoriteRequest } from './application/requests/mark-links-as-favorite.request';
-import { UnmarkLinksAsFavoriteRequest } from './application/requests/unmark-links-as-favorite.request';
+import { CreateLinkCommand, DeleteLinkCommand, MarkLinksAsFavoriteCommand, UnmarkLinksAsFavoriteCommand, UpdateLinkCommand } from '@apps/links/src/application/commands';
+import { GetLinkByIdQuery, GetLinksPaginatedQuery } from '@apps/links/src/application/queries';
+import { CreateLinkRequest, MarkLinksAsFavoriteRequest, UnmarkLinksAsFavoriteRequest, UpdateLinkRequest } from '@apps/links/src/application/requests';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 
 @Controller('links')
 @UseGuards(JwtAuthGuard)

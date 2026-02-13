@@ -7,11 +7,11 @@ import { BasePaginatedHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse, PaginatedResponse } from '@common/responses';
 
-import { GetLinksPaginatedQuery } from '@apps/links/src/application/queries/get-links-paginated.query';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { Link } from '@apps/links/src/domain/entities/link.entity';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { GetLinksPaginatedQuery } from '@apps/links/src/application/queries';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
+import { Link } from '@apps/links/src/domain/entities';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 @QueryHandler(GetLinksPaginatedQuery)
 export class GetLinksPaginatedHandler

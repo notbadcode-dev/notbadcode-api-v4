@@ -1,0 +1,16 @@
+{
+  "error-message": {
+    "invalidGroupLinkId": "Invalid group link ID.",
+    "groupLinkNotFound": "Group link not found.",
+    "invalidPayload": "Invalid update payload.",
+    "invalidTitle": "Title is required and must meet the length constraints.",
+    "invalidDescription": "Description must be a valid string.",
+    "invalidColor": "Color must be a valid RGB object with r, g, and b values.",
+    "invalidIcon": "Icon must be a valid string.",
+    "invalidParentGroupLinkId": "Parent group link ID must be a valid number.",
+    "parentGroupLinkNotFound": "Parent group link not found.",
+    "invalidFavoriteFlag": "Favorite flag must be true or false.",
+    "duplicateTitle": "A group link with this title already exists.",
+    "arrayNotEmpty": "You must provide at least one group link ID."
+  }
+}

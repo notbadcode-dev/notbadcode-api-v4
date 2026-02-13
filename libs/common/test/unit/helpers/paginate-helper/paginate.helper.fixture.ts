@@ -16,7 +16,7 @@ export class PaginateHelperFixture {
     request.take = 5;
     request.sortBy = 'createdAt';
     request.sortOrder = EPaginatedOrder.ASC;
-    delete (request as Record<string, unknown>).skip;
+    delete (request as unknown as Record<string, unknown>).skip;
     return request;
   }
 
@@ -34,9 +34,9 @@ export class PaginateHelperFixture {
     const request = new PaginatedRequest();
     request.currentPage = 0;
     request.take = 0;
-    delete (request as Record<string, unknown>).skip;
-    delete (request as Record<string, unknown>).sortBy;
-    delete (request as Record<string, unknown>).sortOrder;
+    delete (request as unknown as Record<string, unknown>).skip;
+    delete (request as unknown as Record<string, unknown>).sortBy;
+    delete (request as unknown as Record<string, unknown>).sortOrder;
     return request;
   }
 }

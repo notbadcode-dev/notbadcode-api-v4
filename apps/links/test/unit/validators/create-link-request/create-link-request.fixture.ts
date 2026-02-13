@@ -1,4 +1,4 @@
-import { CreateLinkRequest } from '@apps/links/src/application/requests/create-link.request';
+import { CreateLinkRequest } from '@apps/links/src/application/requests';
 
 export class CreateLinkRequestValidatorFixture {
   static getValidFullRequest(): CreateLinkRequest {

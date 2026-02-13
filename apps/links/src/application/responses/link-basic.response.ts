@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
-import { LinkLastStatusCode } from '../../domain/enums/link-last-status-code.enum';
+import { LinkLastStatusCode } from '@apps/links/src/domain/enums';
 
 type NullableString = string | null;
 type LinkStatusCode = LinkLastStatusCode;

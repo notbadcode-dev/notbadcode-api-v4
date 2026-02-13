@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { GetLinkByIdHandler } from '@apps/links/src/application/handlers/get-link-by-id.handler';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
-import { GetLinkByIdQuery } from '@apps/links/src/application/queries/get-link-by-id.query';
-import { LinksErrorMessageConstants } from '@apps/links/src/constants/links-error-message.constants';
-import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { GetLinkByIdHandler } from '@apps/links/src/application/handlers';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { GetLinkByIdQuery } from '@apps/links/src/application/queries';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 import { LinkByIdHandlerFixture } from './get-link-by-id.handler.fixture';
 

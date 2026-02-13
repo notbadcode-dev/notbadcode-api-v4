@@ -1,4 +1,4 @@
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 
 import { GetLinkByIdResponseFixture } from './get-link-by-id.response.fixture';
 

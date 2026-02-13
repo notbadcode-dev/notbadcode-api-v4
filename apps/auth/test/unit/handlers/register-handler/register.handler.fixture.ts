@@ -1,7 +1,7 @@
 import { type ApiFailureResponse, EApiResponseMessageType } from '@common/responses';
 
-import { AuthErrorMessageConstants } from '../../../../src/constants';
-import { BaseHandlerFixture } from '../base.handler.fixture';
+import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
+import { BaseHandlerFixture } from '@apps/auth/test/unit/handlers/base.handler.fixture';
 
 export class RegisterHandlerFixture extends BaseHandlerFixture {
   static emailExistsResponse(): ApiFailureResponse {

@@ -1,10 +1,14 @@
-import { type INestApplication } from '@nestjs/common';
+import { type INestApplication, type Type } from '@nestjs/common';
 import { DocumentBuilder, type SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 
 import { SwaggerConstants } from '@common/constants';
+import { PaginatedRequest } from '@common/requests';
+import { ApiFailureResponseModel, ApiNullResponse, ApiResponseMessageModel } from '@common/responses';
 import { type SwaggerInfo } from '@common/value-objects';
 
-export function buildSwaggerConfig(app: INestApplication, info: SwaggerInfo): void {
+const COMMON_SWAGGER_MODELS: Type[] = [ApiNullResponse, ApiFailureResponseModel, ApiResponseMessageModel, PaginatedRequest];
+
+export function buildSwaggerConfig(app: INestApplication, info: SwaggerInfo, extraModels: Type[] = []): void {
   const documentBuilder = new DocumentBuilder()
     .setTitle(info.title)
     .setDescription(info.description)
@@ -12,7 +16,9 @@ export function buildSwaggerConfig(app: INestApplication, info: SwaggerInfo): vo
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, documentBuilder);
+  const document = SwaggerModule.createDocument(app, documentBuilder, {
+    extraModels: [...COMMON_SWAGGER_MODELS, ...extraModels],
+  });
 
   SwaggerModule.setup(SwaggerConstants.defaultPath, app, document, swaggerCustomOptions);
 }

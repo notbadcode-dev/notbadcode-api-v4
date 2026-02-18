@@ -6,7 +6,7 @@ import { SwaggerConstants } from '@common/constants';
 import { CurrentUserId } from '@common/decorators';
 import { JwtAuthGuard } from '@common/guards';
 import { PaginatedRequest } from '@common/requests';
-import { ApiResponse, createApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
+import { ApiFailureResponseModel, ApiResponse, createApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
 
 import { CreateLinkCommand, DeleteLinkCommand, MarkLinksAsFavoriteCommand, UnmarkLinksAsFavoriteCommand, UpdateLinkCommand } from '@apps/links/src/application/commands';
 import { GetLinkByIdQuery, GetLinksPaginatedQuery } from '@apps/links/src/application/queries';
@@ -27,8 +27,8 @@ export class LinksController {
   @Post()
   @ApiOperation({ summary: 'Create a link', description: 'Creates a new link for the authenticated user' })
   @ApiOkResponse({ type: createApiResponse(GetLinkByIdResponse), description: 'Link created successfully' })
-  @ApiBadRequestResponse({ description: SwaggerConstants.descriptions.invalidRequestBody })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiBadRequestResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidRequestBody })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async createLink(@Body() request: CreateLinkRequest, @CurrentUserId() userId: number): Promise<ApiResponse<GetLinkByIdResponse>> {
     return this.commandBus.execute(new CreateLinkCommand(request, userId));
   }
@@ -37,8 +37,8 @@ export class LinksController {
   @ApiOperation({ summary: 'Get a link by ID', description: 'Retrieves the full details of a link by its ID' })
   @ApiParam({ name: 'id', type: Number, description: LinksSwaggerConstants.links.paramId })
   @ApiOkResponse({ type: createApiResponse(GetLinkByIdResponse), description: 'Link retrieved successfully' })
-  @ApiNotFoundResponse({ description: LinksSwaggerConstants.links.notFound })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiNotFoundResponse({ type: ApiFailureResponseModel, description: LinksSwaggerConstants.links.notFound })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async getLinkById(@Param('id', ParseIntPipe) id: number, @CurrentUserId() userId: number): Promise<ApiResponse<GetLinkByIdResponse>> {
     return this.queryBus.execute(new GetLinkByIdQuery(id, userId));
   }
@@ -46,8 +46,8 @@ export class LinksController {
   @Post('paginated')
   @ApiOperation({ summary: 'Get paginated links', description: 'Retrieves a paginated list of links for the authenticated user' })
   @ApiOkResponse({ type: createApiResponse(createPaginatedResponse(GetLinkByIdResponse)), description: 'Paginated links retrieved successfully' })
-  @ApiBadRequestResponse({ description: SwaggerConstants.descriptions.invalidPaginationParameters })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiBadRequestResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidPaginationParameters })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async getLinksPaginated(@Body() request: PaginatedRequest, @CurrentUserId() userId: number): Promise<InstanceType<ReturnType<typeof createPaginatedResponse>>> {
     return this.queryBus.execute(new GetLinksPaginatedQuery(request, userId));
   }
@@ -56,9 +56,9 @@ export class LinksController {
   @ApiOperation({ summary: 'Update a link', description: 'Updates an existing link by its ID' })
   @ApiParam({ name: 'id', type: Number, description: LinksSwaggerConstants.links.paramId })
   @ApiOkResponse({ type: createApiResponse(GetLinkByIdResponse), description: 'Link updated successfully' })
-  @ApiBadRequestResponse({ description: SwaggerConstants.descriptions.invalidRequestBody })
-  @ApiNotFoundResponse({ description: LinksSwaggerConstants.links.notFound })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiBadRequestResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidRequestBody })
+  @ApiNotFoundResponse({ type: ApiFailureResponseModel, description: LinksSwaggerConstants.links.notFound })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async updateLink(@Param('id', ParseIntPipe) id: number, @Body() request: UpdateLinkRequest, @CurrentUserId() userId: number): Promise<ApiResponse<GetLinkByIdResponse>> {
     return this.commandBus.execute(new UpdateLinkCommand(id, request, userId));
   }
@@ -67,8 +67,8 @@ export class LinksController {
   @ApiOperation({ summary: 'Delete a link', description: 'Deletes a link by its ID' })
   @ApiParam({ name: 'id', type: Number, description: LinksSwaggerConstants.links.paramId })
   @ApiOkResponse({ type: createApiResponse(GetLinkByIdResponse), description: 'Link deleted successfully' })
-  @ApiNotFoundResponse({ description: LinksSwaggerConstants.links.notFound })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiNotFoundResponse({ type: ApiFailureResponseModel, description: LinksSwaggerConstants.links.notFound })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async deleteLink(@Param('id', ParseIntPipe) id: number, @CurrentUserId() userId: number): Promise<ApiResponse<GetLinkByIdResponse>> {
     return this.commandBus.execute(new DeleteLinkCommand(id, userId));
   }
@@ -76,8 +76,8 @@ export class LinksController {
   @Post('favorite')
   @ApiOperation({ summary: 'Mark links as favorite', description: 'Marks a list of links as favorite by their IDs' })
   @ApiOkResponse({ type: createApiResponse(SuccessFailureResponse), description: 'Links marked as favorite' })
-  @ApiBadRequestResponse({ description: SwaggerConstants.descriptions.invalidRequestBody })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiBadRequestResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidRequestBody })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async markLinksAsFavorite(@Body() body: MarkLinksAsFavoriteRequest, @CurrentUserId() userId: number): Promise<ApiResponse<SuccessFailureResponse<number>>> {
     return this.commandBus.execute(new MarkLinksAsFavoriteCommand(body, userId));
   }
@@ -85,8 +85,8 @@ export class LinksController {
   @Post('unfavorite')
   @ApiOperation({ summary: 'Unmark links as favorite', description: 'Removes the favorite mark from a list of links by their IDs' })
   @ApiOkResponse({ type: createApiResponse(SuccessFailureResponse), description: 'Links unmarked as favorite' })
-  @ApiBadRequestResponse({ description: SwaggerConstants.descriptions.invalidRequestBody })
-  @ApiUnauthorizedResponse({ description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  @ApiBadRequestResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidRequestBody })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async unmarkLinksAsFavorite(@Body() body: UnmarkLinksAsFavoriteRequest, @CurrentUserId() userId: number): Promise<ApiResponse<SuccessFailureResponse<number>>> {
     return this.commandBus.execute(new UnmarkLinksAsFavoriteCommand(body, userId));
   }

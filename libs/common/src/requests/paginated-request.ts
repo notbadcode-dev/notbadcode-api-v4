@@ -32,7 +32,7 @@ export class PaginatedRequest {
   @IsString({ message: CommonErrorMessageConstants.invalidSortBy })
   sortBy = PaginatedConstants.DEFAULT_SORT_BY;
 
-  @ApiPropertyOptional({ description: 'Sort direction', enum: EPaginatedOrder, example: EPaginatedOrder.DESC, default: EPaginatedOrder.DESC })
+  @ApiPropertyOptional({ description: 'Sort direction', enum: EPaginatedOrder, enumName: 'EPaginatedOrder', example: EPaginatedOrder.DESC, default: EPaginatedOrder.DESC })
   @IsOptional()
   @IsEnum(EPaginatedOrder, { message: CommonErrorMessageConstants.invalidSortOrder })
   sortOrder = EPaginatedOrder.DESC;

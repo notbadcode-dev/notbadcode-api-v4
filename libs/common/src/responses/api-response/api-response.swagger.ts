@@ -41,3 +41,17 @@ export class ApiNullResponse {
   @ApiProperty({ required: false })
   code?: string;
 }
+
+export class ApiFailureResponseModel {
+  @ApiProperty({ example: false })
+  success!: false;
+
+  @ApiProperty({ type: 'null', nullable: true, example: null, required: false })
+  data?: null;
+
+  @ApiProperty({ type: [ApiResponseMessageModel], required: false })
+  messageList?: ApiResponseMessageModel[];
+
+  @ApiProperty({ required: false })
+  code?: string;
+}

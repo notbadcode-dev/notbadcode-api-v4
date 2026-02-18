@@ -18,6 +18,9 @@ import { LoggingInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
 
+import { AuthCredentialsRequest, LoginRequest, RefreshRequest, RegisterRequest } from './application/requests';
+import { LoginResponse } from './application/responses';
+
 async function bootstrap(): Promise<void> {
   const app = await createApp();
   const isProd = process.env.NODE_ENV === CommonConstants.productionEnvironmentTag;
@@ -76,5 +79,5 @@ async function createApp(): Promise<INestApplication> {
 function addSwaggerConfiguration(app: INestApplication): void {
   const info = SwaggerInfo.create(AuthConstants.swaggerTitle, AuthConstants.swaggerDescription, AuthConstants.swaggerVersion);
 
-  buildSwaggerConfig(app, info);
+  buildSwaggerConfig(app, info, [AuthCredentialsRequest, LoginRequest, RegisterRequest, RefreshRequest, LoginResponse]);
 }

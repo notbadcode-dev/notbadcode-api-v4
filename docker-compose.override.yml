@@ -34,6 +34,12 @@ services:
   auth:
     profiles: ["debug"]
     command: sh -lc "npm ci && npm run start:auth:debug"
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:60200/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
     environment:
       - NODE_ENV=development
       - NODE_OPTIONS=--enable-source-maps
@@ -59,6 +65,12 @@ services:
   links:
     profiles: ["debug"]
     command: sh -lc "npm ci && npm run start:links:debug"
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:60201/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
     environment:
       - NODE_ENV=development
       - NODE_OPTIONS=--enable-source-maps

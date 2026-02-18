@@ -20,6 +20,8 @@ import { LoggingInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
 
+import { CreateGroupLinkRequest, CreateLinkRequest, MarkGroupLinksAsFavoriteRequest, MarkLinksAsFavoriteRequest, UnmarkGroupLinksAsFavoriteRequest, UnmarkLinksAsFavoriteRequest, UpdateGroupLinkRequest, UpdateLinkRequest } from './application/requests';
+import { GetGroupLinkByIdResponse, GetLinkByIdResponse, GroupLinkBasicResponse, LinkBasicResponse } from './application/responses';
 import { LinksConstants } from './constants/links.constants';
 import { LinksModule } from './links.module';
 
@@ -81,5 +83,12 @@ async function createApp(): Promise<INestApplication> {
 function addSwaggerConfiguration(app: INestApplication): void {
   const info = SwaggerInfo.create(LinksConstants.swaggerTitle, LinksConstants.swaggerDescription, LinksConstants.swaggerVersion);
 
-  buildSwaggerConfig(app, info);
+  buildSwaggerConfig(app, info, [
+    CreateLinkRequest, UpdateLinkRequest,
+    CreateGroupLinkRequest, UpdateGroupLinkRequest,
+    MarkLinksAsFavoriteRequest, UnmarkLinksAsFavoriteRequest,
+    MarkGroupLinksAsFavoriteRequest, UnmarkGroupLinksAsFavoriteRequest,
+    LinkBasicResponse, GetLinkByIdResponse,
+    GroupLinkBasicResponse, GetGroupLinkByIdResponse,
+  ]);
 }

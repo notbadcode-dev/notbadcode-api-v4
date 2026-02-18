@@ -8,7 +8,7 @@ export interface ApiResponseMessage {
 }
 
 export class ApiResponseMessageModel {
-  @ApiProperty({ enum: EApiResponseMessageType })
+  @ApiProperty({ enum: EApiResponseMessageType, enumName: 'EApiResponseMessageType' })
   type!: EApiResponseMessageType;
 
   @ApiProperty()

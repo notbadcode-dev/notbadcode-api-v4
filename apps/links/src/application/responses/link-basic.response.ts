@@ -33,7 +33,7 @@ export class LinkBasicResponse {
   @Expose()
   isActive!: boolean;
 
-  @ApiProperty({ enum: LinkLastStatusCode })
+  @ApiProperty({ enum: LinkLastStatusCode, enumName: 'LinkLastStatusCode' })
   @Expose()
   lastStatusCode!: LinkStatusCode;
 

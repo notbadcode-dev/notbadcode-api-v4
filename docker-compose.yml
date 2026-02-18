@@ -89,6 +89,12 @@ services:
       - SSL_KEY_PATH=${SSL_KEY_PATH}
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - I18N_DIR=/app/dist/libs/common/src/i18n
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "--no-check-certificate", "https://localhost:60200/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       mariadb:
         condition: service_healthy
@@ -118,6 +124,12 @@ services:
       - SSL_KEY_PATH=${SSL_KEY_PATH}
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - I18N_DIR=/app/dist/libs/common/src/i18n
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "--no-check-certificate", "https://localhost:60201/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       mariadb:
         condition: service_healthy

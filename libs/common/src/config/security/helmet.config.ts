@@ -1,4 +1,4 @@
-import { SecurityConstants } from '@common/constants/security.constants';
+import { SecurityConstants } from '../../constants/security.constants';
 
 import type { HelmetOptions } from 'helmet';
 

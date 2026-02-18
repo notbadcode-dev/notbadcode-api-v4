@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { AuthModule } from 'apps/auth/src/auth.module';
+import { AuthConstants } from 'apps/auth/src/constants';
 import * as express from 'express';
 import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
@@ -19,9 +17,6 @@ import { I18nService } from '@common/i18n';
 import { LoggingInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
-
-import { AuthModule } from 'apps/auth/src/auth.module';
-import { AuthConstants } from 'apps/auth/src/constants';
 
 async function bootstrap(): Promise<void> {
   const app = await createApp();

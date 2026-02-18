@@ -3,6 +3,7 @@ export * from './api-response/api-response-message';
 export * from './api-response/api-response-message-type';
 export * from './api-response/api-response.constants';
 export * from './api-response/api-response.service';
+export * from './api-response/api-response.swagger';
 
 export * from './paginated-response/paginated-response';
 

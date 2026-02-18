@@ -160,7 +160,7 @@ describe('RefreshHandler', () => {
       messageList: [],
     });
 
-    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RefreshHandlerFixture.mockJwtPayload());
+    const spy = jest.spyOn(JwtPayload, 'create').mockReturnValueOnce(ErrorOnFactory.success(RefreshHandlerFixture.mockJwtPayload()));
 
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 

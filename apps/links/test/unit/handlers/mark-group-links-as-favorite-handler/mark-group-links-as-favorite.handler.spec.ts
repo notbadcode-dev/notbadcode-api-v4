@@ -89,4 +89,25 @@ describe('MarkGroupLinksAsFavoriteHandler', () => {
     expect(result.data?.successList).toEqual([1]);
     expect(result.data?.failureList).toEqual([99]);
   });
+
+  it('handles partial update when affected is less than existingIds length', async () => {
+    // Arrange
+    const groupLinks = [
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+    ];
+    groupLinkRepository.find.mockResolvedValueOnce(groupLinks as any);
+    groupLinkRepository.update.mockResolvedValueOnce({ affected: 2 });
+    const request = MarkGroupLinksAsFavoriteHandlerFixture.createRequest({ groupLinkIdList: [1, 2, 3] });
+    const command = new MarkGroupLinksAsFavoriteCommand(request, MarkGroupLinksAsFavoriteHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(result.data?.successList).toEqual([1, 2]);
+    expect(result.data?.failureList).toEqual([3]);
+  });
 });

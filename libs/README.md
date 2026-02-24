@@ -14,6 +14,7 @@ reutilización y calidad** en la arquitectura.
   - [Índice](#índice)
   - [Propósito](#propósito)
   - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Documentación modular](#documentación-modular)
   - [Variables de entorno](#variables-de-entorno)
   - [Comandos útiles](#comandos-útiles)
   - [Contenido principal](#contenido-principal)
@@ -58,6 +59,25 @@ libs/common
 ├── tsconfig.build.json
 └── tsconfig.json
 ```
+
+---
+
+## Documentación modular
+
+Documentación por subgrupo (estilo índice por capas):
+
+- Entrada de `src`: [`common/src/README.md`](./common/src/README.md)
+- Auth compartido: [`common/src/auth/README.md`](./common/src/auth/README.md)
+- Configuración transversal: [`common/src/config/README.md`](./common/src/config/README.md)
+- Database base: [`common/src/database/README.md`](./common/src/database/README.md)
+- Guards: [`common/src/guards/README.md`](./common/src/guards/README.md)
+- Handler base CQRS: [`common/src/handler/README.md`](./common/src/handler/README.md)
+- i18n: [`common/src/i18n/README.md`](./common/src/i18n/README.md)
+- Redis (cache/sesión): [`common/src/redis/README.md`](./common/src/redis/README.md)
+- Responses (envelope): [`common/src/responses/README.md`](./common/src/responses/README.md)
+
+Regla:
+- Si cambia contrato o comportamiento de un subgrupo, actualizar su `README.md` en la misma PR.
 
 ---
 

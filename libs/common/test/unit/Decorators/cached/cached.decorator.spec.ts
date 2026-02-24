@@ -21,12 +21,9 @@ import {
   returnCacheError,
   stableReplacer,
 } from '@common/redis/cache/decorators/cached.decorator';
-import {
-  ApiFailureResponse,
-  apiResponseFailure,
-  ApiResponseMessage,
-  EApiResponseMessageType,
-} from '@common/responses';
+import { ServiceUnavailableException } from '@nestjs/common';
+
+import { apiResponseFailure, ApiResponseMessage } from '@common/responses';
 
 import { CachedDecoratorFixture } from './cached.decorator.fixture';
 
@@ -111,30 +108,31 @@ beforeEach(() => {
       expect(name).toBe(RedisCacheConstants.unknownClassName);
     });
 
-    it('returns error response with i18nService in returnCacheError', async () => {
+    it('throws ServiceUnavailableException with i18nService in returnCacheError', async () => {
       // Arrange
       const i18nMock = { translate: jest.fn(async () => 'msg') };
 
       // Act
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const res = await returnCacheError(i18nMock as any);
-
-      // Assert
-      expect((res as ApiFailureResponse).success).toBe(false);
+      await expect(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        returnCacheError(i18nMock as any),
+      ).rejects.toThrow(ServiceUnavailableException);
+      await expect(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        returnCacheError(i18nMock as any),
+      ).rejects.toThrow('msg');
     });
 
-    it('returns null if no i18nService in returnCacheError', async () => {
+    it('throws ServiceUnavailableException if no i18nService in returnCacheError', async () => {
       // Act
-      const res = await returnCacheError();
-
-      // Assert
-      expect(res).toBeNull();
+      await expect(returnCacheError()).rejects.toThrow(ServiceUnavailableException);
+      await expect(returnCacheError()).rejects.toThrow(CommonErrorMessageConstants.redisCacheNotInitialized);
     });
   });
 
 // ===== Decorator tests =====
   describe('Cached Decorator', () => {
-    it('returns an i18n error if cache is missing and I18nService is provided', async () => {
+    it('throws i18n error if cache is missing and I18nService is provided', async () => {
       // Arrange
       class I18nServiceMock {
         translate = jest.fn(async (key: string) => `[en] ${key}`);
@@ -145,40 +143,35 @@ beforeEach(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         @Cached(CachedDecoratorFixture.CachedTimer, i18n as any)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        async demo(_x: number): Promise<any> {
+        async demo(_x: number): Promise<string> {
           throw new Error(CachedDecoratorFixture.noCachedError);
         }
       }
       const svc = new Svc();
 
       // Act
-      const res = (await svc.demo(CachedDecoratorFixture.exampleArg)) as ApiFailureResponse;
+      await expect(svc.demo(CachedDecoratorFixture.exampleArg)).rejects.toThrow(ServiceUnavailableException);
+      await expect(svc.demo(CachedDecoratorFixture.exampleArg)).rejects.toThrow('redisCacheNotInitialized');
 
       // Assert
-      expect(apiResponseFailure).toHaveBeenCalled();
       expect(i18n.translate).toHaveBeenCalledWith(CommonErrorMessageConstants.redisCacheNotInitialized);
-      expect(res.success).toBe(false);
-      expect(res.messageList?.[0]?.type).toBe(EApiResponseMessageType.Error);
-      expect(res.messageList?.[0]?.message).toContain('redisCacheNotInitialized');
     });
 
-    it('returns null if cache is missing and I18nService is not provided', async () => {
+    it('throws if cache is missing and I18nService is not provided', async () => {
       // Arrange
       const { Cached } = await import('@common/redis/cache/decorators/cached.decorator');
 
       class Svc {
         @Cached(CachedDecoratorFixture.CachedTimer)
-        async foo(): Promise<any> {
+        async foo(): Promise<string> {
           throw new Error(CachedDecoratorFixture.noCachedError);
         }
       }
       const svc = new Svc();
 
       // Act
-      const result = await svc.foo();
-
-      // Assert
-      expect(result).toBeNull();
+      await expect(svc.foo()).rejects.toThrow(ServiceUnavailableException);
+      await expect(svc.foo()).rejects.toThrow(CommonErrorMessageConstants.redisCacheNotInitialized);
     });
 
     it('uses the cache if it is initialized', async () => {

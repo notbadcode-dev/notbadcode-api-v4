@@ -5,6 +5,7 @@ import {
   ColumnEnumNonNullable,
   ColumnEnumNullable,
   ColumnJsonArray,
+  ColumnJsonRgb,
   ColumnVarchar,
   ColumnVarcharWithTransform,
 } from '@common/database/configurations/column-types';
@@ -87,6 +88,27 @@ describe('column-types configuration helpers', () => {
       const options = ColumnJsonArray(false);
 
       expect(options.nullable).toBe(false);
+    });
+  });
+
+  describe('ColumnJsonRgb', () => {
+    it('should serialize/deserialize valid rgb values', () => {
+      const options = ColumnJsonRgb();
+      const transformer = options.transformer;
+      const rgb = { r: 10, g: 20, b: 30 };
+
+      expect(transformer?.to(rgb)).toEqual(rgb);
+      expect(transformer?.from(rgb)).toEqual(rgb);
+    });
+
+    it('should map invalid rgb values to null', () => {
+      const options = ColumnJsonRgb(false);
+      const transformer = options.transformer;
+
+      expect(options.nullable).toBe(false);
+      expect(transformer?.to(null)).toBeNull();
+      expect(transformer?.to({ r: 10, g: 20 } as unknown as { r: number; g: number; b: number })).toBeNull();
+      expect(transformer?.from('invalid')).toBeNull();
     });
   });
 

@@ -1,7 +1,8 @@
+import { ServiceUnavailableException } from '@nestjs/common';
+
 import { CommonConstants, CommonErrorMessageConstants } from '@common/constants';
 import { RedisCacheConstants } from '@common/constants/redis-cache.constants';
 import { type I18nService } from '@common/i18n';
-import { apiResponseFailure, EApiResponseMessageType } from '@common/responses';
 
 import { CacheAccessor } from '@common/redis/cache/cache-accessor';
 
@@ -40,12 +41,13 @@ export function getClassName(thisArg: unknown): string {
 }
 
 export async function returnCacheError<R>(i18nService?: I18nService): Promise<R> {
-  if (i18nService) {
-    const message = await i18nService.translate(CommonErrorMessageConstants.redisCacheNotInitialized);
+  let message = CommonErrorMessageConstants.redisCacheNotInitialized;
 
-    return apiResponseFailure(i18nService, [{ message, type: EApiResponseMessageType.Error }]) as R;
+  if (i18nService) {
+    message = String(await i18nService.translate(CommonErrorMessageConstants.redisCacheNotInitialized));
   }
-  return null as unknown as R;
+
+  throw new ServiceUnavailableException(message);
 }
 
 export function Cached(ttlSeconds: number, i18nService?: I18nService): AsyncMethodDecorator {

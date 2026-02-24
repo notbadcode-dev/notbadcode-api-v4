@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { HttpStatus, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 
@@ -35,7 +35,7 @@ export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<Logi
 
     const tokenPresenceResult = await TokenValidationHelper.validateTokenPresence(accessToken);
     if (tokenPresenceResult.isError) {
-      return await this.createResponseFailure(tokenPresenceResult.errorMessage);
+      return await this.createResponseFailure(tokenPresenceResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     let payload: JwtPayloadPlain<number> | null;
@@ -44,20 +44,20 @@ export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<Logi
       payload = this.jwtService.verify<JwtPayloadPlain<number>>(accessToken);
     } catch (error: unknown) {
       this.logErrorJwtVerify(error);
-      return await this.createResponseFailure(AuthErrorMessageConstants.invalidToken);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidToken, HttpStatus.UNAUTHORIZED);
     }
 
     const validatePayloadResult = await TokenValidationHelper.validatePayload(payload);
     if (validatePayloadResult.isError) {
-      return await this.createResponseFailure(validatePayloadResult.errorMessage);
+      return await this.createResponseFailure(validatePayloadResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     const tokenTypeResult = await TokenValidationHelper.validateTokenType(payload, EJwtType.REFRESH);
-    if (tokenTypeResult.isError) return await this.createResponseFailure(tokenTypeResult.errorMessage);
+    if (tokenTypeResult.isError) return await this.createResponseFailure(tokenTypeResult.errorMessage, HttpStatus.UNAUTHORIZED);
 
     const uuidResult = await TokenValidationHelper.validateUUID(payload.jti as string);
     if (uuidResult.isError) {
-      return await this.createResponseFailure(uuidResult.errorMessage);
+      return await this.createResponseFailure(uuidResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     const { sub, jti, email } = payload;
@@ -66,12 +66,12 @@ export class RefreshHandler extends BaseHandler<RefreshCommand, ApiResponse<Logi
     const sessionKey = this.commonSessionControlService.getUserSessionKey(userSession);
     const activeSession = await this.commonSessionControlService.getSession(sessionKey);
     if (!activeSession) {
-      return this.createResponseFailure(AuthErrorMessageConstants.sessionNotActive);
+      return this.createResponseFailure(AuthErrorMessageConstants.sessionNotActive, HttpStatus.UNAUTHORIZED);
     }
 
     const createPayloadResult = JwtPayload.create(sub, email);
     if (createPayloadResult.isError) {
-      return await this.createResponseFailure(createPayloadResult.errorMessage);
+      return await this.createResponseFailure(createPayloadResult.errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const createdPayload = createPayloadResult.value;

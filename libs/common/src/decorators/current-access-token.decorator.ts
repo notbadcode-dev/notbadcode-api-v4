@@ -2,8 +2,7 @@ import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
 
 import type { Request } from 'express';
 
-export const CurrentAccessToken = createParamDecorator((_data: unknown, ctx: ExecutionContext): string => {
-  const request = ctx.switchToHttp().getRequest<Request>();
+export function extractAccessTokenFromRequest(request: Request): string {
   const { authorization = '' } = request.headers;
   const [type, token] = authorization.split(' ');
 
@@ -12,4 +11,9 @@ export const CurrentAccessToken = createParamDecorator((_data: unknown, ctx: Exe
   }
 
   return token;
+}
+
+export const CurrentAccessToken = createParamDecorator((_data: unknown, ctx: ExecutionContext): string => {
+  const request = ctx.switchToHttp().getRequest<Request>();
+  return extractAccessTokenFromRequest(request);
 });

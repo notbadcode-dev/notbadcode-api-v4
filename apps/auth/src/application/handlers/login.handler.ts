@@ -1,6 +1,6 @@
 import { UUID } from 'node:crypto';
 
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
   /* istanbul ignore next */
@@ -41,18 +41,18 @@ export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginRes
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials, HttpStatus.UNAUTHORIZED);
     }
 
     const passwordMatch = await this.hashService.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials, HttpStatus.UNAUTHORIZED);
     }
 
     const payloadResult = JwtPayload.create(user.id, user.email);
     if (payloadResult.isError) {
-      return this.createResponseFailure(payloadResult.errorMessage);
+      return this.createResponseFailure(payloadResult.errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const payload = payloadResult.value;
@@ -60,7 +60,10 @@ export class LoginHandler extends BaseHandler<LoginCommand, ApiResponse<LoginRes
 
     await this.addLastLoginAt(tokens, user);
 
-    await this.setCacheSession(user, payload.jti);
+    const sessionKey = await this.setCacheSession(user, payload.jti);
+    if (!sessionKey) {
+      return this.createResponseFailure(AuthErrorMessageConstants.invalidSessionId, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     return await this.createSuccessResponse(tokens);
   }

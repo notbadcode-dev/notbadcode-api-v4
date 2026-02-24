@@ -1,6 +1,7 @@
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
+import { QueryFailedError } from 'typeorm';
 
 import { LengthSizes } from '@common/constants';
 import { BaseHandler } from '@common/handler';
@@ -35,14 +36,14 @@ export class CreateLinkHandler
   async execute(command: CreateLinkCommand): Promise<ApiResponse<GetLinkByIdResponse>> {
     const validationResult = this.validatePayload(command.payload);
     if (validationResult.isError) {
-      return this.createResponseFailure(validationResult.errorMessage);
+      return this.createResponseFailure(validationResult.errorMessage, HttpStatus.BAD_REQUEST);
     }
     const sanitizedPayload = validationResult.value;
 
     if (sanitizedPayload.groupLinkId !== undefined && sanitizedPayload.groupLinkId !== null) {
       const groupLink = await this.groupLinkRepository.findOne({ where: { id: sanitizedPayload.groupLinkId, userId: command.userId } });
       if (!groupLink) {
-        return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound);
+        return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound, HttpStatus.NOT_FOUND);
       }
     }
 
@@ -50,7 +51,7 @@ export class CreateLinkHandler
 
     const existingLink = await this.linkRepository.findOne({ where: { userId: command.userId, normalizedUrl } });
     if (existingLink) {
-      return this.createResponseFailure(LinksErrorMessageConstants.duplicateUrl);
+      return this.createResponseFailure(LinksErrorMessageConstants.duplicateUrl, HttpStatus.CONFLICT);
     }
 
     const link = Object.assign(new Link(), {
@@ -70,7 +71,15 @@ export class CreateLinkHandler
       groupLinkId: sanitizedPayload.groupLinkId ?? null,
     });
 
-    const saved = await this.linkRepository.save(link);
+    let saved: Link;
+    try {
+      saved = await this.linkRepository.save(link);
+    } catch (error) {
+      if (this.isDuplicateEntryError(error)) {
+        return this.createResponseFailure(LinksErrorMessageConstants.duplicateUrl, HttpStatus.CONFLICT);
+      }
+      throw error;
+    }
 
     const response = plainToInstance(GetLinkByIdResponse, saved, { excludeExtraneousValues: true });
     return this.createSuccessResponse(response);
@@ -167,5 +176,13 @@ export class CreateLinkHandler
     } catch {
       return false;
     }
+  }
+
+  private isDuplicateEntryError(error: unknown): boolean {
+    if (error instanceof QueryFailedError) {
+      const dbError = error as QueryFailedError & { code?: string; errno?: number };
+      return dbError.code === 'ER_DUP_ENTRY' || dbError.errno === 1062;
+    }
+    return false;
   }
 }

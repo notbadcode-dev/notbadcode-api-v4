@@ -100,4 +100,18 @@ describe('DeleteGroupLinkHandler', () => {
     expect(result.data?.title).toBe(DeleteGroupLinkHandlerFixture.existingGroupLink.title);
     expect(result.data?.description).toBe(DeleteGroupLinkHandlerFixture.existingGroupLink.description);
   });
+
+  it('returns failure when softDelete affects 0 rows', async () => {
+    // Arrange
+    groupLinkRepository.findOne.mockResolvedValueOnce(DeleteGroupLinkHandlerFixture.existingGroupLink);
+    groupLinkRepository.softDelete.mockResolvedValueOnce({ affected: 0 });
+    const command = new DeleteGroupLinkCommand(DeleteGroupLinkHandlerFixture.validGroupLinkId, DeleteGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.notFound);
+  });
 });

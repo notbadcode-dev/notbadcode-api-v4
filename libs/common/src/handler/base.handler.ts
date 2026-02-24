@@ -6,8 +6,16 @@ export abstract class BaseHandler<TCommand, TResult> {
 
   abstract execute(command: TCommand): Promise<TResult>;
 
-  protected async createResponseFailure(message: string): Promise<ApiFailureResponse> {
-    return await apiResponseFailure(this.i18nService, [{ type: EApiResponseMessageType.Error, message }]);
+  protected async createResponseFailure(
+    message: string,
+    status?: number,
+    code?: string,
+  ): Promise<ApiFailureResponse> {
+    void status;
+    if (code === undefined) {
+      return await apiResponseFailure(this.i18nService, [{ type: EApiResponseMessageType.Error, message }]);
+    }
+    return await apiResponseFailure(this.i18nService, [{ type: EApiResponseMessageType.Error, message }], code);
   }
 
   protected async createSuccessResponse<TResult>(tokens: TResult): Promise<ApiSuccessResponse<TResult>> {

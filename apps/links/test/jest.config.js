@@ -27,11 +27,23 @@ module.exports = {
     '/node_modules/',
     '/test/',
     '\\.(spec|test|fixture|mock)\\.[jt]s$',
+
+    // Declarative files
+    '\\.d\\.ts$',
     '/constants?/|\\.constants?\\.[jt]s$',
     '/enums?/|\\.enums?\\.[jt]s$',
     '/types?/|\\.types?\\.[jt]s$',
     '/interfaces?/|\\.interfaces?\\.[jt]s$',
     '/dtos?/|\\.dtos?\\.[jt]s$',
+    '/entities?/|\\.entity\\.[jt]s$',
+    '/ports?/|\\.port\\.[jt]s$',
+    '/commands?/|\\.command\\.[jt]s$',
+    '/queries?/|\\.query\\.[jt]s$',
+    '/requests?/|\\.request\\.[jt]s$',
+    '/responses?/|\\.response\\.[jt]s$',
+    '/specifications?/|\\.specification\\.[jt]s$',
+
+    // Config and barrel exports
     '/index\\.[jt]s$',
     '\\.config\\.[jt]s$',
   ],

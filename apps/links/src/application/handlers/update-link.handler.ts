@@ -1,6 +1,7 @@
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
+import { QueryFailedError } from 'typeorm';
 
 import { LengthSizes } from '@common/constants';
 import { BaseHandler } from '@common/handler';
@@ -36,30 +37,39 @@ export class UpdateLinkHandler
   async execute(command: UpdateLinkCommand): Promise<ApiResponse<GetLinkByIdResponse>> {
     const linkId = command.id ?? 0;
     if (!linkId || linkId <= 0) {
-      return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId);
+      return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId, HttpStatus.BAD_REQUEST);
     }
 
     const validationResult = this.validatePayload(command.payload);
     if (validationResult.isError) {
-      return this.createResponseFailure(validationResult.errorMessage);
+      return this.createResponseFailure(validationResult.errorMessage, HttpStatus.BAD_REQUEST);
     }
     const sanitizedPayload = validationResult.value;
 
     const link = await this.linkRepository.findOne(LinkByIdSpecification.options(linkId, command.userId));
 
     if (!link) {
-      return this.createResponseFailure(LinksErrorMessageConstants.notFound);
+      return this.createResponseFailure(LinksErrorMessageConstants.notFound, HttpStatus.NOT_FOUND);
     }
 
     if (sanitizedPayload.groupLinkId !== undefined && sanitizedPayload.groupLinkId !== null) {
       const groupLink = await this.groupLinkRepository.findOne({ where: { id: sanitizedPayload.groupLinkId, userId: command.userId } });
       if (!groupLink) {
-        return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound);
+        return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound, HttpStatus.NOT_FOUND);
       }
     }
 
     this.linkService.updateLink(link, sanitizedPayload);
-    const updated = await this.linkRepository.save(link);
+
+    let updated = link;
+    try {
+      updated = await this.linkRepository.save(link);
+    } catch (error) {
+      if (this.isDuplicateEntryError(error)) {
+        return this.createResponseFailure(LinksErrorMessageConstants.duplicateUrl, HttpStatus.CONFLICT);
+      }
+      throw error;
+    }
 
     const response = plainToInstance(GetLinkByIdResponse, updated, { excludeExtraneousValues: true });
     return this.createSuccessResponse(response);
@@ -163,5 +173,13 @@ export class UpdateLinkHandler
     } catch {
       return false;
     }
+  }
+
+  private isDuplicateEntryError(error: unknown): boolean {
+    if (error instanceof QueryFailedError) {
+      const dbError = error as QueryFailedError & { code?: string; errno?: number };
+      return dbError.code === 'ER_DUP_ENTRY' || dbError.errno === 1062;
+    }
+    return false;
   }
 }

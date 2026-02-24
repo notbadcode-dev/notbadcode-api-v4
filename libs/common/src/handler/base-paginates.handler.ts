@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { type FindOptionsOrder, type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import { PaginateHelper } from '@common/helpers';
@@ -29,7 +30,7 @@ export abstract class BasePaginatedHandler<TCommand, TEntity extends ObjectLiter
     const [entities, total] = await repository.findAndCount({ skip, take, order, where, relations });
 
     if (!entities.length) {
-      return this.createResponseFailure(notFoundMessage);
+      return this.createResponseFailure(notFoundMessage, HttpStatus.NOT_FOUND);
     }
 
     const items = entities.map(map);

@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
 
@@ -32,7 +32,7 @@ export class CreateGroupLinkHandler
   async execute(command: CreateGroupLinkCommand): Promise<ApiResponse<GetGroupLinkByIdResponse>> {
     const validationResult = this.validatePayload(command.payload);
     if (validationResult.isError) {
-      return this.createResponseFailure(validationResult.errorMessage);
+      return this.createResponseFailure(validationResult.errorMessage, HttpStatus.BAD_REQUEST);
     }
     const sanitizedPayload = validationResult.value;
 
@@ -41,7 +41,7 @@ export class CreateGroupLinkHandler
         where: { id: sanitizedPayload.parentGroupLinkId, userId: command.userId },
       });
       if (!parentGroupLink) {
-        return this.createResponseFailure(GroupLinksErrorMessageConstants.parentGroupLinkNotFound);
+        return this.createResponseFailure(GroupLinksErrorMessageConstants.parentGroupLinkNotFound, HttpStatus.NOT_FOUND);
       }
     }
 

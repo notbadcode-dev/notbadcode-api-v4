@@ -414,7 +414,7 @@ npm run test:watch:auth
 La documentación interactiva de la API está disponible en:
 
 ```
-https://localhost:60200/api/docs
+http://localhost:60200/docs
 ```
 
 ---

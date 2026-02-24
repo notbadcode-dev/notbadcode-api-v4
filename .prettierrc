@@ -37,6 +37,13 @@
         "proseWrap": "always",
         "printWidth": 88
       }
+    },
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular",
+        "htmlWhitespaceSensitivity": "ignore"
+      }
     }
   ]
 }

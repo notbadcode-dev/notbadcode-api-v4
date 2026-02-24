@@ -112,4 +112,18 @@ describe('DeleteLinkHandler', () => {
     expect(result.data).toBeInstanceOf(GetLinkByIdResponse);
     expect(result.data?.id).toBe(DeleteLinkHandlerFixture.validLink.id);
   });
+
+  it('returns failure when softDelete affects 0 rows', async () => {
+    // Arrange
+    linkRepository.findOne.mockResolvedValueOnce(DeleteLinkHandlerFixture.validLink);
+    linkRepository.softDelete.mockResolvedValueOnce({ affected: 0 });
+    const command = new DeleteLinkCommand(DeleteLinkHandlerFixture.validLink.id, DeleteLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.notFound);
+  });
 });

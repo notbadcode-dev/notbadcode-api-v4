@@ -40,6 +40,8 @@ describe('LoginHandler', () => {
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
+    commonSessionControlService.setSession.mockResolvedValue(LoginHandlerFixture.getValidJti());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(LoginHandlerFixture.getValidJti());
     hashService = mockDeep<HashService>();
     userService = {
       getUserSessionWithDate: jest.fn(),
@@ -179,7 +181,8 @@ describe('LoginHandler', () => {
     const result = await handler.execute(new LoginCommand(LoginHandlerFixture.testEmail(), LoginHandlerFixture.testPassword()));
 
     expect(setSessionSpy).not.toHaveBeenCalled();
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(AuthErrorMessageConstants.invalidSessionId);
   });
 
   it('should NOT update lastLoginAt if user.id is falsy (e.g. 0)', async () => {

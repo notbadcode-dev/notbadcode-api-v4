@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { ExecutionContext } from '@nestjs/common';
 
@@ -69,5 +69,17 @@ describe('JwtAuthGuard (unit)', () => {
     const context = createContext(`Bearer ${token}`);
 
     await expect(guard.canActivate(context)).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('rethrows ServiceUnavailableException when session store fails', async () => {
+    const failingSessionService = {
+      getSession: jest.fn().mockRejectedValue(new ServiceUnavailableException('Session store unavailable')),
+      getUserSessionKey: jest.fn().mockReturnValue('session::1:uuid'),
+    } as unknown as CommonSessionControlService;
+    const guard = new JwtAuthGuard(jwtService, failingSessionService);
+    const token = await jwtService.signAsync(JwtAuthGuardFixture.validPayload);
+    const context = createContext(`Bearer ${token}`);
+
+    await expect(guard.canActivate(context)).rejects.toBeInstanceOf(ServiceUnavailableException);
   });
 });

@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
 
@@ -29,13 +29,13 @@ export class GetLinkByIdHandler
   async execute(query: GetLinkByIdQuery): Promise<ApiResponse<GetLinkByIdResponse>> {
     const linkId = query.id ?? 0;
     if (!linkId || linkId <= 0) {
-      return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId);
+      return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId, HttpStatus.BAD_REQUEST);
     }
 
     const link = await this.linkRepository.findOne(LinkByIdSpecification.options(linkId, query.userId));
 
     if (!link) {
-      return this.createResponseFailure(LinksErrorMessageConstants.notFound);
+      return this.createResponseFailure(LinksErrorMessageConstants.notFound, HttpStatus.NOT_FOUND);
     }
 
     const response = plainToInstance(GetLinkByIdResponse, link, { excludeExtraneousValues: true });

@@ -212,15 +212,15 @@ describe('LogoutHandler', () => {
     expect(commonSessionControlService.getSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
-    expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, true);
+    expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, null);
     expect(result).toEqual({
       success: true,
-      data: true,
+      data: null,
       messageList: [],
     });
   });
 
-  it('removes session and returns success with false if session did not exist after check', async () => {
+  it('returns failure if deleteSession returns false after active-session check', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
     userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
@@ -234,15 +234,11 @@ describe('LogoutHandler', () => {
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
-    expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, false);
-    expect(result).toEqual({
-      success: true,
-      data: false,
-      messageList: [],
-    });
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.sessionNotActiveResponse().messageList);
+    expect(result.success).toBe(false);
   });
 
-  it('returns success if deleteSession returns null (graceful fallback)', async () => {
+  it('returns failure if deleteSession returns null', async () => {
     // Arrange
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload());
     userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
@@ -254,12 +250,8 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
-    expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, false);
-    expect(result).toEqual({
-      success: true,
-      data: false,
-      messageList: [],
-    });
+    expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.sessionNotActiveResponse().messageList);
+    expect(result.success).toBe(false);
   });
 
   it('returns failure when tokenType is not "access"', async () => {

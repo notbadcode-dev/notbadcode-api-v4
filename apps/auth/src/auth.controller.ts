@@ -50,6 +50,7 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: AuthConstants.throttle.defaultLimit, ttl: AuthConstants.throttle.defaultTtl } })
   @ApiOperation({ summary: 'Refresh tokens', description: 'Generates new access and refresh tokens using a valid refresh token' })
   @ApiOkResponse({ type: createApiResponse(LoginResponse), description: 'Tokens refreshed successfully' })
   @ApiBadRequestResponse({ type: ApiFailureResponseModel, description: 'Invalid refresh token format' })

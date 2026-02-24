@@ -105,7 +105,7 @@ describe('BasePaginatedHandler', () => {
 
       // Assert
       expect(repository.findAndCount).toHaveBeenCalledWith(paginationOptions);
-      expect(failureSpy).toHaveBeenCalledWith(notFoundMessage);
+      expect(failureSpy).toHaveBeenCalledWith(notFoundMessage, 404);
       expect(result).toBe(failureResponse);
     });
   });

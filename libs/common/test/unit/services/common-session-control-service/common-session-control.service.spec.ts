@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Logger } from '@nestjs/common';
+import { Logger, ServiceUnavailableException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { RedisSessionControlConstants } from '@common/constants/redis-session-control.constants';
@@ -65,19 +65,18 @@ describe('CommonSessionControlService', () => {
     expect(result).toBe('OK');
   });
 
-  it('should return null and log error if setSession throws', async () => {
+  it('should throw and log error if setSession throws', async () => {
     // Arrange
     cacheMock.set.mockRejectedValue(new Error('fail'));
     const session = UserSessionFixture.create();
     const key = service.getUserSessionKey(session);
 
     // Act
-    const result = await service.setSession(key, session);
+    await expect(service.setSession(key, session)).rejects.toThrow(ServiceUnavailableException);
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(loggerMock.error).toHaveBeenCalled();
-    expect(result).toBeNull();
   });
 
   it('should get a session', async () => {
@@ -109,7 +108,7 @@ describe('CommonSessionControlService', () => {
     expect(result).toBeNull();
   });
 
-  it('should return null and log if JSON parse fails', async () => {
+  it('should throw and log if JSON parse fails', async () => {
     // Arrange
     const session = UserSessionFixture.create();
     const key = service.getUserSessionKey(session);
@@ -117,12 +116,11 @@ describe('CommonSessionControlService', () => {
     cacheMock.get.mockResolvedValue('INVALID_JSON');
 
     // Act
-    const result = await service.getSession(key);
+    await expect(service.getSession(key)).rejects.toThrow(ServiceUnavailableException);
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(loggerMock.error).toHaveBeenCalled();
-    expect(result).toBeNull();
   });
 
   it('should delete a session when it exists', async () => {
@@ -156,7 +154,7 @@ describe('CommonSessionControlService', () => {
     expect(result).toBe(false);
   });
 
-  it('should return null and log when deleteSession throws', async () => {
+  it('should throw and log when deleteSession throws', async () => {
     // Arrange
     const session = UserSessionFixture.create();
     const key = service.getUserSessionKey(session);
@@ -165,11 +163,10 @@ describe('CommonSessionControlService', () => {
     cacheMock.del.mockRejectedValue(new Error('fail'));
 
     // Act
-    const result = await service.deleteSession(key);
+    await expect(service.deleteSession(key)).rejects.toThrow(ServiceUnavailableException);
 
     // Assert
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(loggerMock.error).toHaveBeenCalled();
-    expect(result).toBeNull();
   });
 });

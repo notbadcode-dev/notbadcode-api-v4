@@ -1,5 +1,6 @@
 import { hash as bcryptHash } from 'bcrypt';
 import { mockDeep } from 'jest-mock-extended';
+import { QueryFailedError } from 'typeorm';
 
 import { type CommonSessionControlService } from '@common/redis/session';
 import { apiResponseFailure, apiResponseSuccess } from '@common/responses';
@@ -42,6 +43,8 @@ describe('RegisterHandler', () => {
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
     commonSessionControlService = mockDeep<CommonSessionControlService>();
+    commonSessionControlService.setSession.mockResolvedValue(RegisterHandlerFixture.getValidJti());
+    commonSessionControlService.getUserSessionKey.mockReturnValue(RegisterHandlerFixture.getValidJti());
     hashService = mockDeep<HashService>();
     userService = {
       getUserSessionWithDate: jest.fn(),
@@ -178,7 +181,8 @@ describe('RegisterHandler', () => {
 
     // Assert
     expect(setSessionSpy).not.toHaveBeenCalled();
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(AuthErrorMessageConstants.invalidSessionId);
 
     spy.mockRestore();
     uuidSpy.mockRestore();
@@ -370,5 +374,84 @@ describe('RegisterHandler', () => {
     expect(resultEmpty).toBeNull();
     expect(resultNull).toBeNull();
     expect(resultUndefined).toBeNull();
+  });
+
+  it('returns failure when save throws QueryFailedError with duplicate entry (ER_DUP_ENTRY)', async () => {
+    // Arrange
+    userRepository.findByEmail.mockResolvedValueOnce(null);
+    (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
+
+    const duplicateError = Object.create(QueryFailedError.prototype);
+    Object.assign(duplicateError, {
+      code: 'ER_DUP_ENTRY',
+      message: 'Duplicate entry',
+      query: '',
+      parameters: [],
+    });
+
+    userRepository.save.mockRejectedValueOnce(duplicateError);
+    jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.emailExistsResponse());
+
+    // Act
+    const result = await handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()));
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(AuthErrorMessageConstants.emailAlreadyExists);
+  });
+
+  it('returns failure when save throws QueryFailedError with duplicate entry (errno 1062)', async () => {
+    // Arrange
+    userRepository.findByEmail.mockResolvedValueOnce(null);
+    (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
+
+    const duplicateError = Object.create(QueryFailedError.prototype);
+    Object.assign(duplicateError, {
+      errno: 1062,
+      message: 'Duplicate entry',
+      query: '',
+      parameters: [],
+    });
+
+    userRepository.save.mockRejectedValueOnce(duplicateError);
+    jest.mocked(apiResponseFailure).mockResolvedValueOnce(RegisterHandlerFixture.emailExistsResponse());
+
+    // Act
+    const result = await handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()));
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(AuthErrorMessageConstants.emailAlreadyExists);
+  });
+
+  it('rethrows error when save throws non-duplicate QueryFailedError', async () => {
+    // Arrange
+    userRepository.findByEmail.mockResolvedValueOnce(null);
+    (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
+
+    const otherError = Object.create(QueryFailedError.prototype);
+    Object.assign(otherError, {
+      code: 'ER_OTHER_ERROR',
+      message: 'Some other database error',
+      query: '',
+      parameters: [],
+    });
+
+    userRepository.save.mockRejectedValueOnce(otherError);
+
+    // Act & Assert
+    await expect(handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()))).rejects.toThrow(QueryFailedError);
+  });
+
+  it('rethrows error when save throws non-QueryFailedError', async () => {
+    // Arrange
+    userRepository.findByEmail.mockResolvedValueOnce(null);
+    (bcryptHash as jest.Mock).mockResolvedValueOnce('hash');
+
+    const genericError = new Error('Generic error');
+    userRepository.save.mockRejectedValueOnce(genericError);
+
+    // Act & Assert
+    await expect(handler.execute(new RegisterCommand(RegisterHandlerFixture.testEmail(), RegisterHandlerFixture.testPassword()))).rejects.toThrow('Generic error');
   });
 });

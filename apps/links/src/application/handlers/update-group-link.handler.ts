@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
 
@@ -31,12 +31,12 @@ export class UpdateGroupLinkHandler
   async execute(command: UpdateGroupLinkCommand): Promise<ApiResponse<GetGroupLinkByIdResponse>> {
     const groupLinkId = command.id ?? 0;
     if (!groupLinkId || groupLinkId <= 0) {
-      return this.createResponseFailure(GroupLinksErrorMessageConstants.invalidGroupLinkId);
+      return this.createResponseFailure(GroupLinksErrorMessageConstants.invalidGroupLinkId, HttpStatus.BAD_REQUEST);
     }
 
     const validationResult = this.validatePayload(command.payload);
     if (validationResult.isError) {
-      return this.createResponseFailure(validationResult.errorMessage);
+      return this.createResponseFailure(validationResult.errorMessage, HttpStatus.BAD_REQUEST);
     }
     const sanitizedPayload = validationResult.value;
 
@@ -45,18 +45,23 @@ export class UpdateGroupLinkHandler
     });
 
     if (!groupLink) {
-      return this.createResponseFailure(GroupLinksErrorMessageConstants.notFound);
+      return this.createResponseFailure(GroupLinksErrorMessageConstants.notFound, HttpStatus.NOT_FOUND);
     }
 
     if (sanitizedPayload.parentGroupLinkId !== undefined && sanitizedPayload.parentGroupLinkId !== null) {
       if (sanitizedPayload.parentGroupLinkId === groupLinkId) {
-        return this.createResponseFailure(GroupLinksErrorMessageConstants.invalidParentGroupLinkId);
+        return this.createResponseFailure(GroupLinksErrorMessageConstants.invalidParentGroupLinkId, HttpStatus.BAD_REQUEST);
       }
       const parentGroupLink = await this.groupLinkRepository.findOne({
         where: { id: sanitizedPayload.parentGroupLinkId, userId: command.userId },
       });
       if (!parentGroupLink) {
-        return this.createResponseFailure(GroupLinksErrorMessageConstants.parentGroupLinkNotFound);
+        return this.createResponseFailure(GroupLinksErrorMessageConstants.parentGroupLinkNotFound, HttpStatus.NOT_FOUND);
+      }
+
+      const hasCycle = await this.hasParentCycle(command.userId, groupLinkId, parentGroupLink.id);
+      if (hasCycle) {
+        return this.createResponseFailure(GroupLinksErrorMessageConstants.invalidParentGroupLinkId, HttpStatus.CONFLICT);
       }
     }
 
@@ -184,5 +189,32 @@ export class UpdateGroupLinkHandler
       c.b >= 0 &&
       c.b <= 255
     );
+  }
+
+  private async hasParentCycle(userId: number, targetGroupLinkId: number, initialParentGroupLinkId: number | null): Promise<boolean> {
+    const visited = new Set<number>();
+    let currentParentId = initialParentGroupLinkId;
+
+    while (currentParentId !== null) {
+      if (currentParentId === targetGroupLinkId) {
+        return true;
+      }
+      if (visited.has(currentParentId)) {
+        return true;
+      }
+      visited.add(currentParentId);
+
+      const parent = await this.groupLinkRepository.findOne({
+        where: { id: currentParentId, userId },
+      });
+
+      if (!parent) {
+        return false;
+      }
+
+      currentParentId = parent.parentGroupLinkId ?? null;
+    }
+
+    return false;
   }
 }

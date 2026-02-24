@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { HttpStatus, Inject } from '@nestjs/common';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
 
@@ -29,13 +29,13 @@ export class GetGroupLinkByIdHandler
   async execute(query: GetGroupLinkByIdQuery): Promise<ApiResponse<GetGroupLinkByIdResponse>> {
     const groupLinkId = query.id ?? 0;
     if (!groupLinkId || groupLinkId <= 0) {
-      return this.createResponseFailure(LinksErrorMessageConstants.invalidGroupLinkId);
+      return this.createResponseFailure(LinksErrorMessageConstants.invalidGroupLinkId, HttpStatus.BAD_REQUEST);
     }
 
     const groupLink = await this.groupLinkRepository.findOne(GroupLinkByIdSpecification.options(groupLinkId, query.userId));
 
     if (!groupLink) {
-      return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound);
+      return this.createResponseFailure(LinksErrorMessageConstants.groupLinkNotFound, HttpStatus.NOT_FOUND);
     }
 
     const response = plainToInstance(GetGroupLinkByIdResponse, groupLink, { excludeExtraneousValues: true });

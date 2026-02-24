@@ -1,4 +1,4 @@
-import { Inject, Logger } from '@nestjs/common';
+import { HttpStatus, Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 
@@ -16,7 +16,7 @@ import { User } from '@apps/auth/src/domain/entities';
 import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
 @CommandHandler(LogoutCommand)
-export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolean>> implements ICommandHandler<LogoutCommand, ApiResponse<boolean>> {
+export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<null>> implements ICommandHandler<LogoutCommand, ApiResponse<null>> {
   /* istanbul ignore next */
   constructor(
     @Inject('IUserRepository') private readonly userRepository: IUserRepository,
@@ -29,12 +29,12 @@ export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolea
     super(i18nService);
   }
 
-  async execute(command: LogoutCommand): Promise<ApiResponse<boolean>> {
+  async execute(command: LogoutCommand): Promise<ApiResponse<null>> {
     const { accessToken } = command;
 
     const tokenPresenceResult = await TokenValidationHelper.validateTokenPresence(accessToken);
     if (tokenPresenceResult.isError) {
-      return await this.createResponseFailure(tokenPresenceResult.errorMessage);
+      return await this.createResponseFailure(tokenPresenceResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     let payload: JwtPayloadPlain<number> | null;
@@ -42,28 +42,28 @@ export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolea
       payload = this.jwtService.verify<JwtPayloadPlain<number>>(accessToken);
     } catch (error: unknown) {
       this.logErrorJwtVerify(error);
-      return await this.createResponseFailure(AuthErrorMessageConstants.invalidToken);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidToken, HttpStatus.UNAUTHORIZED);
     }
 
     const payloadResult = await TokenValidationHelper.validatePayload(payload);
     if (payloadResult.isError) {
-      return await this.createResponseFailure(payloadResult.errorMessage);
+      return await this.createResponseFailure(payloadResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     const { sub, jti, email } = payload;
     const tokenTypeResult = await TokenValidationHelper.validateTokenType(payload, EJwtType.ACCESS);
     if (tokenTypeResult.isError) {
-      return await this.createResponseFailure(tokenTypeResult.errorMessage);
+      return await this.createResponseFailure(tokenTypeResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     const uuidResult = await TokenValidationHelper.validateUUID(jti);
     if (uuidResult.isError) {
-      return await this.createResponseFailure(uuidResult.errorMessage);
+      return await this.createResponseFailure(uuidResult.errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     const user = await this.userRepository.findByIdAndEmail(sub, email);
     if (!user) {
-      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials);
+      return await this.createResponseFailure(AuthErrorMessageConstants.invalidCredentials, HttpStatus.UNAUTHORIZED);
     }
 
     const userSession = this.userService.getUserSessions(user.id, jti);
@@ -71,14 +71,17 @@ export class LogoutHandler extends BaseHandler<LogoutCommand, ApiResponse<boolea
     const key = this.commonSessionControlService.getUserSessionKey(userSession);
     const activeSession = await this.commonSessionControlService.getSession(key);
     if (!activeSession) {
-      return await this.createResponseFailure(AuthErrorMessageConstants.sessionNotActive);
+      return await this.createResponseFailure(AuthErrorMessageConstants.sessionNotActive, HttpStatus.UNAUTHORIZED);
     }
 
-    const resultDelete = (await this.commonSessionControlService.deleteSession(key)) ?? false;
+    const resultDelete = await this.commonSessionControlService.deleteSession(key);
+    if (!resultDelete) {
+      return await this.createResponseFailure(AuthErrorMessageConstants.sessionNotActive, HttpStatus.UNAUTHORIZED);
+    }
 
     await this.addLastLogoutAt(accessToken, user);
 
-    return await this.createSuccessResponse(resultDelete);
+    return await this.createSuccessResponse(null);
   }
 
   private async addLastLogoutAt(accessToken: string, user: User): Promise<void> {

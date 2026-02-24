@@ -158,4 +158,97 @@ describe('CreateGroupLinkHandler', () => {
     expect(result.success).toBe(true);
     expect(result.data?.title).toBe('Minimal Group');
   });
+
+  it('returns failure when payload is undefined', async () => {
+    // Arrange
+    const command = new CreateGroupLinkCommand(undefined as any, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.invalidPayload);
+  });
+
+  it('returns failure when description is not a string', async () => {
+    // Arrange
+    const payload = CreateGroupLinkHandlerFixture.createPayload({ description: 123 as any });
+    const command = new CreateGroupLinkCommand(payload, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.invalidDescription);
+  });
+
+  it('returns failure when description exceeds maximum length', async () => {
+    // Arrange
+    const tooLongDescription = 'a'.repeat(501);
+    const payload = CreateGroupLinkHandlerFixture.createPayload({ description: tooLongDescription });
+    const command = new CreateGroupLinkCommand(payload, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.invalidDescription);
+  });
+
+  it('returns failure when icon is not a string', async () => {
+    // Arrange
+    const payload = CreateGroupLinkHandlerFixture.createPayload({ icon: 123 as any });
+    const command = new CreateGroupLinkCommand(payload, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.invalidIcon);
+  });
+
+  it('returns failure when icon exceeds maximum length', async () => {
+    // Arrange
+    const tooLongIcon = 'a'.repeat(256);
+    const payload = CreateGroupLinkHandlerFixture.createPayload({ icon: tooLongIcon });
+    const command = new CreateGroupLinkCommand(payload, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.invalidIcon);
+  });
+
+  it('accepts parentGroupLinkId as null explicitly', async () => {
+    // Arrange
+    groupLinkRepository.save.mockResolvedValueOnce(CreateGroupLinkHandlerFixture.savedGroupLink);
+    const payload = CreateGroupLinkHandlerFixture.createPayload({ parentGroupLinkId: null });
+    const command = new CreateGroupLinkCommand(payload, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(result.data?.parentGroupLinkId).toBeNull();
+  });
+
+  it('returns failure when color is null', async () => {
+    // Arrange
+    const payload = CreateGroupLinkHandlerFixture.createPayload({ color: null as any });
+    const command = new CreateGroupLinkCommand(payload, CreateGroupLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(GroupLinksErrorMessageConstants.invalidColor);
+  });
 });

@@ -81,7 +81,14 @@ TypeORM 0.3 with MariaDB. Base entities: `AuditableEntity` (id, createdAt, updat
 
 ## Testing
 
-Jest with `ts-jest`. Test mocks in `test/utils/mocks/` (i18n, config, cache, winston, responses). Factories in `test/utils/factories/`. Coverage excludes constants, enums, types, entities, config files.
+Jest with `ts-jest`. Test mocks in `test/utils/mocks/` (i18n, config, cache, winston, responses). Factories in `test/utils/factories/`.
+
+**Coverage exclusions** (declarative files):
+- TypeScript declarations (`*.d.ts`)
+- Constants, enums, types, interfaces
+- DTOs: commands, queries, requests, responses
+- Domain: entities, ports (repository interfaces), specifications
+- Config files and barrel exports (`index.ts`, `*.config.ts`)
 
 ## ESLint Rules (strict)
 

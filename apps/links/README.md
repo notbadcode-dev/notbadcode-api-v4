@@ -349,7 +349,7 @@ npm run test:watch:links
 La documentación interactiva de la API está disponible en:
 
 ```
-https://localhost:60201/api/docs
+http://localhost:60201/docs
 ```
 
 ---

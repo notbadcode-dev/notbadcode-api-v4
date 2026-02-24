@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { QueryFailedError } from 'typeorm';
+
 import { UpdateLinkCommand } from '@apps/links/src/application/commands';
 import { UpdateLinkHandler } from '@apps/links/src/application/handlers';
 import { type UpdateLinkRequest } from '@apps/links/src/application/requests';
@@ -239,5 +241,181 @@ describe('UpdateLinkHandler', () => {
       expect(result.success).toBe(false);
       expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidGroupLinkId);
     });
+  });
+
+  it('returns failure when payload is undefined', async () => {
+    // Arrange
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, undefined as any, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidPayload);
+  });
+
+  it('returns failure when url is not a string', async () => {
+    // Arrange
+    const payload = { url: 123 as any };
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidUrl);
+  });
+
+  it('returns failure when title is not a string', async () => {
+    // Arrange
+    const payload = { title: 123 as any };
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidTitle);
+  });
+
+  it('returns failure when description is not a string', async () => {
+    // Arrange
+    const payload = { description: 123 as any };
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.descriptionRequired);
+  });
+
+  it('returns failure when payload is empty object', async () => {
+    // Arrange
+    const payload = {};
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidPayload);
+  });
+
+  it('returns failure when tagList exceeds maximum length', async () => {
+    // Arrange
+    const tooManyTags = Array.from({ length: 51 }, (_, i) => `tag${i}`);
+    const payload = { tagList: tooManyTags };
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidTagList);
+  });
+
+  it('returns failure when tag is not a string', async () => {
+    // Arrange
+    const payload = { tagList: [123 as any, 'valid'] };
+    const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.invalidTagList);
+  });
+
+  it('returns failure when save throws QueryFailedError with duplicate entry (ER_DUP_ENTRY)', async () => {
+    // Arrange
+    const link = UpdateLinkHandlerFixture.existingLink;
+    linkRepository.findOne.mockResolvedValueOnce(link);
+
+    const duplicateError = Object.create(QueryFailedError.prototype);
+    Object.assign(duplicateError, {
+      code: 'ER_DUP_ENTRY',
+      message: 'Duplicate entry',
+      query: '',
+      parameters: [],
+    });
+
+    linkRepository.save.mockRejectedValueOnce(duplicateError);
+    const payload = UpdateLinkHandlerFixture.updatePayload();
+    const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.duplicateUrl);
+  });
+
+  it('returns failure when save throws QueryFailedError with duplicate entry (errno 1062)', async () => {
+    // Arrange
+    const link = UpdateLinkHandlerFixture.existingLink;
+    linkRepository.findOne.mockResolvedValueOnce(link);
+
+    const duplicateError = Object.create(QueryFailedError.prototype);
+    Object.assign(duplicateError, {
+      errno: 1062,
+      message: 'Duplicate entry',
+      query: '',
+      parameters: [],
+    });
+
+    linkRepository.save.mockRejectedValueOnce(duplicateError);
+    const payload = UpdateLinkHandlerFixture.updatePayload();
+    const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.messageList?.[0]?.message).toBe(LinksErrorMessageConstants.duplicateUrl);
+  });
+
+  it('rethrows error when save throws non-duplicate QueryFailedError', async () => {
+    // Arrange
+    const link = UpdateLinkHandlerFixture.existingLink;
+    linkRepository.findOne.mockResolvedValueOnce(link);
+
+    const otherError = Object.create(QueryFailedError.prototype);
+    Object.assign(otherError, {
+      code: 'ER_OTHER_ERROR',
+      message: 'Some other database error',
+      query: '',
+      parameters: [],
+    });
+
+    linkRepository.save.mockRejectedValueOnce(otherError);
+    const payload = UpdateLinkHandlerFixture.updatePayload();
+    const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act & Assert
+    await expect(handler.execute(command)).rejects.toThrow(QueryFailedError);
+  });
+
+  it('rethrows error when save throws non-QueryFailedError', async () => {
+    // Arrange
+    const link = UpdateLinkHandlerFixture.existingLink;
+    linkRepository.findOne.mockResolvedValueOnce(link);
+
+    const genericError = new Error('Generic error');
+    linkRepository.save.mockRejectedValueOnce(genericError);
+    const payload = UpdateLinkHandlerFixture.updatePayload();
+    const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
+
+    // Act & Assert
+    await expect(handler.execute(command)).rejects.toThrow('Generic error');
   });
 });

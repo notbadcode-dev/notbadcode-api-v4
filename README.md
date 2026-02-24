@@ -345,7 +345,7 @@ Codigo reutilizable entre microservicios:
 - **Internacionalizacion**: Soporte multi-idioma con i18n
 - **Guards y Filtros**: Autenticacion JWT, validacion
 
-[Documentacion completa](./libs/common/README.md)
+[Documentacion completa](./libs/README.md)
 
 ---
 
@@ -424,11 +424,21 @@ npm run lint:fix && npm run format && npm test
 
 | Recurso | Enlace |
 |---------|--------|
+| Guía para agentes IA | [AGENTS.md](./AGENTS.md) |
+| Arquitectura (agentes) | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) |
+| Convenciones (agentes) | [docs/CONVENTIONS.md](./docs/CONVENTIONS.md) |
+| Contratos (agentes) | [docs/CONTRACTS.md](./docs/CONTRACTS.md) |
+| Seguridad (agentes) | [docs/SECURITY.md](./docs/SECURITY.md) |
+| Entorno (agentes) | [docs/ENVIRONMENT.md](./docs/ENVIRONMENT.md) |
+| Operación (agentes) | [docs/OPERATIONS.md](./docs/OPERATIONS.md) |
+| Observabilidad (agentes) | [docs/OBSERVABILITY.md](./docs/OBSERVABILITY.md) |
+| Features (agentes) | [docs/FEATURES/README.md](./docs/FEATURES/README.md) |
 | Auth Service | [apps/auth/README.md](./apps/auth/README.md) |
 | Links Service | [apps/links/README.md](./apps/links/README.md) |
-| Common Library | [libs/common/README.md](./libs/common/README.md) |
-| Swagger (Auth) | `https://localhost:60200/api/docs` |
-| Swagger (Links) | `https://localhost:60201/api/docs` |
+| Common Library | [libs/README.md](./libs/README.md) |
+| Common Src (modular) | [libs/common/src/README.md](./libs/common/src/README.md) |
+| Swagger (Auth) | `http://localhost:60200/docs` |
+| Swagger (Links) | `http://localhost:60201/docs` |
 
 ---
 

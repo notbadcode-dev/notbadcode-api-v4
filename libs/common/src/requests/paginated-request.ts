@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
-import { CommonErrorMessageConstants, PaginatedConstants } from '@common/constants';
 import { EPaginatedOrder } from '@common/enums/paginated-order.enum';
+
+import { CommonErrorMessageConstants } from '../constants/common-error-message.constants';
+import { PaginatedConstants } from '../constants/paginated.constants';
 
 export class PaginatedRequest {
   @ApiPropertyOptional({ description: 'Number of items to skip', type: Number, example: 0, default: PaginatedConstants.DEFAULT_SKIP })

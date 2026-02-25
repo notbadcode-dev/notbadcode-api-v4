@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 export class UnmarkLinksAsFavoriteFixture {
   static LINK_IDS = {
     ONE: 1,

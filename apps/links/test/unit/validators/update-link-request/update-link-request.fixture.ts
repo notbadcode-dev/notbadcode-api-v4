@@ -23,7 +23,7 @@ export class UpdateLinkRequestValidatorFixture {
 
   static getTooLongUrlRequest(): UpdateLinkRequest {
     return Object.assign(new UpdateLinkRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       url: `https://example.com/${'a'.repeat(2000)}`,
     });
   }
@@ -36,14 +36,14 @@ export class UpdateLinkRequestValidatorFixture {
 
   static getTooLongTitleRequest(): UpdateLinkRequest {
     return Object.assign(new UpdateLinkRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       title: 'a'.repeat(251),
     });
   }
 
   static getTooLongDescriptionRequest(): UpdateLinkRequest {
     return Object.assign(new UpdateLinkRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       description: 'a'.repeat(501),
     });
   }
@@ -62,7 +62,7 @@ export class UpdateLinkRequestValidatorFixture {
 
   static getTooManyTagsRequest(): UpdateLinkRequest {
     return Object.assign(new UpdateLinkRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       tagList: Array.from({ length: 51 }, (_, i) => `tag${i}`),
     });
   }
@@ -75,7 +75,7 @@ export class UpdateLinkRequestValidatorFixture {
 
   static getTagListWithTooLongTagRequest(): UpdateLinkRequest {
     return Object.assign(new UpdateLinkRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       tagList: ['a'.repeat(251)],
     });
   }

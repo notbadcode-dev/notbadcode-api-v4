@@ -22,7 +22,7 @@ describe('apiResponse', () => {
         const data = ApiResponseFixture.sampleObj;
 
         // Act
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         const result = await apiResponseSuccess(i18nService as any, data);
 
         // Assert
@@ -42,7 +42,7 @@ describe('apiResponse', () => {
         const customMessages = ApiResponseFixture.customSuccessMessages;
 
         // Act
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         const result = await apiResponseSuccess(i18nService as any, data, customMessages);
 
         // Assert
@@ -67,7 +67,7 @@ describe('apiResponse', () => {
         const code = ApiResponseFixture.code;
 
         // Act
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         const result = await apiResponseFailure(i18nService as any, undefined, code);
 
         // Assert
@@ -87,7 +87,7 @@ describe('apiResponse', () => {
         const customMessages = ApiResponseFixture.customFailureMessages;
 
         // Act
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         const result = await apiResponseFailure(i18nService as any, customMessages);
 
         // Assert

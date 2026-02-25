@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { QueryFailedError } from 'typeorm';
 
 import { UpdateLinkCommand } from '@apps/links/src/application/commands';
@@ -34,7 +34,7 @@ describe('UpdateLinkHandler', () => {
     };
     linkService = { updateLink: jest.fn() } as unknown as jest.Mocked<LinkService>;
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new UpdateLinkHandler(linkRepository, groupLinkRepository, linkService, i18nService as any);
   });
 

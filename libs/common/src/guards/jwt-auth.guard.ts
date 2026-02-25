@@ -5,7 +5,6 @@ import { EJwtType, JwtPayloadPlain } from '@common/auth';
 import { CommonSessionControlService, UserSession } from '@common/redis/session';
 
 import type { Request } from 'express';
-import type { UUID } from 'node:crypto';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -29,7 +28,7 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
 
-      const userSession = { userId: payload.sub, sessionId: payload.jti as UUID } as UserSession;
+      const userSession = { userId: payload.sub, sessionId: payload.jti } as UserSession;
       const key = this.sessionControlService.getUserSessionKey(userSession);
       const session = await this.sessionControlService.getSession(key);
       if (!session) {

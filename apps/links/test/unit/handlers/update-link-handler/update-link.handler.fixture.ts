@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type UpdateLinkRequest } from '@apps/links/src/application/requests';
 import { GroupLink, Link } from '@apps/links/src/domain/entities';
 

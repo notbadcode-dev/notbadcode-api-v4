@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { QueryFailedError } from 'typeorm';
 
 import { CreateLinkCommand } from '@apps/links/src/application/commands';
@@ -31,7 +31,7 @@ describe('CreateLinkHandler', () => {
       update: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new CreateLinkHandler(linkRepository, groupLinkRepository, i18nService as any);
   });
 

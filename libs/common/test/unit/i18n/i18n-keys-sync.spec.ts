@@ -54,6 +54,7 @@ describe('i18n translation keys synchronization', () => {
 
     describe.each(referenceFiles)('file "%s"', (file) => {
       it('should have the same keys as the reference language', () => {
+        expect.hasAssertions();
         const referenceKeys = loadKeys(referenceLang, file);
         const langKeys = loadKeys(lang, file);
 
@@ -70,8 +71,9 @@ describe('i18n translation keys synchronization', () => {
             messages.push(`Extra in "${lang}/${file}" (not in "${referenceLang}/${file}"): ${extraInLang.join(', ')}`);
           }
 
-          fail(messages.join('\n'));
+          throw new Error(messages.join('\n'));
         }
+        expect(true).toBe(true);
       });
     });
   });

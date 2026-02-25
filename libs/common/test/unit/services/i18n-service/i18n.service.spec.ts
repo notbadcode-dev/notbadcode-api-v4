@@ -9,13 +9,13 @@ describe('I18nService', () => {
 
   beforeEach(() => {
     mockNestI18nService = I18nServiceFixture.makeNestI18nMock();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     i18nService = new I18nService(mockNestI18nService as any);
   });
 
   it('can be constructed', () => {
     // Arrange
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     const factory = () => new I18nService(mockNestI18nService as any);
 
     // Act & Assert

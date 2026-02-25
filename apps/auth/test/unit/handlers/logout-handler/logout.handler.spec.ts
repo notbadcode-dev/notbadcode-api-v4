@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type Logger } from '@nestjs/common';
 import { type JwtService } from '@nestjs/jwt';
 import { mockDeep } from 'jest-mock-extended';
@@ -45,7 +45,7 @@ describe('LogoutHandler', () => {
       commonSessionControlService,
       logger,
       userService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+       
       i18nService as any,
     );
   });
@@ -59,7 +59,7 @@ describe('LogoutHandler', () => {
           commonSessionControlService,
           logger,
           userService,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+           
           i18nService as any,
         ),
     ).not.toThrow();
@@ -92,7 +92,7 @@ describe('LogoutHandler', () => {
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
     expect(result.success).toBe(false);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(logger.error).toHaveBeenCalled();
   });
 
@@ -106,14 +106,14 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
     // Assert
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.invalidTokenResponse().messageList);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('non-Error'), expect.stringContaining('some string error'));
     expect(result.success).toBe(false);
   });
 
   it('returns failure when payload is null', async () => {
     // Arrange
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     jwtService.verify.mockReturnValueOnce(null as any);
     // Act
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.invalidToken()));
@@ -176,7 +176,7 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalled();
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.sessionNotActiveResponse().messageList);
     expect(result.success).toBe(false);
@@ -184,7 +184,7 @@ describe('LogoutHandler', () => {
 
   it('removes session and returns success for valid token and active session', async () => {
     // Arrange
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     jwtService.verify.mockReturnValueOnce(LogoutHandlerFixture.validJwtPayload() as any);
     userRepository.findByIdAndEmail.mockResolvedValue(LogoutHandlerFixture.existingUser());
     commonSessionControlService.getUserSessionKey.mockImplementation((session) => {
@@ -201,16 +201,16 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(commonSessionControlService.getUserSessionKey).toHaveBeenCalledWith(
       expect.objectContaining({
         sessionId: LogoutHandlerFixture.userSession().sessionId,
         userId: LogoutHandlerFixture.userSession().userId,
       }),
     );
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(commonSessionControlService.getSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
     expect(apiResponseSuccess).toHaveBeenCalledWith(i18nService, null);
     expect(result).toEqual({
@@ -232,7 +232,7 @@ describe('LogoutHandler', () => {
     const result = await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(commonSessionControlService.deleteSession).toHaveBeenCalledWith(LogoutHandlerFixture.getUserSessionKey());
     expect(apiResponseFailure).toHaveBeenCalledWith(i18nService, LogoutHandlerFixture.sessionNotActiveResponse().messageList);
     expect(result.success).toBe(false);
@@ -302,11 +302,11 @@ describe('LogoutHandler', () => {
     await handler.execute(new LogoutCommand(LogoutHandlerFixture.validTokens().accessToken));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(userRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({
         ...user,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         lastLogoutAt: expect.any(Date),
       }),
     );
@@ -326,12 +326,12 @@ describe('LogoutHandler', () => {
     await handler.execute(new LogoutCommand('valid.jwt.token'));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(userRepository.save).not.toHaveBeenCalled();
 
     // También puedes probar con accessToken vacío
     await handler.execute(new LogoutCommand(''));
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(userRepository.save).not.toHaveBeenCalled();
   });
 });

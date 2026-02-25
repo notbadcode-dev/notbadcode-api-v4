@@ -13,10 +13,10 @@ import { UpdateLinkCommand } from '@apps/links/src/application/commands';
 import { UpdateLinkRequest } from '@apps/links/src/application/requests';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 import { LinkService } from '@apps/links/src/application/services';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 import { LinkByIdSpecification } from '@apps/links/src/domain/specifications';
 
-import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @CommandHandler(UpdateLinkCommand)
 export class UpdateLinkHandler

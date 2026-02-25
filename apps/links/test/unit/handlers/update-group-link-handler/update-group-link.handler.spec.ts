@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { UpdateGroupLinkCommand } from '@apps/links/src/application/commands';
 import { UpdateGroupLinkHandler } from '@apps/links/src/application/handlers';
 import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
@@ -21,7 +21,7 @@ describe('UpdateGroupLinkHandler', () => {
       softDelete: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new UpdateGroupLinkHandler(groupLinkRepository, i18nService as any);
   });
 

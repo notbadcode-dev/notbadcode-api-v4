@@ -32,7 +32,7 @@ export class AuthCredentialsRequestValidatorFixture {
   static getTooLongPasswordAuthCredentialsRequest(): AuthCredentialsRequest {
     return Object.assign(new AuthCredentialsRequest(), {
       email: 'test@test.com',
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       password: 'a'.repeat(200),
     });
   }

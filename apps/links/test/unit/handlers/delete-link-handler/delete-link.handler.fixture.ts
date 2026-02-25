@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { Link } from '@apps/links/src/domain/entities';
 
 export class DeleteLinkHandlerFixture {

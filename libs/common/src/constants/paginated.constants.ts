@@ -1,6 +1,6 @@
 import { EPaginatedOrder } from '@common/enums';
 
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 export const PaginatedConstants = {
   DEFAULT_SKIP: 0,
   DEFAULT_FIRST_PAGE: 1,

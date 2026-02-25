@@ -3,7 +3,6 @@ import { ServiceUnavailableException } from '@nestjs/common';
 import { CommonConstants, CommonErrorMessageConstants } from '@common/constants';
 import { RedisCacheConstants } from '@common/constants/redis-cache.constants';
 import { type I18nService } from '@common/i18n';
-
 import { CacheAccessor } from '@common/redis/cache/cache-accessor';
 
 type AsyncMethod<This, A extends unknown[], R> = (this: This, ...args: A) => Promise<R>;
@@ -77,8 +76,8 @@ export function Cached(ttlSeconds: number, i18nService?: I18nService): AsyncMeth
 
       const result = await original.apply(this, args);
 
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      await cache.set(key, result, ttlSeconds * 1000);
+      const msToSeconds = 1000;
+      await cache.set(key, result, ttlSeconds * msToSeconds);
 
       return result;
     };

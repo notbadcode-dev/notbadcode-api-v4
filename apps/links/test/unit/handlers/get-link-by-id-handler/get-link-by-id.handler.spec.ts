@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { GetLinkByIdHandler } from '@apps/links/src/application/handlers';
-import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 import { GetLinkByIdQuery } from '@apps/links/src/application/queries';
+import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
@@ -21,7 +21,7 @@ describe('GetLinkByIdHandler', () => {
       update: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new GetLinkByIdHandler(linkRepository, i18nService as any);
   });
 

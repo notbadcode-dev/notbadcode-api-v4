@@ -90,7 +90,7 @@ services:
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - I18N_DIR=/app/dist/libs/common/src/i18n
     healthcheck:
-      test: ["CMD", "wget", "-qO", "/dev/null", "--no-check-certificate", "https://localhost:60200/healthz"]
+      test: ["CMD", "wget", "-qO", "/dev/null", "--no-check-certificate", "https://127.0.0.1:60200/healthz"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -102,6 +102,11 @@ services:
         condition: service_healthy
       redis-session:
         condition: service_healthy
+    ports:
+      - "60200:60200"
+      - "9229:9229"
+    volumes:
+      - ./certs:/app/certs:ro
     networks: [app-net]
 
   links:
@@ -112,7 +117,6 @@ services:
     profiles: ["prod"]
     env_file:
       - apps/links/.env
-    command: sh -lc "npm ci && npm run start:links:debug"
     environment:
       - LINKS_DB_HOST=${DB_HOST}
       - LINKS_DB_PORT=${DB_PORT}
@@ -125,7 +129,7 @@ services:
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - I18N_DIR=/app/dist/libs/common/src/i18n
     healthcheck:
-      test: ["CMD", "wget", "-qO", "/dev/null", "--no-check-certificate", "https://localhost:60201/healthz"]
+      test: ["CMD", "wget", "-qO", "/dev/null", "--no-check-certificate", "https://127.0.0.1:60201/healthz"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -137,6 +141,11 @@ services:
         condition: service_healthy
       redis-session:
         condition: service_healthy
+    ports:
+      - "60201:60201"
+      - "9230:9230"
+    volumes:
+      - ./certs:/app/certs:ro
     networks: [app-net]
 
 

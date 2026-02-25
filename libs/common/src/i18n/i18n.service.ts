@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { I18nService as NestI18nService, TranslateOptions } from 'nestjs-i18n';
+import { I18nContext, I18nService as NestI18nService, TranslateOptions } from 'nestjs-i18n';
 
 @Injectable()
 export class I18nService {
@@ -13,11 +13,8 @@ export class I18nService {
     }
 
     try {
-      if (!options) {
-        return await this.i18n.t(key);
-      }
-
-      return await this.i18n.t(key, options);
+      const lang = options?.lang || I18nContext.current()?.lang;
+      return await this.i18n.t(key, { ...options, lang });
     } catch (error) {
       this.logger.warn(`Failed to translate key "${key}": ${error instanceof Error ? error.message : String(error)}`);
       return '';

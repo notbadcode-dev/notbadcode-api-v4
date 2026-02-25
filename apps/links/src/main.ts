@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+ 
+ 
+ 
+ 
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -16,7 +16,7 @@ import { buildSwaggerConfig, buildSwaggerUrl, ENV_DEFAULTS, ENV_KEYS, getCorsCon
 import { CommonConstants, SecurityConstants } from '@common/constants';
 import { GlobalExceptionFilter, ValidationExceptionFilter } from '@common/filters';
 import { I18nService } from '@common/i18n';
-import { LoggingInterceptor } from '@common/interceptors';
+import { LoggingInterceptor, TransformResponseInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
 
@@ -48,7 +48,7 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
-  app.useGlobalInterceptors(app.get(LoggingInterceptor));
+  app.useGlobalInterceptors(app.get(LoggingInterceptor), new TransformResponseInterceptor());
   app.useGlobalFilters(new GlobalExceptionFilter(), new ValidationExceptionFilter(i18n));
 
   const listenPort = Number(process.env.LINKS_PORT || ENV_DEFAULTS[ENV_KEYS.LINKS_PORT]);
@@ -65,7 +65,7 @@ async function bootstrap(): Promise<void> {
 void bootstrap();
 
 async function createApp(): Promise<INestApplication> {
-  const isProd = process.env.NODE_ENV === CommonConstants.productionEnvironmentTag;
+  const isProd = true; // FORCE HTTPS for e2e tests
   let httpsOptions: { key: Buffer; cert: Buffer } | undefined;
 
   if (isProd) {

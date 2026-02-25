@@ -11,10 +11,10 @@ import { ErrorOn, ErrorOnFactory } from '@common/types';
 import { CreateGroupLinkCommand } from '@apps/links/src/application/commands';
 import { CreateGroupLinkRequest } from '@apps/links/src/application/requests';
 import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 import { GroupLink } from '@apps/links/src/domain/entities';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 
-import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @CommandHandler(CreateGroupLinkCommand)
 export class CreateGroupLinkHandler

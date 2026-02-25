@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+import { REDIS_DB_SUFFIX } from '@common/config/helpers/require-redis-db.helper';
 import { CommonConstants } from '@common/constants/';
 import { ESupportedLanguage } from '@common/enums/';
 
@@ -10,7 +11,6 @@ import {
   ENV_KEYS,
   ENV_REDIS_SCHEMES,
 } from '.';
-import { REDIS_DB_SUFFIX } from '@common/config/helpers/require-redis-db.helper';
 
 // --- Auth Servicio ---
 const authServiceSchema = {

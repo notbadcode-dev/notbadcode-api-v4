@@ -62,7 +62,7 @@ export class BaseHandlerFixture {
 
   static createdUser(): User {
     const u = this.existingUser();
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+     
     u.id = 3;
 
     return u;

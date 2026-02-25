@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { UnmarkGroupLinksAsFavoriteCommand } from '@apps/links/src/application/commands';
 import { UnmarkGroupLinksAsFavoriteHandler } from '@apps/links/src/application/handlers';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
@@ -20,7 +20,7 @@ describe('UnmarkGroupLinksAsFavoriteHandler', () => {
       softDelete: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new UnmarkGroupLinksAsFavoriteHandler(groupLinkRepository, i18nService as any);
   });
 

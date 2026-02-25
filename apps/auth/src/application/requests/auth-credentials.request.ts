@@ -23,7 +23,7 @@ export class AuthCredentialsRequest {
     }),
   })
   @MaxLength(AuthConstants.userPasswordMaxLength, {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     message: i18nMsg(AuthErrorMessageConstants.invalidMaxLengthPassword, {
       max: AuthConstants.userPasswordMaxLength,
     }),

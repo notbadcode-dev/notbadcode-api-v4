@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type UUID } from 'crypto';
 
 import { type Logger } from '@nestjs/common';
@@ -40,13 +40,13 @@ describe('RefreshHandler', () => {
     };
 
     handler = new RefreshHandler(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+       
       jwtService as any,
       authService,
       commonSessionControlService,
       logger,
       userService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+       
       i18nService as any,
     );
   });
@@ -55,13 +55,13 @@ describe('RefreshHandler', () => {
     expect(
       () =>
         new RefreshHandler(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+           
           jwtService as any,
           authService,
           commonSessionControlService,
           logger,
           userService,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+           
           i18nService as any,
         ),
     ).not.toThrow();
@@ -200,7 +200,7 @@ describe('RefreshHandler', () => {
     const result = await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(logger.error).toHaveBeenCalledWith(expect.any(String), expect.stringContaining(errorMessage));
     expect(result.success).toBe(false);
     expect(result).toEqual(RefreshHandlerFixture.invalidTokenResponse());
@@ -269,7 +269,7 @@ describe('RefreshHandler', () => {
     await handler.execute(new RefreshCommand(RefreshHandlerFixture.validTokens().accessToken));
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(commonSessionControlService.setSession).toHaveBeenCalled();
     spy.mockRestore();
   });

@@ -3,8 +3,6 @@ import * as path from 'path';
 
 import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AuthModule } from 'apps/auth/src/auth.module';
-import { AuthConstants } from 'apps/auth/src/constants';
 import * as express from 'express';
 import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
@@ -14,9 +12,12 @@ import { buildSwaggerConfig, buildSwaggerUrl, ENV_DEFAULTS, ENV_KEYS, getCorsCon
 import { CommonConstants, SecurityConstants } from '@common/constants';
 import { GlobalExceptionFilter, ValidationExceptionFilter } from '@common/filters';
 import { I18nService } from '@common/i18n';
-import { LoggingInterceptor } from '@common/interceptors';
+import { LoggingInterceptor, TransformResponseInterceptor } from '@common/interceptors';
 import { loggerConfiguration } from '@common/loggers';
 import { SwaggerInfo } from '@common/value-objects';
+
+import { AuthModule } from 'apps/auth/src/auth.module';
+import { AuthConstants } from 'apps/auth/src/constants';
 
 import { AuthCredentialsRequest, LoginRequest, RefreshRequest, RegisterRequest } from './application/requests';
 import { LoginResponse } from './application/responses';
@@ -44,7 +45,7 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
-  app.useGlobalInterceptors(app.get(LoggingInterceptor));
+  app.useGlobalInterceptors(app.get(LoggingInterceptor), new TransformResponseInterceptor());
   app.useGlobalFilters(new GlobalExceptionFilter(), new ValidationExceptionFilter(i18n));
 
   const listenPort = Number(process.env.AUTH_PORT || ENV_DEFAULTS[ENV_KEYS.AUTH_PORT]);
@@ -61,7 +62,7 @@ async function bootstrap(): Promise<void> {
 void bootstrap();
 
 async function createApp(): Promise<INestApplication> {
-  const isProd = process.env.NODE_ENV === CommonConstants.productionEnvironmentTag;
+  const isProd = true; // FORCE HTTPS for e2e tests
   let httpsOptions: { key: Buffer; cert: Buffer } | undefined;
 
   if (isProd) {

@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'async_hooks';
+import { randomUUID } from 'crypto';
 
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 
 export interface RequestContext {
   correlationId: string;

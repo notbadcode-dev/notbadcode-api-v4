@@ -28,9 +28,9 @@ import {
 } from '@apps/links/src/application/handlers';
 import { LinkService } from '@apps/links/src/application/services';
 import { GroupLink, Link } from '@apps/links/src/domain/entities';
+import { GroupLinksController } from '@apps/links/src/group-links.controller';
 import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database';
 import { TypeOrmGroupLinkRepository, TypeOrmLinkRepository } from '@apps/links/src/infrastructure/repositories';
-import { GroupLinksController } from '@apps/links/src/group-links.controller';
 import { LinksHealthController } from '@apps/links/src/links-healtz.controller';
 import { LinksController } from '@apps/links/src/links.controller';
 

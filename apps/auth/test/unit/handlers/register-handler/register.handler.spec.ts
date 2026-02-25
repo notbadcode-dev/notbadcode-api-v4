@@ -57,7 +57,7 @@ describe('RegisterHandler', () => {
       commonSessionControlService,
       hashService,
       userService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+       
       i18nService as any,
     );
   });
@@ -71,7 +71,7 @@ describe('RegisterHandler', () => {
           commonSessionControlService,
           hashService,
           userService,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+           
           i18nService as any,
         ),
     ).not.toThrow();
@@ -152,7 +152,7 @@ describe('RegisterHandler', () => {
       expect.objectContaining({
         userId: RegisterHandlerFixture.createdUser().id,
         sessionId: RegisterHandlerFixture.getValidJti(),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         loginAt: expect.any(String),
       }),
     );
@@ -328,7 +328,7 @@ describe('RegisterHandler', () => {
     const spyError = jest.spyOn(TokenValidationHelper, 'validateUUID').mockResolvedValueOnce({ isError: true, errorMessage: 'invalid' });
 
     // Act (error)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+     
     const resultError = await (handler as any).setCacheSession(user, 'bad-uuid');
 
     // Assert (error)
@@ -344,7 +344,7 @@ describe('RegisterHandler', () => {
     commonSessionControlService.setSession.mockResolvedValueOnce(expectedSessionKey);
 
     // Act (success)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+     
     const resultSuccess = await (handler as any).setCacheSession(user, validJti);
 
     // Assert (success)
@@ -363,11 +363,11 @@ describe('RegisterHandler', () => {
     const user = RegisterHandlerFixture.createdUser();
 
     // Act
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+     
     const resultEmpty = await (handler as any).setCacheSession(user, '');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+     
     const resultNull = await (handler as any).setCacheSession(user, null);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+     
     const resultUndefined = await (handler as any).setCacheSession(user, undefined);
 
     // Assert

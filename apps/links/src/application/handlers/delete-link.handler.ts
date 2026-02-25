@@ -8,10 +8,10 @@ import { ApiResponse } from '@common/responses';
 
 import { DeleteLinkCommand } from '@apps/links/src/application/commands';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type ILinkRepository } from '@apps/links/src/domain/ports';
 import { LinkByIdSpecification } from '@apps/links/src/domain/specifications';
 
-import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @CommandHandler(DeleteLinkCommand)
 export class DeleteLinkHandler

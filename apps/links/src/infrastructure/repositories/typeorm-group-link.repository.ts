@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type FindOneOptions, type FindOptionsOrder, type FindOptionsWhere, Repository } from 'typeorm';
 
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 import { GroupLink } from '@apps/links/src/domain/entities';
+import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 
 @Injectable()
 export class TypeOrmGroupLinkRepository implements IGroupLinkRepository {

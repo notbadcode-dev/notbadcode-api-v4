@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type FindOneOptions, type FindOptionsOrder, type FindOptionsWhere, Repository } from 'typeorm';
 
-import { type ILinkRepository } from '@apps/links/src/domain/ports';
 import { Link } from '@apps/links/src/domain/entities';
+import { type ILinkRepository } from '@apps/links/src/domain/ports';
 
 @Injectable()
 export class TypeOrmLinkRepository implements ILinkRepository {

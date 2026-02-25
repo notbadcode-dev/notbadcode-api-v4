@@ -1,6 +1,7 @@
+import { permissionsPolicyMiddleware } from '@common/config/security/permissions-policy.middleware';
+
 import type { NextFunction, Request, Response } from 'express';
 
-import { permissionsPolicyMiddleware } from '@common/config/security/permissions-policy.middleware';
 
 describe('permissionsPolicyMiddleware', () => {
   it('sets Permissions-Policy header and calls next', () => {

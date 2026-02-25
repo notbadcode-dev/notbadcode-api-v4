@@ -15,7 +15,7 @@ export class RefreshRequestValidatorFixture {
 
   static getNonStringRefreshTokenRequest(): RefreshRequest {
     return Object.assign(new RefreshRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       refreshToken: 12345,
     });
   }

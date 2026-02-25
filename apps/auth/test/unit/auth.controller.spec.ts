@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import { Test, TestingModule } from '@nestjs/testing';
+ 
 import { CommandBus } from '@nestjs/cqrs';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { AuthController } from '@apps/auth/src/auth.controller';
 import { LoginCommand, LogoutCommand, RefreshCommand, RegisterCommand } from '@apps/auth/src/application/commands';
+import { AuthController } from '@apps/auth/src/auth.controller';
 
 import { AuthControllerFixture } from './auth.controller.fixture';
 
@@ -14,9 +14,7 @@ describe('AuthController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [
-        { provide: CommandBus, useValue: { execute: jest.fn() } },
-      ],
+      providers: [{ provide: CommandBus, useValue: { execute: jest.fn() } }],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
@@ -33,9 +31,7 @@ describe('AuthController', () => {
       const result = await controller.login(request);
 
       // Assert
-      expect(commandBus.execute).toHaveBeenCalledWith(
-        new LoginCommand(request.email, request.password),
-      );
+      expect(commandBus.execute).toHaveBeenCalledWith(new LoginCommand(request.email, request.password));
       expect(result).toEqual(AuthControllerFixture.loginResponse);
     });
   });
@@ -50,9 +46,7 @@ describe('AuthController', () => {
       const result = await controller.register(request);
 
       // Assert
-      expect(commandBus.execute).toHaveBeenCalledWith(
-        new RegisterCommand(request.email, request.password),
-      );
+      expect(commandBus.execute).toHaveBeenCalledWith(new RegisterCommand(request.email, request.password));
       expect(result).toEqual(AuthControllerFixture.loginResponse);
     });
   });
@@ -68,9 +62,7 @@ describe('AuthController', () => {
       const result = await controller.logout(accessToken);
 
       // Assert
-      expect(commandBus.execute).toHaveBeenCalledWith(
-        new LogoutCommand(accessToken),
-      );
+      expect(commandBus.execute).toHaveBeenCalledWith(new LogoutCommand(accessToken));
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -85,9 +77,7 @@ describe('AuthController', () => {
       const result = await controller.refresh(request);
 
       // Assert
-      expect(commandBus.execute).toHaveBeenCalledWith(
-        new RefreshCommand(request.refreshToken),
-      );
+      expect(commandBus.execute).toHaveBeenCalledWith(new RefreshCommand(request.refreshToken));
       expect(result).toEqual(AuthControllerFixture.loginResponse);
     });
   });

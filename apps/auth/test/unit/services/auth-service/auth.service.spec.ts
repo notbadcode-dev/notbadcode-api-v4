@@ -15,12 +15,12 @@ describe('AuthService', () => {
   beforeEach(() => {
     jwtService = mockDeep<JwtService>();
     configService = { get: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     service = new AuthService(jwtService, configService as any);
   });
 
   it('can be constructed', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     expect(() => new AuthService(jwtService, configService as any)).not.toThrow();
   });
 
@@ -44,12 +44,12 @@ describe('AuthService', () => {
   const result = await service.generateTokens(AuthServiceFixture.validJwtPayload);
 
   // Assert
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+   
   expect(jwtService.signAsync).toHaveBeenCalledWith(
     { ...AuthServiceFixture.validJwtPayload.toPlainObject(), tokenType: 'access' },
     { expiresIn: AuthServiceFixture.accessTokenExpiresIn() },
   );
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+   
   expect(jwtService.signAsync).toHaveBeenCalledWith(
     { ...AuthServiceFixture.validJwtPayload.toPlainObject(), tokenType: 'refresh' },
     { expiresIn: AuthServiceFixture.refreshTokenExpiresIn() },

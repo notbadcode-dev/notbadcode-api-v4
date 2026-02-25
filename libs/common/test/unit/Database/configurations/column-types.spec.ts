@@ -1,13 +1,14 @@
+/* eslint-disable no-restricted-syntax */
 import {
-  ColumnBoolean,
-  ColumnDateTimeNonNullable,
-  ColumnDateTimeNullable,
-  ColumnEnumNonNullable,
-  ColumnEnumNullable,
-  ColumnJsonArray,
-  ColumnJsonRgb,
-  ColumnVarchar,
-  ColumnVarcharWithTransform,
+    ColumnBoolean,
+    ColumnDateTimeNonNullable,
+    ColumnDateTimeNullable,
+    ColumnEnumNonNullable,
+    ColumnEnumNullable,
+    ColumnJsonArray,
+    ColumnJsonRgb,
+    ColumnVarchar,
+    ColumnVarcharWithTransform,
 } from '@common/database/configurations/column-types';
 
 import { ColumnTypesFixture, ColumnTypesFixtureEnum } from './column-types.fixture';

@@ -8,10 +8,10 @@ import { ApiResponse } from '@common/responses';
 
 import { GetGroupLinkByIdQuery } from '@apps/links/src/application/queries';
 import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 import { GroupLinkByIdSpecification } from '@apps/links/src/domain/specifications';
 
-import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @QueryHandler(GetGroupLinkByIdQuery)
 export class GetGroupLinkByIdHandler

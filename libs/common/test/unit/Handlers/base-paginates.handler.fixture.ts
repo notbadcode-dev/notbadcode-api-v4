@@ -17,9 +17,9 @@ export interface TestResponseDto {
 export class BasePaginatedHandlerFixture {
   static request(): PaginatedRequest {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       currentPage: 2,
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       take: 10,
       sortBy: 'createdAt',
       sortOrder: 'DESC',
@@ -33,7 +33,7 @@ export class BasePaginatedHandlerFixture {
         title: 'first',
       },
       {
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+         
         id: 2,
         title: 'second',
       },
@@ -50,11 +50,11 @@ export class BasePaginatedHandlerFixture {
   static paginatedResponse(items: TestResponseDto[]): PaginatedResponse<TestResponseDto> {
     return {
       items,
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       total: 50,
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       take: 10,
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       skip: 10,
       sortBy: 'createdAt',
       sortOrder: 'DESC',
@@ -83,9 +83,9 @@ export class BasePaginatedHandlerFixture {
     order: Record<string, unknown>;
   } {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       skip: 10,
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       take: 10,
       order: {
         createdAt: 'DESC',

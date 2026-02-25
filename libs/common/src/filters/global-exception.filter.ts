@@ -52,18 +52,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (typeof response === 'object' && response !== null && 'message' in response) {
       const msg = (response as { message: unknown }).message;
       if (typeof msg === 'string') return msg;
-      if (Array.isArray(msg)) return msg[0]?.toString() ?? 'Error';
+      if (Array.isArray(msg)) {
+        const msgArray = msg as string[];
+        return msgArray[0] ?? 'Error';
+      }
     }
 
     return exception.message;
   }
 
   private logException(exception: unknown, status: number): void {
-    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(
-        exception instanceof Error ? exception.message : 'Unknown error',
-        exception instanceof Error ? exception.stack : undefined,
-      );
+    if (status >= (HttpStatus.INTERNAL_SERVER_ERROR as number)) {
+      this.logger.error(exception instanceof Error ? exception.message : 'Unknown error', exception instanceof Error ? exception.stack : undefined);
     } else {
       this.logger.warn(exception instanceof Error ? exception.message : 'Unknown warning');
     }

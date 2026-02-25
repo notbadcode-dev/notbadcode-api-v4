@@ -43,7 +43,17 @@ export const ColumnJsonRgb = (nullable = true): ColumnOptions => ({
   nullable,
   transformer: {
     to: (value: RgbColor | null): RgbColor | null => (isRgbColor(value) ? { r: value.r, g: value.g, b: value.b } : null),
-    from: (value: unknown): RgbColor | null => (isRgbColor(value) ? { r: value.r, g: value.g, b: value.b } : null),
+    from: (value: unknown): RgbColor | null => {
+      let parsed = value;
+      if (typeof value === 'string') {
+        try {
+          parsed = JSON.parse(value);
+        } catch {
+          // ignore parsing error
+        }
+      }
+      return isRgbColor(parsed) ? { r: parsed.r, g: parsed.g, b: parsed.b } : null;
+    },
   },
 });
 

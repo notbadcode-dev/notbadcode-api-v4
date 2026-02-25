@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { CreateGroupLinkCommand } from '@apps/links/src/application/commands';
 import { CreateGroupLinkHandler } from '@apps/links/src/application/handlers';
 import { type CreateGroupLinkRequest } from '@apps/links/src/application/requests';
@@ -22,7 +22,7 @@ describe('CreateGroupLinkHandler', () => {
       softDelete: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new CreateGroupLinkHandler(groupLinkRepository, i18nService as any);
   });
 

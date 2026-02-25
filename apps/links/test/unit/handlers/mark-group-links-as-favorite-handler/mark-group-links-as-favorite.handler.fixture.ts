@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type MarkGroupLinksAsFavoriteRequest } from '@apps/links/src/application/requests';
 import { GroupLink } from '@apps/links/src/domain/entities';
 

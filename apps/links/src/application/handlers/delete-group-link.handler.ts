@@ -8,9 +8,9 @@ import { ApiResponse } from '@common/responses';
 
 import { DeleteGroupLinkCommand } from '@apps/links/src/application/commands';
 import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
-
 import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
+import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
+
 
 @CommandHandler(DeleteGroupLinkCommand)
 export class DeleteGroupLinkHandler
@@ -20,6 +20,8 @@ export class DeleteGroupLinkHandler
   constructor(
     @Inject('IGroupLinkRepository')
     private readonly groupLinkRepository: IGroupLinkRepository,
+    @Inject('ILinkRepository')
+    private readonly linkRepository: ILinkRepository,
     i18nService: I18nService,
   ) {
     super(i18nService);
@@ -38,6 +40,10 @@ export class DeleteGroupLinkHandler
     if (!groupLink) {
       return this.createResponseFailure(GroupLinksErrorMessageConstants.notFound, HttpStatus.NOT_FOUND);
     }
+
+    // Manually nullify groupLinkId for all associated links
+    // This is necessary because softDelete doesn't trigger ON DELETE SET NULL database constraints
+    await this.linkRepository.update({ groupLinkId: groupLinkId, userId: command.userId }, { groupLinkId: null });
 
     const deleteResult = await this.groupLinkRepository.softDelete({ id: groupLinkId, userId: command.userId });
     if (!deleteResult.affected) {

@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 export class CachedDecoratorFixture {
   static noCachedError = 'Should not be executed!';
   static CachedTimer = 1;

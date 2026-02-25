@@ -1,11 +1,24 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 
-import { type RgbColor } from '@common/database/configurations/column-types';
 
 import { LinkBasicResponse } from './link-basic.response';
 
 type GetGroupLinkByIdResponsePartial = Partial<GetGroupLinkByIdResponse>;
+
+class RgbColorResponse {
+  @ApiProperty()
+  @Expose()
+  r!: number;
+
+  @ApiProperty()
+  @Expose()
+  g!: number;
+
+  @ApiProperty()
+  @Expose()
+  b!: number;
+}
 
 @Exclude()
 export class GetGroupLinkByIdResponse {
@@ -21,9 +34,10 @@ export class GetGroupLinkByIdResponse {
   @Expose()
   description?: string | null;
 
-  @ApiPropertyOptional({ type: Object, nullable: true, description: 'RGB color object { r, g, b }' })
+  @ApiPropertyOptional({ type: RgbColorResponse, nullable: true, description: 'RGB color object { r, g, b }' })
   @Expose()
-  color?: RgbColor | null;
+  @Type(() => RgbColorResponse)
+  color?: RgbColorResponse | null;
 
   @ApiPropertyOptional({ nullable: true })
   @Expose()

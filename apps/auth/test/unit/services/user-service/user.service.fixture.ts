@@ -4,7 +4,7 @@ import { type UserSession } from '@common/redis/session/user-session.model';
 
 export class UserServiceFixture {
   static userId(): number {
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+     
     return 12345;
   }
 

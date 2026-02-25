@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { DeleteLinkCommand } from '@apps/links/src/application/commands';
 import { DeleteLinkHandler } from '@apps/links/src/application/handlers';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
@@ -22,7 +22,7 @@ describe('DeleteLinkHandler', () => {
       softDelete: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new DeleteLinkHandler(linkRepository, i18nService as any);
   });
 

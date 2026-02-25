@@ -1,16 +1,12 @@
 import { type I18nService } from '@common/i18n';
-import { type ApiFailureResponse, apiResponseFailure, apiResponseSuccess, type ApiSuccessResponse, EApiResponseMessageType } from '@common/responses';
+import { apiResponseFailure, apiResponseSuccess, EApiResponseMessageType, type ApiFailureResponse, type ApiSuccessResponse } from '@common/responses';
 
 export abstract class BaseHandler<TCommand, TResult> {
   constructor(protected readonly i18nService: I18nService) {}
 
   abstract execute(command: TCommand): Promise<TResult>;
 
-  protected async createResponseFailure(
-    message: string,
-    status?: number,
-    code?: string,
-  ): Promise<ApiFailureResponse> {
+  protected async createResponseFailure(message: string, status?: number, code?: string): Promise<ApiFailureResponse> {
     void status;
     if (code === undefined) {
       return await apiResponseFailure(this.i18nService, [{ type: EApiResponseMessageType.Error, message }]);

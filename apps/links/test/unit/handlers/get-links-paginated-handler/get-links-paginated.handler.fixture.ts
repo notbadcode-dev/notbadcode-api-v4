@@ -1,6 +1,6 @@
 import { PaginatedRequest } from '@common/requests';
 
-import { Link } from '@apps/links/src/domain/entities';
+import { type Link } from '@apps/links/src/domain/entities';
 
 export class GetLinksPaginatedHandlerFixture {
   static readonly validUserId = 123;

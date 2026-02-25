@@ -32,7 +32,7 @@ export class RegisterRequestValidatorFixture {
   static getTooLongPasswordRegisterRequest(): RegisterRequest {
     return Object.assign(new RegisterRequest(), {
       email: 'test@example.com',
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       password: 'a'.repeat(200),
     });
   }

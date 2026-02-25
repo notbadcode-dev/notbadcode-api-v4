@@ -32,7 +32,7 @@ export class CreateLinkRequestValidatorFixture {
 
   static getTooLongUrlRequest(): CreateLinkRequest {
     return Object.assign(new CreateLinkRequest(), {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       url: `https://example.com/${'a'.repeat(2000)}`,
     });
   }
@@ -47,7 +47,7 @@ export class CreateLinkRequestValidatorFixture {
   static getTooLongTitleRequest(): CreateLinkRequest {
     return Object.assign(new CreateLinkRequest(), {
       url: 'https://example.com',
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       title: 'a'.repeat(251),
     });
   }
@@ -55,7 +55,7 @@ export class CreateLinkRequestValidatorFixture {
   static getTooLongDescriptionRequest(): CreateLinkRequest {
     return Object.assign(new CreateLinkRequest(), {
       url: 'https://example.com',
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       description: 'a'.repeat(501),
     });
   }
@@ -77,7 +77,7 @@ export class CreateLinkRequestValidatorFixture {
   static getTooManyTagsRequest(): CreateLinkRequest {
     return Object.assign(new CreateLinkRequest(), {
       url: 'https://example.com',
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       tagList: Array.from({ length: 51 }, (_, i) => `tag${i}`),
     });
   }
@@ -92,7 +92,7 @@ export class CreateLinkRequestValidatorFixture {
   static getTagListWithTooLongTagRequest(): CreateLinkRequest {
     return Object.assign(new CreateLinkRequest(), {
       url: 'https://example.com',
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+       
       tagList: ['a'.repeat(251)],
     });
   }

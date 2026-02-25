@@ -12,11 +12,11 @@ import { ErrorOn, ErrorOnFactory } from '@common/types';
 import { CreateLinkCommand } from '@apps/links/src/application/commands';
 import { CreateLinkRequest } from '@apps/links/src/application/requests';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
+import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { Link } from '@apps/links/src/domain/entities';
 import { LinkLastStatusCode } from '@apps/links/src/domain/enums';
 import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 
-import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @CommandHandler(CreateLinkCommand)
 export class CreateLinkHandler

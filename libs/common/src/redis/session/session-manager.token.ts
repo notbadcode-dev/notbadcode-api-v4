@@ -1,0 +1,1 @@
+export const SESSION_MANAGER = 'SESSION_MANAGER';

@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { GetGroupLinkByIdHandler } from '@apps/links/src/application/handlers';
-import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
 import { GetGroupLinkByIdQuery } from '@apps/links/src/application/queries';
+import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 
@@ -21,7 +21,7 @@ describe('GetGroupLinkByIdHandler', () => {
       update: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new GetGroupLinkByIdHandler(groupLinkRepository, i18nService as any);
   });
 

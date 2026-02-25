@@ -11,9 +11,9 @@ import { ErrorOn, ErrorOnFactory } from '@common/types';
 import { UpdateGroupLinkCommand } from '@apps/links/src/application/commands';
 import { UpdateGroupLinkRequest } from '@apps/links/src/application/requests';
 import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 
-import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 
 @CommandHandler(UpdateGroupLinkCommand)
 export class UpdateGroupLinkHandler

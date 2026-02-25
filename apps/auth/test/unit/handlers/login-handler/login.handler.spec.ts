@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
+import { mockDeep } from 'jest-mock-extended';
+
 import { type CommonSessionControlService } from '@common/redis/session';
 import { ErrorOnFactory } from '@common/types/error-on.type';
 
@@ -10,7 +12,6 @@ import { AuthErrorMessageConstants } from '@apps/auth/src/constants';
 import { type User } from '@apps/auth/src/domain/entities';
 import { type IUserRepository } from '@apps/auth/src/domain/ports';
 
-import { mockDeep } from 'jest-mock-extended';
 
 import { LoginHandlerFixture } from './login.handler.fixture';
 
@@ -54,7 +55,7 @@ describe('LoginHandler', () => {
       commonSessionControlService,
       hashService,
       userService,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+       
       i18nService as any,
     );
   });
@@ -67,7 +68,7 @@ describe('LoginHandler', () => {
         commonSessionControlService,
         hashService,
         userService,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         i18nService as any,
       );
     }).not.toThrow();

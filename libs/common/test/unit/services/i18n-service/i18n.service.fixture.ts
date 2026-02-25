@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type TranslateOptions } from 'nestjs-i18n';
 
 type NestI18nMock = {

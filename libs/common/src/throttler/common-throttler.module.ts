@@ -10,15 +10,19 @@ import { ENV_DEFAULTS, ENV_KEYS } from '@common/config';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        throttlers: [
-          {
-            name: 'default',
-            ttl: config.get<number>(ENV_KEYS.THROTTLE_TTL, ENV_DEFAULTS[ENV_KEYS.THROTTLE_TTL] as number),
-            limit: config.get<number>(ENV_KEYS.THROTTLE_LIMIT, ENV_DEFAULTS[ENV_KEYS.THROTTLE_LIMIT] as number),
-          },
-        ],
-      }),
+      useFactory: (config: ConfigService) => {
+        const ttlString = config.get<string>(ENV_KEYS.THROTTLE_TTL, String(ENV_DEFAULTS[ENV_KEYS.THROTTLE_TTL]));
+        const limitString = config.get<string>(ENV_KEYS.THROTTLE_LIMIT, String(ENV_DEFAULTS[ENV_KEYS.THROTTLE_LIMIT]));
+        return {
+          throttlers: [
+            {
+              name: 'default',
+              ttl: parseInt(ttlString, 10),
+              limit: parseInt(limitString, 10),
+            },
+          ],
+        };
+      },
     }),
   ],
   providers: [

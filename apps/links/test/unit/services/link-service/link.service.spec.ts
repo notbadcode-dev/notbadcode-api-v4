@@ -1,5 +1,5 @@
 import { LinkService } from '@apps/links/src/application/services';
-import { Link } from '@apps/links/src/domain/entities';
+import { type Link } from '@apps/links/src/domain/entities';
 
 describe('LinkService', () => {
   let service: LinkService;

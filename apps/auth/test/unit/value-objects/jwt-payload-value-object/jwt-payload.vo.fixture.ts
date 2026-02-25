@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type UUID } from 'crypto';
 
 import { EJwtType, type JwtPayloadPlain } from '@common/auth';

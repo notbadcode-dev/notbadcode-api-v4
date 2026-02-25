@@ -33,7 +33,9 @@ services:
 
   auth:
     profiles: ["debug"]
-    command: sh -lc "npm ci && npm run start:auth:debug"
+    command: sh -lc "npm install && npx nest start auth --debug 0.0.0.0:9229 --watch"
+    env_file:
+      - apps/auth/.env
     healthcheck:
       test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:60200/healthz"]
       interval: 15s
@@ -64,7 +66,9 @@ services:
         condition: service_healthy
   links:
     profiles: ["debug"]
-    command: sh -lc "npm ci && npm run start:links:debug"
+    command: sh -lc "npm install && npx nest start links --debug 0.0.0.0:9230 --watch"
+    env_file:
+      - apps/links/.env
     healthcheck:
       test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:60201/healthz"]
       interval: 15s

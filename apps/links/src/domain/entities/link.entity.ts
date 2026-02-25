@@ -5,6 +5,7 @@ import { DeletableEntity } from '@common/database';
 import { ColumnBoolean, ColumnDateTimeNullable, ColumnEnumNonNullable, ColumnJsonArray, ColumnVarchar } from '@common/database/configurations/column-types';
 
 import { LinkLastStatusCode } from '@apps/links/src/domain/enums';
+
 import { GroupLink } from './group-link.entity';
 
 @Entity({ name: 'links' })

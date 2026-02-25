@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { GroupLink, Link } from '@apps/links/src/domain/entities';
 
 export class LinkByIdHandlerFixture {

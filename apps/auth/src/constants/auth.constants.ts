@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 export const AuthConstants = {
   nodeInspectHost: '0.0.0.0',
   listenAppMessage: (port: number) => {
@@ -14,7 +14,7 @@ export const AuthConstants = {
   saltsRounds: 10,
 
   throttle: {
-    defaultLimit: 5,
-    defaultTtl: 60000,
+    defaultLimit: parseInt(process.env.THROTTLE_LIMIT || '5', 10),
+    defaultTtl: parseInt(process.env.THROTTLE_TTL || '60000', 10),
   },
 };

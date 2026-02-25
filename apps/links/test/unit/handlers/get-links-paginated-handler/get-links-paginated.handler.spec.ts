@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+ 
 import { GetLinksPaginatedHandler } from '@apps/links/src/application/handlers';
 import { GetLinksPaginatedQuery } from '@apps/links/src/application/queries';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants';
@@ -22,7 +22,7 @@ describe('GetLinksPaginatedHandler', () => {
       createQueryBuilder: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new GetLinksPaginatedHandler(linkRepository, i18nService as any);
   });
 

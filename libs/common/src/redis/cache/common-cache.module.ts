@@ -2,8 +2,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { cacheConfigFactory } from './cache.config';
 import { CacheAccessor } from './cache-accessor';
+import { cacheConfigFactory } from './cache.config';
 
 @Module({
   imports: [
@@ -15,6 +15,6 @@ import { CacheAccessor } from './cache-accessor';
     }),
   ],
   providers: [CacheAccessor],
-  exports: [CacheModule],
+  exports: [CacheAccessor],
 })
 export class CommonCacheModule {}

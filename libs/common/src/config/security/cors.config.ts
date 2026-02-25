@@ -1,6 +1,6 @@
+import { ENV_DEFAULTS, ENV_KEYS } from '@common/config/environment';
 import { SecurityConstants } from '@common/constants/security.constants';
 
-import { ENV_DEFAULTS, ENV_KEYS } from '@common/config/environment';
 
 import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 

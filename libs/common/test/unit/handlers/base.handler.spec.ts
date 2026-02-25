@@ -1,8 +1,10 @@
-import { type I18nService } from '@common/i18n';
 import { BaseHandler } from '@common/handler/base.handler';
+import { type I18nService } from '@common/i18n';
+import { type ApiSuccessResponse } from '@common/responses';
 
-class TestBaseHandler extends BaseHandler<{ input: string }, { ok: boolean }> {
-  async execute(_command: { input: string }): Promise<{ ok: boolean }> {
+class TestBaseHandler extends BaseHandler<{ input: string }, ApiSuccessResponse<{ ok: boolean }>> {
+  async execute(_command: { input: string }): Promise<ApiSuccessResponse<{ ok: boolean }>> {
+    void _command;
     return this.createSuccessResponse({ ok: true });
   }
 
@@ -17,9 +19,8 @@ describe('BaseHandler', () => {
 
   beforeEach(() => {
     i18nService = {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       translate: jest.fn(async (key: string) => key),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       t: jest.fn(async (key: string) => key),
     } as unknown as I18nService;
     handler = new TestBaseHandler(i18nService);

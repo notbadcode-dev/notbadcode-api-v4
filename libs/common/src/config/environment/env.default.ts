@@ -1,5 +1,6 @@
 import { ESupportedLanguage } from '@common/enums/';
-// eslint-disable-next-line import/order
+
+ 
 import { ENV_KEYS } from './env.keys';
 
 
@@ -34,7 +35,7 @@ export const ENV_DEFAULTS = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   [ENV_KEYS.THROTTLE_TTL]: 60000,
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-  [ENV_KEYS.THROTTLE_LIMIT]: 60,
+  [ENV_KEYS.THROTTLE_LIMIT]: 100,
 
   [ENV_KEYS.REDIS_CACHE_URL]: 'redis://redis:6379',
   [ENV_KEYS.REDIS_CACHE_PASSWORD]: '',

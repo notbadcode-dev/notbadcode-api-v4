@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import { GetGroupLinksPaginatedQuery } from '@apps/links/src/application/queries';
+ 
 import { GetGroupLinksPaginatedHandler } from '@apps/links/src/application/handlers';
+import { GetGroupLinksPaginatedQuery } from '@apps/links/src/application/queries';
 import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
 
@@ -21,7 +21,7 @@ describe('GetGroupLinksPaginatedHandler', () => {
       softDelete: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     handler = new GetGroupLinksPaginatedHandler(groupLinkRepository, i18nService as any);
   });
 

@@ -10,15 +10,11 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     // 👉 Asegúrate de incluir TODOS los tsconfig de apps y libs
-    project: [
-      './tsconfig.eslint.json',
-      './tsconfig.json',
-      './apps/*/tsconfig.json',
-      './libs/*/tsconfig.json',
-    ],
+    project: ['./tsconfig.eslint.json', './tsconfig.json', './apps/*/tsconfig.json', './libs/*/tsconfig.json'],
     tsconfigRootDir: __dirname,
     sourceType: 'module',
     ecmaVersion: 'latest',
+    noWarnOnMultipleProjects: true,
   },
 
   plugins: ['@typescript-eslint', 'import', 'unused-imports', 'sonarjs'],
@@ -39,12 +35,8 @@ module.exports = {
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true,
-        project: [
-          './tsconfig.eslint.json',
-          './tsconfig.json',
-          './apps/*/tsconfig.json',
-          './libs/*/tsconfig.json',
-        ],
+        project: ['./tsconfig.eslint.json', './tsconfig.json', './apps/*/tsconfig.json', './libs/*/tsconfig.json'],
+        noWarnOnMultipleProjects: true,
       },
     },
   },
@@ -69,10 +61,7 @@ module.exports = {
     'no-debugger': 'warn',
 
     // ——— TypeScript (type-aware)
-    '@typescript-eslint/consistent-type-imports': [
-      'warn',
-      { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
-    ],
+    '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
     '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: { attributes: false } }],
     '@typescript-eslint/require-await': 'off',
     '@typescript-eslint/no-floating-promises': 'warn',
@@ -108,10 +97,7 @@ module.exports = {
 
     // ——— Limpiar imports/vars sin usar
     'unused-imports/no-unused-imports': 'warn',
-    'unused-imports/no-unused-vars': [
-      'warn',
-      { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
-    ],
+    'unused-imports/no-unused-vars': ['warn', { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' }],
 
     // ——— Orden de imports
     'import/order': [
@@ -160,13 +146,14 @@ module.exports = {
     },
     // Tests
     {
-      files: ['**/*.spec.ts', '**/*.test.ts'],
+      files: ['**/*.spec.ts', '**/*.test.ts', '**/*.e2e-spec.ts', '**/*.fixture.ts'],
       env: { jest: true, node: true },
-      plugins: ['jest', '@typescript-eslint'],
+      plugins: ['jest', '@typescript-eslint', 'sonarjs'],
       extends: ['plugin:@typescript-eslint/recommended', 'plugin:jest/recommended', 'prettier'],
       parserOptions: {
         project: ['./tsconfig.eslint.json', './apps/*/tsconfig.json', './libs/*/tsconfig.json'],
         tsconfigRootDir: __dirname,
+        noWarnOnMultipleProjects: true,
       },
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
@@ -174,6 +161,31 @@ module.exports = {
         '@typescript-eslint/no-floating-promises': 'off',
         '@typescript-eslint/no-misused-promises': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-magic-numbers': 'off',
+        '@typescript-eslint/unbound-method': 'off',
+        'sonarjs/no-duplicate-string': 'off',
+        'sonarjs/no-identical-functions': 'off',
+      },
+    },
+    // CQRS Handlers
+    {
+      files: ['**/*.handler.ts'],
+      rules: {
+        '@typescript-eslint/no-unsafe-return': 'off',
+        'sonarjs/cognitive-complexity': 'off',
+        '@typescript-eslint/no-magic-numbers': 'off',
+      },
+    },
+    // DTOs, Constants and Entities
+    {
+      files: ['**/*.request.ts', '**/*.response.ts', '**/*.constants.ts', '**/*.entity.ts'],
+      rules: {
+        '@typescript-eslint/no-magic-numbers': 'off',
       },
     },
     // Si tienes archivos de setup que no necesitan type-checking

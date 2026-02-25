@@ -1,9 +1,9 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Logger, ServiceUnavailableException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { RedisSessionControlConstants } from '@common/constants/redis-session-control.constants';
 import { CommonSessionControlService } from '@common/redis/session';
+import { SESSION_MANAGER } from '@common/redis/session/session-manager.token';
 
 import { cacheManagerMock } from '@test/utils/mocks/cache.mock';
 import { loggerMock } from '@test/utils/mocks/winston.mock';
@@ -19,21 +19,16 @@ describe('CommonSessionControlService', () => {
     cacheMock = cacheManagerMock();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommonSessionControlService, { provide: CACHE_MANAGER, useValue: cacheMock }, { provide: Logger, useValue: loggerMock }],
+      providers: [CommonSessionControlService, { provide: SESSION_MANAGER, useValue: cacheMock }, { provide: Logger, useValue: loggerMock }],
     }).compile();
 
     // Act
     service = module.get(CommonSessionControlService);
   });
 
-  it('should be defined', () => {
-    // Assert
-    expect(service).toBeDefined();
-  });
-
   it('can be constructed manually', () => {
     // Arrange
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     const factory = () => new CommonSessionControlService(cacheMock as any, loggerMock as any);
 
     // Assert
@@ -75,7 +70,7 @@ describe('CommonSessionControlService', () => {
     await expect(service.setSession(key, session)).rejects.toThrow(ServiceUnavailableException);
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(loggerMock.error).toHaveBeenCalled();
   });
 
@@ -119,7 +114,7 @@ describe('CommonSessionControlService', () => {
     await expect(service.getSession(key)).rejects.toThrow(ServiceUnavailableException);
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(loggerMock.error).toHaveBeenCalled();
   });
 
@@ -166,7 +161,7 @@ describe('CommonSessionControlService', () => {
     await expect(service.deleteSession(key)).rejects.toThrow(ServiceUnavailableException);
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(loggerMock.error).toHaveBeenCalled();
   });
 });

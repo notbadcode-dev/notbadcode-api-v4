@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+ 
+ 
 
 jest.mock('@common/responses', () => {
   const actual = jest.requireActual('@common/responses');
@@ -11,6 +11,8 @@ jest.mock('@common/responses', () => {
   return { ...actual, apiResponseFailure } as ApiFailureResponse;
 });
 
+import { ServiceUnavailableException } from '@nestjs/common';
+
 import { CommonConstants, CommonErrorMessageConstants } from '@common/constants';
 import { RedisCacheConstants } from '@common/constants/redis-cache.constants';
 import { CacheAccessor } from '@common/redis/cache/cache-accessor';
@@ -21,14 +23,12 @@ import {
   returnCacheError,
   stableReplacer,
 } from '@common/redis/cache/decorators/cached.decorator';
-import { ServiceUnavailableException } from '@nestjs/common';
-
 import { apiResponseFailure, ApiResponseMessage } from '@common/responses';
 
 import { CachedDecoratorFixture } from './cached.decorator.fixture';
 
 beforeEach(() => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+   
   (CacheAccessor as any)._cache = null;
   (apiResponseFailure as jest.Mock).mockClear();
 });
@@ -114,11 +114,11 @@ beforeEach(() => {
 
       // Act
       await expect(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         returnCacheError(i18nMock as any),
       ).rejects.toThrow(ServiceUnavailableException);
       await expect(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         returnCacheError(i18nMock as any),
       ).rejects.toThrow('msg');
     });
@@ -140,7 +140,7 @@ beforeEach(() => {
       const i18n = new I18nServiceMock();
 
       class Svc {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         @Cached(CachedDecoratorFixture.CachedTimer, i18n as any)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async demo(_x: number): Promise<string> {
@@ -180,7 +180,7 @@ beforeEach(() => {
         get: jest.fn().mockResolvedValue('cached-value'),
         set: jest.fn(),
       };
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+       
       (CacheAccessor as any)._cache = fakeCache;
 
       class Svc {
@@ -205,7 +205,7 @@ beforeEach(() => {
         get: jest.fn().mockResolvedValue(undefined),
         set: jest.fn(),
       };
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+       
       (CacheAccessor as any)._cache = fakeCache;
 
       class Svc {
@@ -231,7 +231,7 @@ beforeEach(() => {
     it('handles propertyKey as symbol in Cached', async () => {
       // Arrange
       const fakeCache = { get: jest.fn().mockResolvedValue(undefined), set: jest.fn() };
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+       
       (CacheAccessor as any)._cache = fakeCache;
       class Svc {
         @Cached(CachedDecoratorFixture.CachedTimer)
@@ -253,7 +253,7 @@ beforeEach(() => {
       const desc: any = { value: undefined };
 
       // Act
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+       
       const result = Cached(CachedDecoratorFixture.CachedTimer)({}, CachedDecoratorFixture.exampleKey, desc);
 
       // Assert

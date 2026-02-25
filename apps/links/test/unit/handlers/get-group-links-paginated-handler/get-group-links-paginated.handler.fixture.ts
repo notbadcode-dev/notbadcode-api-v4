@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+ 
 import { type PaginatedRequest } from '@common/requests';
 
 import { GroupLink } from '@apps/links/src/domain/entities';

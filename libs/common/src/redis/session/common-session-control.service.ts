@@ -1,16 +1,18 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 
 import { RedisSessionControlConstants } from '@common/constants/redis-session-control.constants';
 
+import { SESSION_MANAGER } from './session-manager.token';
 import { UserSession } from './user-session.model';
 
 import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class CommonSessionControlService {
+  private readonly SESSION_STORE_UNAVAILABLE_MSG = 'Session store unavailable';
+
   constructor(
-    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    @Inject(SESSION_MANAGER) private readonly cache: Cache,
     private readonly logger: Logger,
   ) {}
 
@@ -19,7 +21,7 @@ export class CommonSessionControlService {
       return await this.cache.set(key, JSON.stringify(value), ttl);
     } catch (error) {
       this.logger.error(error);
-      throw new ServiceUnavailableException('Session store unavailable');
+      throw new ServiceUnavailableException(this.SESSION_STORE_UNAVAILABLE_MSG);
     }
   }
 
@@ -34,7 +36,7 @@ export class CommonSessionControlService {
       return JSON.parse(raw) as UserSession;
     } catch (error) {
       this.logger.error(error);
-      throw new ServiceUnavailableException('Session store unavailable');
+      throw new ServiceUnavailableException(this.SESSION_STORE_UNAVAILABLE_MSG);
     }
   }
 
@@ -47,7 +49,7 @@ export class CommonSessionControlService {
       return await this.cache.del(key);
     } catch (error) {
       this.logger.error(error);
-      throw new ServiceUnavailableException('Session store unavailable');
+      throw new ServiceUnavailableException(this.SESSION_STORE_UNAVAILABLE_MSG);
     }
   }
 

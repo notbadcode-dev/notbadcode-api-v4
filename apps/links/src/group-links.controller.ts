@@ -9,9 +9,9 @@ import { PaginatedRequest } from '@common/requests';
 import { ApiFailureResponseModel, ApiResponse, createApiResponse, createPaginatedResponse, SuccessFailureResponse } from '@common/responses';
 
 import { CreateGroupLinkCommand, DeleteGroupLinkCommand, MarkGroupLinksAsFavoriteCommand, UnmarkGroupLinksAsFavoriteCommand, UpdateGroupLinkCommand } from '@apps/links/src/application/commands';
-import { GetGroupLinkByIdQuery, GetGroupLinksPaginatedQuery } from '@apps/links/src/application/queries';
+import { GetFavoriteGroupsQuery, GetGroupLinkByIdQuery, GetGroupLinksPaginatedQuery } from '@apps/links/src/application/queries';
 import { CreateGroupLinkRequest, MarkGroupLinksAsFavoriteRequest, UnmarkGroupLinksAsFavoriteRequest, UpdateGroupLinkRequest } from '@apps/links/src/application/requests';
-import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
+import { GetFavoriteGroupsResponse, GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
 import { LinksSwaggerConstants } from '@apps/links/src/constants';
 
 @ApiTags('Group Links')
@@ -58,6 +58,14 @@ export class GroupLinksController {
   @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
   async unmarkGroupLinksAsFavorite(@Body() body: UnmarkGroupLinksAsFavoriteRequest, @CurrentUserId() userId: number): Promise<ApiResponse<SuccessFailureResponse<number>>> {
     return this.commandBus.execute(new UnmarkGroupLinksAsFavoriteCommand(body, userId));
+  }
+
+  @Get('favorite-list')
+  @ApiOperation({ summary: 'Get favorite group links', description: 'Retrieves a list of favorite group links for the authenticated user' })
+  @ApiOkResponse({ type: createApiResponse(GetFavoriteGroupsResponse), description: 'Favorite group links retrieved successfully' })
+  @ApiUnauthorizedResponse({ type: ApiFailureResponseModel, description: SwaggerConstants.descriptions.invalidOrExpiredAccessToken })
+  async getFavoriteGroups(@CurrentUserId() userId: number): Promise<ApiResponse<GetFavoriteGroupsResponse>> {
+    return this.queryBus.execute(new GetFavoriteGroupsQuery(userId));
   }
 
   @Get(':id')

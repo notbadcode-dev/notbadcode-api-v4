@@ -15,10 +15,13 @@ import {
   CreateLinkHandler,
   DeleteGroupLinkHandler,
   DeleteLinkHandler,
+  GetFavoriteGroupsHandler,
+  GetFavoriteLinksHandler,
   GetGroupLinkByIdHandler,
   GetGroupLinksPaginatedHandler,
   GetLinkByIdHandler,
   GetLinksPaginatedHandler,
+  GetTotalsHandler,
   MarkGroupLinksAsFavoriteHandler,
   MarkLinksAsFavoriteHandler,
   UnmarkGroupLinksAsFavoriteHandler,
@@ -27,6 +30,7 @@ import {
   UpdateLinkHandler,
 } from '@apps/links/src/application/handlers';
 import { LinkService } from '@apps/links/src/application/services';
+import { DashboardLinkController } from '@apps/links/src/dashboard-link.controller';
 import { GroupLink, Link } from '@apps/links/src/domain/entities';
 import { GroupLinksController } from '@apps/links/src/group-links.controller';
 import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database';
@@ -47,7 +51,7 @@ import { LinksController } from '@apps/links/src/links.controller';
     CommonAuthGuardModule,
     CqrsModule,
   ],
-  controllers: [LinksController, GroupLinksController, LinksHealthController],
+  controllers: [LinksController, GroupLinksController, LinksHealthController, DashboardLinkController],
   providers: [
     CreateGroupLinkHandler,
     CreateLinkHandler,
@@ -63,6 +67,9 @@ import { LinksController } from '@apps/links/src/links.controller';
     MarkLinksAsFavoriteHandler,
     UnmarkGroupLinksAsFavoriteHandler,
     UnmarkLinksAsFavoriteHandler,
+    GetFavoriteLinksHandler,
+    GetFavoriteGroupsHandler,
+    GetTotalsHandler,
     LinkService,
     {
       provide: 'ILinkRepository',

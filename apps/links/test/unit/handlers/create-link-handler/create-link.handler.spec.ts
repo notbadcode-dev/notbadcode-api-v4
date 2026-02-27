@@ -1,5 +1,7 @@
- 
+
 import { QueryFailedError } from 'typeorm';
+
+import { ErrorOnFactory } from '@common/types';
 
 import { CreateLinkCommand } from '@apps/links/src/application/commands';
 import { CreateLinkHandler } from '@apps/links/src/application/handlers';
@@ -13,6 +15,7 @@ describe('CreateLinkHandler', () => {
   let handler: CreateLinkHandler;
   let linkRepository: jest.Mocked<ILinkRepository>;
   let groupLinkRepository: jest.Mocked<IGroupLinkRepository>;
+  let linkValidationService: jest.Mocked<any>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
 
   beforeEach(() => {
@@ -22,23 +25,32 @@ describe('CreateLinkHandler', () => {
       find: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
-    };
+      softDelete: jest.fn(),
+    } as any;
     groupLinkRepository = {
       findOne: jest.fn(),
       findAndCount: jest.fn(),
       find: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
+      softDelete: jest.fn(),
+    } as any;
+    linkValidationService = {
+      validateCreatePayload: jest.fn(),
+      validateUpdatePayload: jest.fn(),
+      isDuplicateEntryError: jest.fn(),
+      isValidUrl: jest.fn(),
     };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-     
-    handler = new CreateLinkHandler(linkRepository, groupLinkRepository, i18nService as any);
+
+    handler = new CreateLinkHandler(linkRepository, groupLinkRepository, linkValidationService, i18nService as any);
   });
 
   it('returns failure when url is missing', async () => {
     // Arrange
     const payload = { title: 'No URL' } as CreateLinkRequest;
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl));
 
     // Act
     const result = await handler.execute(command);
@@ -52,6 +64,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ url: CreateLinkHandlerFixture.invalidUrl });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl));
 
     // Act
     const result = await handler.execute(command);
@@ -65,6 +78,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ title: CreateLinkHandlerFixture.invalidTitle });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle));
 
     // Act
     const result = await handler.execute(command);
@@ -78,6 +92,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ isFavorite: 'yes' as unknown as boolean });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidFavoriteFlag));
 
     // Act
     const result = await handler.execute(command);
@@ -91,6 +106,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ tagList: CreateLinkHandlerFixture.invalidTagList });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList));
 
     // Act
     const result = await handler.execute(command);
@@ -104,6 +120,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ groupLinkId: -1 });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidGroupLinkId));
 
     // Act
     const result = await handler.execute(command);
@@ -119,6 +136,7 @@ describe('CreateLinkHandler', () => {
     groupLinkRepository.findOne.mockResolvedValueOnce(null);
     const payload = CreateLinkHandlerFixture.createPayloadWithGroup();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act
     const result = await handler.execute(command);
@@ -134,6 +152,7 @@ describe('CreateLinkHandler', () => {
     linkRepository.findOne.mockResolvedValueOnce(CreateLinkHandlerFixture.savedLink);
     const payload = CreateLinkHandlerFixture.createPayload();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act
     const result = await handler.execute(command);
@@ -149,6 +168,7 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockResolvedValueOnce(CreateLinkHandlerFixture.savedLink);
     const payload = CreateLinkHandlerFixture.createPayload();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act
     const result = await handler.execute(command);
@@ -167,6 +187,7 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockResolvedValueOnce(CreateLinkHandlerFixture.savedLinkWithGroup);
     const payload = CreateLinkHandlerFixture.createPayloadWithGroup();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act
     const result = await handler.execute(command);
@@ -191,6 +212,7 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockResolvedValueOnce(minimalSaved);
     const payload = CreateLinkHandlerFixture.createPayloadMinimal();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act
     const result = await handler.execute(command);
@@ -203,6 +225,7 @@ describe('CreateLinkHandler', () => {
   it('returns failure when payload is undefined', async () => {
     // Arrange
     const command = new CreateLinkCommand(undefined as any, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidPayload));
 
     // Act
     const result = await handler.execute(command);
@@ -216,6 +239,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ title: 123 as any });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle));
 
     // Act
     const result = await handler.execute(command);
@@ -229,6 +253,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ description: 123 as any });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired));
 
     // Act
     const result = await handler.execute(command);
@@ -242,6 +267,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ description: '   ' });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired));
 
     // Act
     const result = await handler.execute(command);
@@ -257,6 +283,7 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockResolvedValueOnce(CreateLinkHandlerFixture.savedLink);
     const payload = CreateLinkHandlerFixture.createPayload({ groupLinkId: null });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act
     const result = await handler.execute(command);
@@ -271,6 +298,7 @@ describe('CreateLinkHandler', () => {
     const tooManyTags = Array.from({ length: 51 }, (_, i) => `tag${i}`);
     const payload = CreateLinkHandlerFixture.createPayload({ tagList: tooManyTags });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList));
 
     // Act
     const result = await handler.execute(command);
@@ -284,6 +312,7 @@ describe('CreateLinkHandler', () => {
     // Arrange
     const payload = CreateLinkHandlerFixture.createPayload({ tagList: [123 as any, 'valid'] });
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList));
 
     // Act
     const result = await handler.execute(command);
@@ -308,6 +337,8 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockRejectedValueOnce(duplicateError);
     const payload = CreateLinkHandlerFixture.createPayload();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
+    linkValidationService.isDuplicateEntryError.mockReturnValue(true);
 
     // Act
     const result = await handler.execute(command);
@@ -332,6 +363,8 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockRejectedValueOnce(duplicateError);
     const payload = CreateLinkHandlerFixture.createPayload();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
+    linkValidationService.isDuplicateEntryError.mockReturnValue(true);
 
     // Act
     const result = await handler.execute(command);
@@ -356,6 +389,8 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockRejectedValueOnce(otherError);
     const payload = CreateLinkHandlerFixture.createPayload();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
+    linkValidationService.isDuplicateEntryError.mockReturnValue(false);
 
     // Act & Assert
     await expect(handler.execute(command)).rejects.toThrow(QueryFailedError);
@@ -369,6 +404,7 @@ describe('CreateLinkHandler', () => {
     linkRepository.save.mockRejectedValueOnce(genericError);
     const payload = CreateLinkHandlerFixture.createPayload();
     const command = new CreateLinkCommand(payload, CreateLinkHandlerFixture.validUserId);
+    linkValidationService.validateCreatePayload.mockReturnValue(ErrorOnFactory.success(payload));
 
     // Act & Assert
     await expect(handler.execute(command)).rejects.toThrow('Generic error');

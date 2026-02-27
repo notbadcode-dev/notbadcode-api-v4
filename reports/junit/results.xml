@@ -1,7 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="1.496">
-  <testsuite name="apps/links/test/unit/handlers/get-totals-handler/get-totals.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2026-02-25T22:12:42" time="1.259" tests="1">
-    <testcase classname="GetTotalsHandler - returns correct totals for a user" name="returns correct totals for a user" time="0.002">
+<testsuites name="jest tests" tests="22" failures="0" errors="0" time="1.438">
+  <testsuite name="apps/links/test/unit/handlers/create-link-handler/create-link.handler.spec.ts" errors="0" failures="0" skipped="0" timestamp="2026-02-27T01:20:10" time="1.222" tests="22">
+    <testcase classname="CreateLinkHandler - returns failure when url is missing" name="returns failure when url is missing" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when url is invalid" name="returns failure when url is invalid" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when title is empty whitespace" name="returns failure when title is empty whitespace" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when favorite flag is not boolean" name="returns failure when favorite flag is not boolean" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when tag list contains invalid entries" name="returns failure when tag list contains invalid entries" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when groupLinkId is invalid" name="returns failure when groupLinkId is invalid" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when groupLinkId does not exist" name="returns failure when groupLinkId does not exist" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when normalized url already exists for user" name="returns failure when normalized url already exists for user" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - creates a link without group successfully" name="creates a link without group successfully" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - creates a link with group successfully" name="creates a link with group successfully" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - creates a link with minimal payload (url only)" name="creates a link with minimal payload (url only)" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when payload is undefined" name="returns failure when payload is undefined" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when title is not a string" name="returns failure when title is not a string" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when description is not a string" name="returns failure when description is not a string" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when description is empty after trimming" name="returns failure when description is empty after trimming" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - accepts groupLinkId as null explicitly" name="accepts groupLinkId as null explicitly" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when tagList exceeds maximum length" name="returns failure when tagList exceeds maximum length" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when tag is not a string" name="returns failure when tag is not a string" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when save throws QueryFailedError with duplicate entry (ER_DUP_ENTRY)" name="returns failure when save throws QueryFailedError with duplicate entry (ER_DUP_ENTRY)" time="0.002">
+    </testcase>
+    <testcase classname="CreateLinkHandler - returns failure when save throws QueryFailedError with duplicate entry (errno 1062)" name="returns failure when save throws QueryFailedError with duplicate entry (errno 1062)" time="0">
+    </testcase>
+    <testcase classname="CreateLinkHandler - rethrows error when save throws non-duplicate QueryFailedError" name="rethrows error when save throws non-duplicate QueryFailedError" time="0.001">
+    </testcase>
+    <testcase classname="CreateLinkHandler - rethrows error when save throws non-QueryFailedError" name="rethrows error when save throws non-QueryFailedError" time="0.007">
     </testcase>
   </testsuite>
 </testsuites>

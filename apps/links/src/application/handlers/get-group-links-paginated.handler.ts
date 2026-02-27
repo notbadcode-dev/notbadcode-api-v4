@@ -12,6 +12,7 @@ import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses'
 import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 import { GroupLink } from '@apps/links/src/domain/entities';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
+import { LINK_REPOSITORY_TOKEN, GROUP_LINK_REPOSITORY_TOKEN } from '@apps/links/src/domain/ports';
 
 @QueryHandler(GetGroupLinksPaginatedQuery)
 export class GetGroupLinksPaginatedHandler
@@ -19,7 +20,7 @@ export class GetGroupLinksPaginatedHandler
   implements IQueryHandler<GetGroupLinksPaginatedQuery, ApiResponse<PaginatedResponse<GetGroupLinkByIdResponse>>>
 {
   constructor(
-    @Inject('IGroupLinkRepository')
+    @Inject(GROUP_LINK_REPOSITORY_TOKEN)
     private readonly groupLinkRepository: IGroupLinkRepository,
     i18nService: I18nService,
   ) {

@@ -10,11 +10,12 @@ import { GetFavoriteLinksQuery } from '@apps/links/src/application/queries/get-f
 import { GetFavoriteLinksResponse } from '@apps/links/src/application/responses/get-favorite-links.response';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses/get-link-by-id.response';
 import { type ILinkRepository } from '@apps/links/src/domain/ports/link-repository.port';
+import { LINK_REPOSITORY_TOKEN, GROUP_LINK_REPOSITORY_TOKEN } from '@apps/links/src/domain/ports';
 
 @QueryHandler(GetFavoriteLinksQuery)
 export class GetFavoriteLinksHandler implements IQueryHandler<GetFavoriteLinksQuery, ApiResponse<GetFavoriteLinksResponse>> {
   constructor(
-    @Inject('ILinkRepository')
+    @Inject(LINK_REPOSITORY_TOKEN)
     private readonly linkRepository: ILinkRepository,
     private readonly i18nService: I18nService,
   ) {}

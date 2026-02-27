@@ -12,6 +12,7 @@ import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { Link } from '@apps/links/src/domain/entities';
 import { type ILinkRepository } from '@apps/links/src/domain/ports';
+import { LINK_REPOSITORY_TOKEN, GROUP_LINK_REPOSITORY_TOKEN } from '@apps/links/src/domain/ports';
 
 @QueryHandler(GetLinksPaginatedQuery)
 export class GetLinksPaginatedHandler
@@ -19,7 +20,7 @@ export class GetLinksPaginatedHandler
   implements IQueryHandler<GetLinksPaginatedQuery, ApiResponse<PaginatedResponse<GetLinkByIdResponse>>>
 {
   constructor(
-    @Inject('ILinkRepository')
+    @Inject(LINK_REPOSITORY_TOKEN)
     private readonly linkRepository: ILinkRepository,
     i18nService: I18nService,
   ) {

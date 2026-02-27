@@ -1,22 +1,19 @@
 import { HttpStatus, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
-import { QueryFailedError } from 'typeorm';
 
-import { LengthSizes } from '@common/constants';
 import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse } from '@common/responses';
-import { ErrorOn, ErrorOnFactory } from '@common/types';
 
 import { UpdateLinkCommand } from '@apps/links/src/application/commands';
 import { UpdateLinkRequest } from '@apps/links/src/application/requests';
 import { GetLinkByIdResponse } from '@apps/links/src/application/responses';
 import { LinkService } from '@apps/links/src/application/services';
+import { LinkValidationService } from '@apps/links/src/application/services/link-validation.service';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants';
-import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
+import { GROUP_LINK_REPOSITORY_TOKEN, LINK_REPOSITORY_TOKEN, type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 import { LinkByIdSpecification } from '@apps/links/src/domain/specifications';
-
 
 @CommandHandler(UpdateLinkCommand)
 export class UpdateLinkHandler
@@ -24,11 +21,12 @@ export class UpdateLinkHandler
   implements ICommandHandler<UpdateLinkCommand, ApiResponse<GetLinkByIdResponse>>
 {
   constructor(
-    @Inject('ILinkRepository')
+    @Inject(LINK_REPOSITORY_TOKEN)
     private readonly linkRepository: ILinkRepository,
-    @Inject('IGroupLinkRepository')
+    @Inject(GROUP_LINK_REPOSITORY_TOKEN)
     private readonly groupLinkRepository: IGroupLinkRepository,
     private readonly linkService: LinkService,
+    private readonly linkValidationService: LinkValidationService,
     i18nService: I18nService,
   ) {
     super(i18nService);
@@ -40,7 +38,7 @@ export class UpdateLinkHandler
       return this.createResponseFailure(LinksErrorMessageConstants.invalidLinkId, HttpStatus.BAD_REQUEST);
     }
 
-    const validationResult = this.validatePayload(command.payload);
+    const validationResult = this.linkValidationService.validateUpdatePayload(command.payload as Partial<UpdateLinkRequest>);
     if (validationResult.isError) {
       return this.createResponseFailure(validationResult.errorMessage, HttpStatus.BAD_REQUEST);
     }
@@ -65,7 +63,7 @@ export class UpdateLinkHandler
     try {
       updated = await this.linkRepository.save(link);
     } catch (error) {
-      if (this.isDuplicateEntryError(error)) {
+      if (this.linkValidationService.isDuplicateEntryError(error)) {
         return this.createResponseFailure(LinksErrorMessageConstants.duplicateUrl, HttpStatus.CONFLICT);
       }
       throw error;
@@ -73,113 +71,5 @@ export class UpdateLinkHandler
 
     const response = plainToInstance(GetLinkByIdResponse, updated, { excludeExtraneousValues: true });
     return this.createSuccessResponse(response);
-  }
-
-  private validatePayload(payload: UpdateLinkRequest | undefined): ErrorOn<Partial<UpdateLinkRequest>> {
-    if (!payload) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidPayload);
-    }
-
-    const result: Partial<UpdateLinkRequest> = {};
-
-    if (payload.url !== undefined) {
-      if (typeof payload.url !== 'string') {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl);
-      }
-      const url = payload.url.trim();
-      if (!url || !this.isValidUrl(url) || url.length > LengthSizes.extraLarge) {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidUrl);
-      }
-      result.url = url;
-    }
-
-    if (payload.title !== undefined) {
-      if (typeof payload.title !== 'string') {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle);
-      }
-      const title = payload.title.trim();
-      if (!title || title.length > LengthSizes.regular) {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTitle);
-      }
-      result.title = title;
-    }
-
-    if (payload.description !== undefined) {
-      if (typeof payload.description !== 'string') {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired);
-      }
-      const description = payload.description.trim();
-      if (!description || description.length > LengthSizes.medium) {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.descriptionRequired);
-      }
-      result.description = description;
-    }
-
-    if (payload.isFavorite !== undefined) {
-      if (typeof payload.isFavorite !== 'boolean') {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidFavoriteFlag);
-      }
-      result.isFavorite = payload.isFavorite;
-    }
-
-    if (payload.tagList !== undefined) {
-      const tagValidation = this.validateTags(payload.tagList);
-      if (tagValidation.isError) {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
-      }
-      result.tagList = tagValidation.value;
-    }
-
-    if (payload.groupLinkId !== undefined) {
-      if (payload.groupLinkId === null) {
-        result.groupLinkId = null;
-      } else if (typeof payload.groupLinkId !== 'number' || !Number.isInteger(payload.groupLinkId) || payload.groupLinkId <= 0) {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidGroupLinkId);
-      } else {
-        result.groupLinkId = payload.groupLinkId;
-      }
-    }
-
-    if (Object.keys(result).length === 0) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidPayload);
-    }
-
-    return ErrorOnFactory.success(result);
-  }
-
-  private validateTags(tagList: unknown): ErrorOn<string[]> {
-    if (!Array.isArray(tagList) || tagList.length > LengthSizes.small) {
-      return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
-    }
-
-    const sanitizedTags: string[] = [];
-    for (const tag of tagList) {
-      if (typeof tag !== 'string') {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
-      }
-      const trimmed = tag.trim();
-      if (!trimmed || trimmed.length > LengthSizes.regular) {
-        return ErrorOnFactory.error(LinksErrorMessageConstants.invalidTagList);
-      }
-      sanitizedTags.push(trimmed);
-    }
-    return ErrorOnFactory.success(sanitizedTags);
-  }
-
-  private isValidUrl(value: string): boolean {
-    try {
-      new URL(value);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  private isDuplicateEntryError(error: unknown): boolean {
-    if (error instanceof QueryFailedError) {
-      const dbError = error as QueryFailedError & { code?: string; errno?: number };
-      return dbError.code === 'ER_DUP_ENTRY' || dbError.errno === 1062;
-    }
-    return false;
   }
 }

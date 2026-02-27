@@ -1,21 +1,17 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { In } from 'typeorm';
 
-import { BaseHandler } from '@common/handler';
 import { I18nService } from '@common/i18n';
 import { ApiResponse, SuccessFailureResponse } from '@common/responses';
 
 import { MarkLinksAsFavoriteCommand } from '@apps/links/src/application/commands';
-import { type ILinkRepository } from '@apps/links/src/domain/ports';
+import { BaseMarkAsFavoriteHandler } from '@apps/links/src/application/handlers/base-mark-as-favorite.handler';
+import { LINK_REPOSITORY_TOKEN, type ILinkRepository } from '@apps/links/src/domain/ports';
 
 @CommandHandler(MarkLinksAsFavoriteCommand)
-export class MarkLinksAsFavoriteHandler
-  extends BaseHandler<MarkLinksAsFavoriteCommand, ApiResponse<SuccessFailureResponse<number>>>
-  implements ICommandHandler<MarkLinksAsFavoriteCommand>
-{
+export class MarkLinksAsFavoriteHandler extends BaseMarkAsFavoriteHandler<MarkLinksAsFavoriteCommand, { id: number; userId: number; isFavorite: boolean }> implements ICommandHandler<MarkLinksAsFavoriteCommand> {
   constructor(
-    @Inject('ILinkRepository')
+    @Inject(LINK_REPOSITORY_TOKEN)
     private readonly linkRepository: ILinkRepository,
     i18nService: I18nService,
   ) {
@@ -23,44 +19,6 @@ export class MarkLinksAsFavoriteHandler
   }
 
   async execute(command: MarkLinksAsFavoriteCommand): Promise<ApiResponse<SuccessFailureResponse<number>>> {
-    const { linkIdList } = command.request;
-    const userId = command.userId;
-
-    const result: SuccessFailureResponse<number> = {
-      successList: [],
-      failureList: [],
-    };
-
-    if (!linkIdList.length) {
-      return this.createSuccessResponse(result);
-    }
-
-    const existingLinks = await this.linkRepository.find({
-      select: ['id'],
-      where: { id: In(linkIdList), userId },
-    });
-
-    const existingIds = existingLinks.map((l) => l.id);
-
-    const notFoundIds = linkIdList.filter((id) => !existingIds.includes(id));
-    result.failureList.push(...notFoundIds);
-
-    if (!existingIds.length) {
-      return this.createSuccessResponse(result);
-    }
-
-    const updateResult = await this.linkRepository.update({ id: In(existingIds), userId }, { isFavorite: true });
-
-    const affected = updateResult.affected ?? 0;
-
-    if (affected === existingIds.length) {
-      result.successList.push(...existingIds);
-      return this.createSuccessResponse(result);
-    }
-
-    result.successList.push(...existingIds.slice(0, affected));
-    result.failureList.push(...existingIds.slice(affected));
-
-    return this.createSuccessResponse(result);
+    return this.markEntitiesAsFavorite(this.linkRepository, command.request.linkIdList, command.userId, true);
   }
 }

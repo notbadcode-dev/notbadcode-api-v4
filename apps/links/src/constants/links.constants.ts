@@ -7,4 +7,6 @@ export const LinksConstants = {
   swaggerTitle: 'Links Service',
   swaggerDescription: 'API docs for links resources microservice',
   swaggerVersion: '1.0.0',
+
+  favoriteListMaxSize: 100,
 };

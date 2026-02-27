@@ -29,9 +29,10 @@ import {
   UpdateGroupLinkHandler,
   UpdateLinkHandler,
 } from '@apps/links/src/application/handlers';
-import { LinkService } from '@apps/links/src/application/services';
+import { LinkService, LinkValidationService } from '@apps/links/src/application/services';
 import { DashboardLinkController } from '@apps/links/src/dashboard-link.controller';
 import { GroupLink, Link } from '@apps/links/src/domain/entities';
+import { GROUP_LINK_REPOSITORY_TOKEN, LINK_REPOSITORY_TOKEN } from '@apps/links/src/domain/ports';
 import { GroupLinksController } from '@apps/links/src/group-links.controller';
 import { LinksDatabaseModule } from '@apps/links/src/infrastructure/database';
 import { TypeOrmGroupLinkRepository, TypeOrmLinkRepository } from '@apps/links/src/infrastructure/repositories';
@@ -71,12 +72,13 @@ import { LinksController } from '@apps/links/src/links.controller';
     GetFavoriteGroupsHandler,
     GetTotalsHandler,
     LinkService,
+    LinkValidationService,
     {
-      provide: 'ILinkRepository',
+      provide: LINK_REPOSITORY_TOKEN,
       useClass: TypeOrmLinkRepository,
     },
     {
-      provide: 'IGroupLinkRepository',
+      provide: GROUP_LINK_REPOSITORY_TOKEN,
       useClass: TypeOrmGroupLinkRepository,
     },
   ],

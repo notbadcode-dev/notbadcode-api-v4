@@ -60,4 +60,32 @@ export class Link extends DeletableEntity {
 
   @Column(ColumnDateTimeNullable())
   lastVisitedAt?: Date | null;
+
+  static build(props: {
+    userId: number;
+    url: string;
+    normalizedUrl: string;
+    title?: string | null;
+    description?: string | null;
+    isFavorite?: boolean;
+    tagList?: string[];
+    groupLinkId?: number | null;
+  }): Link {
+    return Object.assign(new Link(), {
+      userId: props.userId,
+      url: props.url,
+      normalizedUrl: props.normalizedUrl,
+      title: props.title ?? null,
+      description: props.description ?? null,
+      faviconUrl: null,
+      imagePreviewUrl: null,
+      isFavorite: props.isFavorite ?? false,
+      tagList: props.tagList ?? [],
+      isActive: true,
+      lastStatusCode: LinkLastStatusCode.PENDING,
+      lastCheckedAt: null,
+      lastVisitedAt: null,
+      groupLinkId: props.groupLinkId ?? null,
+    });
+  }
 }

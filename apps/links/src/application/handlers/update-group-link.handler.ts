@@ -13,6 +13,7 @@ import { UpdateGroupLinkRequest } from '@apps/links/src/application/requests';
 import { GetGroupLinkByIdResponse } from '@apps/links/src/application/responses';
 import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
+import { LINK_REPOSITORY_TOKEN, GROUP_LINK_REPOSITORY_TOKEN } from '@apps/links/src/domain/ports';
 
 
 @CommandHandler(UpdateGroupLinkCommand)
@@ -21,7 +22,7 @@ export class UpdateGroupLinkHandler
   implements ICommandHandler<UpdateGroupLinkCommand, ApiResponse<GetGroupLinkByIdResponse>>
 {
   constructor(
-    @Inject('IGroupLinkRepository')
+    @Inject(GROUP_LINK_REPOSITORY_TOKEN)
     private readonly groupLinkRepository: IGroupLinkRepository,
     i18nService: I18nService,
   ) {

@@ -7,13 +7,14 @@ import { apiResponseSuccess, type ApiResponse } from '@common/responses';
 import { GetTotalsQuery } from '@apps/links/src/application/queries/get-totals.query';
 import { GetTotalsResponse } from '@apps/links/src/application/responses/get-totals.response';
 import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
+import { LINK_REPOSITORY_TOKEN, GROUP_LINK_REPOSITORY_TOKEN } from '@apps/links/src/domain/ports';
 
 @QueryHandler(GetTotalsQuery)
 export class GetTotalsHandler implements IQueryHandler<GetTotalsQuery, ApiResponse<GetTotalsResponse>> {
   constructor(
-    @Inject('ILinkRepository')
+    @Inject(LINK_REPOSITORY_TOKEN)
     private readonly linkRepository: ILinkRepository,
-    @Inject('IGroupLinkRepository')
+    @Inject(GROUP_LINK_REPOSITORY_TOKEN)
     private readonly groupLinkRepository: IGroupLinkRepository,
     private readonly i18nService: I18nService,
   ) {}

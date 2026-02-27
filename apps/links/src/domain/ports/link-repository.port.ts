@@ -1,12 +1,6 @@
-import { type FindOneOptions, type FindOptionsOrder, type FindOptionsWhere } from 'typeorm';
+import type { Link } from '@apps/links/src/domain/entities';
+import type { IBaseRepository } from '@apps/links/src/domain/ports/base-repository.port';
 
-import { type Link } from '@apps/links/src/domain/entities';
-
-export interface ILinkRepository {
-  findOne(options: FindOneOptions<Link>): Promise<Link | null>;
-  findAndCount(options: { skip: number; take: number; order?: FindOptionsOrder<Link>; where?: FindOptionsWhere<Link>; relations?: string[] }): Promise<[Link[], number]>;
-  find(options: { select?: (keyof Link)[]; where: FindOptionsWhere<Link> }): Promise<Link[]>;
-  save(link: Link): Promise<Link>;
-  update(criteria: FindOptionsWhere<Link>, data: Partial<Link>): Promise<{ affected?: number }>;
+export interface ILinkRepository extends IBaseRepository<Link> {
   softDelete(criteria: Pick<Link, 'id' | 'userId'>): Promise<{ affected?: number }>;
 }

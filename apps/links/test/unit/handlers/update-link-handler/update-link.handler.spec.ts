@@ -5,6 +5,7 @@ import { UpdateLinkCommand } from '@apps/links/src/application/commands';
 import { UpdateLinkHandler } from '@apps/links/src/application/handlers';
 import { type UpdateLinkRequest } from '@apps/links/src/application/requests';
 import { type LinkService } from '@apps/links/src/application/services';
+import { type LinkValidationService } from '@apps/links/src/application/services/link-validation.service';
 import { LinksErrorMessageConstants } from '@apps/links/src/constants';
 import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 
@@ -15,6 +16,7 @@ describe('UpdateLinkHandler', () => {
   let linkRepository: jest.Mocked<ILinkRepository>;
   let groupLinkRepository: jest.Mocked<IGroupLinkRepository>;
   let linkService: jest.Mocked<LinkService>;
+  let linkValidationService: jest.Mocked<LinkValidationService>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
 
   beforeEach(() => {
@@ -33,9 +35,17 @@ describe('UpdateLinkHandler', () => {
       update: jest.fn(),
     };
     linkService = { updateLink: jest.fn() } as unknown as jest.Mocked<LinkService>;
+    linkValidationService = {
+      validateCreatePayload: jest.fn(),
+      validateUpdatePayload: jest.fn(),
+      isDuplicateEntryError: jest.fn(),
+    } as unknown as jest.Mocked<LinkValidationService>;
     i18nService = { translate: jest.fn(), t: jest.fn() };
-     
-    handler = new UpdateLinkHandler(linkRepository, groupLinkRepository, linkService, i18nService as any);
+
+    // Default successful validation - can be overridden in specific tests
+    linkValidationService.validateUpdatePayload.mockImplementation((payload) => ({ isError: false, value: payload }));
+
+    handler = new UpdateLinkHandler(linkRepository, groupLinkRepository, linkService, linkValidationService, i18nService as any);
   });
 
   it('returns failure when id is invalid', async () => {
@@ -53,6 +63,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when description is empty', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.descriptionRequired });
     const payload = UpdateLinkHandlerFixture.updatePayload('   ');
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -67,6 +78,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when url is invalid', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidUrl });
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), url: UpdateLinkHandlerFixture.invalidUrl };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -80,6 +92,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when title is invalid', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidTitle });
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), title: UpdateLinkHandlerFixture.invalidTitle };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -93,6 +106,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when favorite flag is invalid', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidFavoriteFlag });
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), isFavorite: 'not-a-boolean' } as unknown as UpdateLinkRequest;
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -106,6 +120,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when tag list is invalid', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidTagList });
     const payload = { ...UpdateLinkHandlerFixture.updatePayload(), tagList: UpdateLinkHandlerFixture.invalidTagList };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -231,6 +246,7 @@ describe('UpdateLinkHandler', () => {
 
     it('returns failure when groupLinkId is not a valid integer', async () => {
       // Arrange
+      linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidGroupLinkId });
       const payload = { ...UpdateLinkHandlerFixture.updatePayload(), groupLinkId: -1 };
       const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -245,6 +261,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when payload is undefined', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidPayload });
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, undefined as any, UpdateLinkHandlerFixture.validUserId);
 
     // Act
@@ -257,6 +274,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when url is not a string', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidUrl });
     const payload = { url: 123 as any };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -270,6 +288,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when title is not a string', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidTitle });
     const payload = { title: 123 as any };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -283,6 +302,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when description is not a string', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.descriptionRequired });
     const payload = { description: 123 as any };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -296,6 +316,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when payload is empty object', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidPayload });
     const payload = {};
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -309,6 +330,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when tagList exceeds maximum length', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidTagList });
     const tooManyTags = Array.from({ length: 51 }, (_, i) => `tag${i}`);
     const payload = { tagList: tooManyTags };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
@@ -323,6 +345,7 @@ describe('UpdateLinkHandler', () => {
 
   it('returns failure when tag is not a string', async () => {
     // Arrange
+    linkValidationService.validateUpdatePayload.mockReturnValue({ isError: true, errorMessage: LinksErrorMessageConstants.invalidTagList });
     const payload = { tagList: [123 as any, 'valid'] };
     const command = new UpdateLinkCommand(UpdateLinkHandlerFixture.existingLink.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -348,6 +371,7 @@ describe('UpdateLinkHandler', () => {
     });
 
     linkRepository.save.mockRejectedValueOnce(duplicateError);
+    linkValidationService.isDuplicateEntryError.mockReturnValue(true);
     const payload = UpdateLinkHandlerFixture.updatePayload();
     const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -373,6 +397,7 @@ describe('UpdateLinkHandler', () => {
     });
 
     linkRepository.save.mockRejectedValueOnce(duplicateError);
+    linkValidationService.isDuplicateEntryError.mockReturnValue(true);
     const payload = UpdateLinkHandlerFixture.updatePayload();
     const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
 
@@ -398,6 +423,7 @@ describe('UpdateLinkHandler', () => {
     });
 
     linkRepository.save.mockRejectedValueOnce(otherError);
+    linkValidationService.isDuplicateEntryError.mockReturnValue(false);
     const payload = UpdateLinkHandlerFixture.updatePayload();
     const command = new UpdateLinkCommand(link.id, payload, UpdateLinkHandlerFixture.validUserId);
 

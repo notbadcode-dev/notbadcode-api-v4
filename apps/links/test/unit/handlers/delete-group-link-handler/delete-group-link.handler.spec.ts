@@ -2,13 +2,14 @@
 import { DeleteGroupLinkCommand } from '@apps/links/src/application/commands';
 import { DeleteGroupLinkHandler } from '@apps/links/src/application/handlers';
 import { GroupLinksErrorMessageConstants } from '@apps/links/src/constants';
-import { type IGroupLinkRepository } from '@apps/links/src/domain/ports';
+import { type IGroupLinkRepository, type ILinkRepository } from '@apps/links/src/domain/ports';
 
 import { DeleteGroupLinkHandlerFixture } from './delete-group-link.handler.fixture';
 
 describe('DeleteGroupLinkHandler', () => {
   let handler: DeleteGroupLinkHandler;
   let groupLinkRepository: jest.Mocked<IGroupLinkRepository>;
+  let linkRepository: jest.Mocked<ILinkRepository>;
   let i18nService: { translate: jest.Mock; t: jest.Mock };
 
   beforeEach(() => {
@@ -20,9 +21,17 @@ describe('DeleteGroupLinkHandler', () => {
       update: jest.fn(),
       softDelete: jest.fn(),
     };
+    linkRepository = {
+      findOne: jest.fn(),
+      findAndCount: jest.fn(),
+      find: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+      softDelete: jest.fn(),
+    };
     i18nService = { translate: jest.fn(), t: jest.fn() };
-     
-    handler = new DeleteGroupLinkHandler(groupLinkRepository, i18nService as any);
+
+    handler = new DeleteGroupLinkHandler(groupLinkRepository, linkRepository, i18nService as any);
   });
 
   it('returns failure when id is zero', async () => {
@@ -68,6 +77,7 @@ describe('DeleteGroupLinkHandler', () => {
   it('deletes group link successfully', async () => {
     // Arrange
     groupLinkRepository.findOne.mockResolvedValueOnce(DeleteGroupLinkHandlerFixture.existingGroupLink);
+    linkRepository.update.mockResolvedValueOnce({ affected: 1, generatedMaps: [], raw: [] });
     groupLinkRepository.softDelete.mockResolvedValueOnce({ affected: 1 });
     const command = new DeleteGroupLinkCommand(DeleteGroupLinkHandlerFixture.validGroupLinkId, DeleteGroupLinkHandlerFixture.validUserId);
 
@@ -76,6 +86,10 @@ describe('DeleteGroupLinkHandler', () => {
 
     // Assert
     expect(groupLinkRepository.findOne).toHaveBeenCalled();
+    expect(linkRepository.update).toHaveBeenCalledWith(
+      { groupLinkId: DeleteGroupLinkHandlerFixture.validGroupLinkId, userId: DeleteGroupLinkHandlerFixture.validUserId },
+      { groupLinkId: null }
+    );
     expect(groupLinkRepository.softDelete).toHaveBeenCalledWith({
       id: DeleteGroupLinkHandlerFixture.validGroupLinkId,
       userId: DeleteGroupLinkHandlerFixture.validUserId,
@@ -88,6 +102,7 @@ describe('DeleteGroupLinkHandler', () => {
   it('returns the deleted group link data in the response', async () => {
     // Arrange
     groupLinkRepository.findOne.mockResolvedValueOnce(DeleteGroupLinkHandlerFixture.existingGroupLink);
+    linkRepository.update.mockResolvedValueOnce({ affected: 1, generatedMaps: [], raw: [] });
     groupLinkRepository.softDelete.mockResolvedValueOnce({ affected: 1 });
     const command = new DeleteGroupLinkCommand(DeleteGroupLinkHandlerFixture.validGroupLinkId, DeleteGroupLinkHandlerFixture.validUserId);
 
@@ -104,6 +119,7 @@ describe('DeleteGroupLinkHandler', () => {
   it('returns failure when softDelete affects 0 rows', async () => {
     // Arrange
     groupLinkRepository.findOne.mockResolvedValueOnce(DeleteGroupLinkHandlerFixture.existingGroupLink);
+    linkRepository.update.mockResolvedValueOnce({ affected: 0, generatedMaps: [], raw: [] });
     groupLinkRepository.softDelete.mockResolvedValueOnce({ affected: 0 });
     const command = new DeleteGroupLinkCommand(DeleteGroupLinkHandlerFixture.validGroupLinkId, DeleteGroupLinkHandlerFixture.validUserId);
 
